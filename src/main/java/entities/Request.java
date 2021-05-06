@@ -2,18 +2,55 @@ package entities;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Objects;
 
 public final class Request {
 
     private int id;
+
     private User customer;
+
     private Status status;
+
     private String deliveryAddress;
+
     private long totalPrice;
+
     private User approvedBy;
+
     private Date createdAt;
+
     private Date updatedAt;
+
     private List<BillItem> bill;
+
+    @Override
+    public String toString() {
+        return "Request{" +
+                "id=" + id +
+                ", customer=" + customer +
+                ", status=" + status +
+                ", deliveryAddress='" + deliveryAddress + '\'' +
+                ", totalPrice=" + totalPrice +
+                ", approvedBy=" + approvedBy +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", bill=" + bill +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Request request = (Request) o;
+        return id == request.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     public int getId() {
         return id;

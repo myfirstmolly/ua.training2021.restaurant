@@ -1,15 +1,51 @@
 package entities;
 
+import java.util.Objects;
+
 public final class Dish {
 
     private int id;
+
     private String nameEng;
+
     private String nameUkr;
+
     private int price;
+
     private String descriptionEng;
+
     private String descriptionUkr;
+
     private String imagePath;
+
     private Category category;
+
+    @Override
+    public String toString() {
+        return "Dish{" +
+                "id=" + id +
+                ", nameEng='" + nameEng + '\'' +
+                ", nameUkr='" + nameUkr + '\'' +
+                ", price=" + price +
+                ", descriptionEng='" + descriptionEng + '\'' +
+                ", descriptionUkr='" + descriptionUkr + '\'' +
+                ", imagePath='" + imagePath + '\'' +
+                ", category=" + category +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Dish dish = (Dish) o;
+        return id == dish.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     public int getId() {
         return id;

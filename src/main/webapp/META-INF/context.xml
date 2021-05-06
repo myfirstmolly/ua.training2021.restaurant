@@ -1,0 +1,11 @@
+<Context>
+    <Resource name="jdbc/restaurant"
+              auth="Container"
+              type="javax.sql.DataSource"
+              maxTotal="100" maxIdle="30" maxWaitMillis="10000"
+              username="root"
+              password="password"
+              driverClassName="com.mysql.cj.jdbc.Driver"
+              defaultTransactionIsolation="READ_COMMITTED"
+              url="jdbc:mysql://localhost:3306/restaurant?serverTimezone=UTC"/>
+</Context>
