@@ -4,11 +4,14 @@ import dao.UserDao;
 import database.DBManager;
 import entities.Role;
 import entities.User;
-import exceptions.DatabaseException;
+import exceptions.DaoException;
+import exceptions.DataIntegrityViolationException;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * data access object for user entity
@@ -38,15 +41,18 @@ public class UserDaoImpl implements UserDao {
     private final DBManager dbManager;
 
     public UserDaoImpl(DBManager dbManager) {
-        this.dbManager = dbManager;
+        this.dbManager = Objects.requireNonNull(dbManager);
     }
 
     /**
+     * @inheritDoc
+     * returns list of all users from database
+     *
      * @return list of all users
-     * @throws DatabaseException if nothing is found
+     * @throws DaoException if select statement wasn't executed
      */
     @Override
-    public List<User> findAll() throws DatabaseException {
+    public List<User> findAll() throws DaoException {
         List<User> users = new ArrayList<>();
 
         try (PreparedStatement ps = dbManager.getConnection()
@@ -58,114 +64,155 @@ public class UserDaoImpl implements UserDao {
             return users;
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new DatabaseException("Users not found", ex);
+            throw new DaoException("Users not found, cause: " + ex.getCause(), ex);
         }
     }
 
     /**
+     * @inheritDoc
+     * returns user with given id
+     *
      * @param id user unique identifier
-     * @return user entity
-     * @throws DatabaseException if user not found
+     * @return optional user object
+     * @throws DaoException if select statement wasn't executed
      */
     @Override
-    public User findById(int id) throws DatabaseException {
+    public Optional<User> findById(int id) throws DaoException {
+        if (id <= 0) return Optional.empty();
+
         try (PreparedStatement ps = dbManager.getConnection()
                 .prepareStatement(FIND_BY_ID)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
-                rs.next();
-                return fetchResult(rs);
+                if (rs.next()) return Optional.ofNullable(fetchResult(rs));
+                return Optional.empty();
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new DatabaseException(String.format("User with id={%s} not found", id), ex);
+            throw new DaoException(String.format("User with id={%s} not found, cause: %s",
+                    id, ex.getCause()), ex);
         }
     }
 
     /**
+     * @inheritDoc
+     * returns user with given username
+     *
      * @param username user's username
-     * @return user entity
-     * @throws DatabaseException if user not found
+     * @return optional user object
+     * @throws DaoException if select statement wasn't executed
      */
     @Override
-    public User findByUsername(String username) throws DatabaseException {
+    public Optional<User> findByUsername(String username) throws DaoException {
+        if (username == null) return Optional.empty();
+
         try (PreparedStatement ps = dbManager.getConnection()
                 .prepareStatement(FIND_BY_USERNAME)) {
             ps.setString(1, username);
             try (ResultSet rs = ps.executeQuery()) {
-                rs.next();
-                return fetchResult(rs);
+                if (rs.next()) return Optional.ofNullable(fetchResult(rs));
+                return Optional.empty();
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new DatabaseException(String.format("User with username={%s} not found", username), ex);
+            throw new DaoException(String.format("User with username='%s' not found, cause: %s",
+                    username, ex.getCause()), ex);
         }
     }
 
     /**
+     * @inheritDoc
+     * saves user object to database and modifies its id
+     *
      * @param user user entity to store to database
-     * @throws DatabaseException if user wasn't saved
+     * @throws DaoException if insert statement wasn't executed
+     * @throws DataIntegrityViolationException if username, password, name,
+     * phoneNumber or role are null
      */
     @Override
-    public void save(User user) throws DatabaseException {
-        try (Connection con = dbManager.getConnection();
-             PreparedStatement ps = con.prepareStatement(SAVE, Statement.RETURN_GENERATED_KEYS)) {
-            setPreparedStatementValues(user, ps);
+    public void save(User user) throws DaoException, DataIntegrityViolationException {
+        if (user == null) return;
+
+        try (PreparedStatement ps = dbManager.getConnection()
+                .prepareStatement(SAVE, Statement.RETURN_GENERATED_KEYS)) {
+            setPreparedStatementParams(user, ps);
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
-                keys.next();
-                int id = keys.getInt(1);
-                user.setId(id);
+                if (keys.next()) {
+                    int id = keys.getInt(1);
+                    user.setId(id);
+                }
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new DatabaseException(String.format("%s not deleted", user.toString()), ex);
+            throw new DaoException(String.format("%s not saved, cause: %s",
+                    user.toString(), ex.getCause()), ex);
         }
     }
 
     /**
+     * @inheritDoc
+     * updates user
+     *
      * @param user user entity to update
-     * @throws DatabaseException if user wasn't updated
+     * @throws DaoException if update statement wasn't executed
+     * @throws DataIntegrityViolationException if username, password, name,
+     * phoneNumber or role are null
      */
     @Override
-    public void update(User user) throws DatabaseException {
-        try (Connection con = dbManager.getConnection();
-             PreparedStatement ps = con.prepareStatement(UPDATE)) {
-            setPreparedStatementValues(user, ps);
+    public void update(User user) throws DaoException, DataIntegrityViolationException {
+        if (user == null) return;
+
+        try (PreparedStatement ps = dbManager.getConnection()
+                .prepareStatement(UPDATE)) {
+            setPreparedStatementParams(user, ps);
             ps.setInt(7, user.getId());
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new DatabaseException(String.format("%s not updated", user.toString()), ex);
+            throw new DaoException(String.format("%s not updated, cause: %s",
+                    user.toString(), ex.getCause()), ex);
         }
     }
 
     /**
+     * @inheritDoc
+     * delete user with given id
+     *
      * @param id user unique identifier
-     * @throws DatabaseException if user wasn't deleted
+     * @throws DaoException if delete statement wasn't executed
      */
     @Override
-    public void deleteById(int id) throws DatabaseException {
-        try (Connection con = dbManager.getConnection();
-             PreparedStatement ps = con.prepareStatement(DELETE)) {
+    public void deleteById(int id) throws DaoException {
+        if (id <= 0) return;
+
+        try (PreparedStatement ps = dbManager.getConnection()
+                .prepareStatement(DELETE)) {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
-            throw new DatabaseException(String.format("User with id={%s} not deleted", id), ex);
+            throw new DaoException(String.format("User with id={%s} not deleted, cause: %s",
+                    id, ex.getCause()), ex);
         }
     }
 
     /**
+     * @inheritDoc
+     * deletes user entity
+     *
      * @param user user entity
-     * @throws DatabaseException if user wasn't deleted
+     * @throws DaoException if delete statement wasn't executed
      */
     @Override
-    public void delete(User user) throws DatabaseException {
+    public void delete(User user) throws DaoException {
+        if (user == null) return;
         deleteById(user.getId());
     }
 
     private User fetchResult(ResultSet rs) throws SQLException {
+        if (rs == null) return null;
+
         User user = new User();
         user.setId(rs.getInt("id"));
         user.setUsername(rs.getString("username"));
@@ -177,7 +224,13 @@ public class UserDaoImpl implements UserDao {
         return user;
     }
 
-    private void setPreparedStatementValues(User user, PreparedStatement ps) throws SQLException {
+    private void setPreparedStatementParams(User user, PreparedStatement ps)
+            throws SQLException, DataIntegrityViolationException {
+        if (user.getUsername() == null || user.getPassword() == null ||
+                user.getName() == null || user.getPhoneNumber() == null ||
+                user.getRole() == null)
+            throw new DataIntegrityViolationException();
+
         ps.setString(1, user.getUsername());
         ps.setString(2, user.getPassword());
         ps.setString(3, user.getName());

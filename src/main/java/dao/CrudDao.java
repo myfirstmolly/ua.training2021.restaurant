@@ -1,8 +1,10 @@
 package dao;
 
-import exceptions.DatabaseException;
+import exceptions.DaoException;
+import exceptions.DataIntegrityViolationException;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * general interface which all data access objects implement
@@ -11,16 +13,55 @@ import java.util.List;
  */
 public interface CrudDao<T> {
 
-    List<T> findAll() throws DatabaseException;
+    /**
+     * returns list of entity objects in database
+     *
+     * @return list of T objects
+     * @throws DaoException if select statement wasn't executed
+     */
+    List<T> findAll() throws DaoException;
 
-    T findById(int id) throws DatabaseException;
+    /**
+     * returns nullable entity object by its unique identifier
+     *
+     * @param id unique entity identifier
+     * @return nullable T object
+     * @throws DaoException if select statement wasn't executed
+     */
+    Optional<T> findById(int id) throws DaoException;
 
-    void save(T t) throws DatabaseException;
+    /**
+     * saves object to database and updates its id
+     *
+     * @param t object to save
+     * @throws DaoException if insert statement wasn't executed
+     * @throws DataIntegrityViolationException if object has inappropriate fields
+     */
+    void save(T t) throws DaoException, DataIntegrityViolationException;
 
-    void update(T t) throws DatabaseException;
+    /**
+     * updates entity in database
+     *
+     * @param t object to update
+     * @throws DaoException if update statement wasn't executed
+     * @throws DataIntegrityViolationException if object has inappropriate fields
+     */
+    void update(T t) throws DaoException, DataIntegrityViolationException;
 
-    void deleteById(int id) throws DatabaseException;
+    /**
+     * deletes entity from database by it's unique identifier
+     *
+     * @param id entity identifier
+     * @throws DaoException if delete statement wasn't executed
+     */
+    void deleteById(int id) throws DaoException;
 
-    void delete(T t) throws DatabaseException;
+    /**
+     * deletes entity from database
+     *
+     * @param t object to delete
+     * @throws DaoException if delete statement wasn't executed
+     */
+    void delete(T t) throws DaoException;
 
 }

@@ -1,10 +1,12 @@
 package dao;
 
 import entities.User;
-import exceptions.DatabaseException;
+import exceptions.DaoException;
+
+import java.util.Optional;
 
 public interface UserDao extends CrudDao<User> {
 
-    User findByUsername(String username) throws DatabaseException;
+    Optional<User> findByUsername(String username) throws DaoException;
 
 }
