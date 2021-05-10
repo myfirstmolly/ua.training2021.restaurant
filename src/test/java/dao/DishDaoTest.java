@@ -41,15 +41,13 @@ public class DishDaoTest {
     }
 
     @Test
-    public void whenFindAllCalled_thenReturnListOfCategories() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
-        List<Dish> categories = dishDao.findAll();
-        Assert.assertNotNull(categories);
+    public void whenFindAllCalled_thenReturnListOfDishes() {
+        List<Dish> dishes = dishDao.findAll();
+        Assert.assertNotNull(dishes);
     }
 
     @Test
-    public void whenFindByIdCalled_thenReturnDish() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenFindByIdCalled_thenReturnDish() {
         dishDao.save(dish);
         int id = dish.getId();
         Dish dishFromDb = dishDao.findById(id).get();
@@ -58,63 +56,65 @@ public class DishDaoTest {
     }
 
     @Test
-    public void givenDishNotExists_whenFindByIdCalled_thenReturnNull() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenDishNotExists_whenFindByIdCalled_thenReturnNull() {
         Assert.assertFalse(dishDao.findById(-10).isPresent());
     }
 
     @Test
-    public void whenSaveCalled_thenUpdateDishId() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenFindByCategoryIdCalled_thenReturnListOfDishes() {
+        dishDao.save(dish);
+        List<Dish> dishes = dishDao.findAllByCategoryId(dish.getCategory().getId());
+        Assert.assertNotNull(dishes);
+        Assert.assertTrue(dishes.contains(dish));
+    }
+
+    @Test
+    public void givenCategoryNotExists_whenFindByCategoryIdCalled_thenReturnEmptyList() {
+        List<Dish> dishes = dishDao.findAllByCategoryId(100);
+        Assert.assertNotNull(dishes);
+        Assert.assertTrue(dishes.isEmpty());
+    }
+
+    @Test
+    public void whenSaveCalled_thenUpdateDishId() {
         int id = dish.getId();
         dishDao.save(dish);
         Assert.assertNotEquals(id, dish.getId());
     }
 
     @Test
-    public void whenSaveCalled_thenSaveDishToDb() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenSaveCalled_thenSaveDishToDb() {
         dishDao.save(dish);
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void givenDishObjectHasNullNames_whenSaveCalled_thenThrowDataIntegrityViolationException()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenDishObjectHasNullNames_whenSaveCalled_thenThrowDataIntegrityViolationException() {
         dish.setNameUkr(null);
         dish.setNameEng(null);
         dishDao.save(dish);
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void givenDishObjectHasNullEngName_whenSaveCalled_thenThrowDataIntegrityViolationException()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenDishObjectHasNullEngName_whenSaveCalled_thenThrowDataIntegrityViolationException() {
         dish.setNameEng(null);
         dishDao.save(dish);
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void givenDishObjectHasNullUkrName_whenSaveCalled_thenThrowDataIntegrityViolationException()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenDishObjectHasNullUkrName_whenSaveCalled_thenThrowDataIntegrityViolationException() {
         dish.setNameUkr(null);
         dishDao.save(dish);
     }
 
     @Test
-    public void givenDishObjectHasNullDescription_whenSaveCalled_thenSaveDishToDb()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenDishObjectHasNullDescription_whenSaveCalled_thenSaveDishToDb() {
         dish.setDescriptionEng(null);
         dishDao.save(dish);
         Assert.assertTrue(dishDao.findAll().contains(dish));
     }
 
     @Test
-    public void givenDishObjectHasNegativeId_whenSaveCalled_thenSaveDishToDbAndUpdateId()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenDishObjectHasNegativeId_whenSaveCalled_thenSaveDishToDbAndUpdateId() {
         int id = -10;
         dish.setId(id);
         dishDao.save(dish);
@@ -124,15 +124,13 @@ public class DishDaoTest {
     }
 
     @Test
-    public void givenDishObjectIsNull_whenSaveCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenDishObjectIsNull_whenSaveCalled_thenReturn() {
         dishDao.save(null);
         Assert.assertFalse(dishDao.findAll().contains(null));
     }
 
     @Test
-    public void whenUpdateCalled_thenUpdateDish() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenUpdateCalled_thenUpdateDish() {
         dishDao.save(dish);
         dish.setNameUkr("new name");
         dish.setNameEng("new name");
@@ -146,17 +144,14 @@ public class DishDaoTest {
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void givenDishHasNullEngName_whenUpdateCalled_thenThrowDataIntegrityViolationException()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenDishHasNullEngName_whenUpdateCalled_thenThrowDataIntegrityViolationException() {
         dishDao.save(dish);
         dish.setNameEng(null);
         dishDao.update(dish);
     }
 
     @Test
-    public void givenDishHasNotExistingId_whenUpdateCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenDishHasNotExistingId_whenUpdateCalled_thenReturn() {
         dish.setId(1000);
         dishDao.update(dish);
         Assert.assertFalse(dishDao.findById(dish.getId()).isPresent());
@@ -166,15 +161,13 @@ public class DishDaoTest {
     }
 
     @Test
-    public void givenDishObjectIsNull_whenUpdateCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenDishObjectIsNull_whenUpdateCalled_thenReturn() {
         dishDao.update(null);
         Assert.assertFalse(dishDao.findAll().contains(null));
     }
 
     @Test
-    public void whenDeleteDishByIdCalled_thenDeleteDish() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenDeleteDishByIdCalled_thenDeleteDish() {
         dishDao.save(dish);
         int size = dishDao.findAll().size();
         dishDao.deleteById(dish.getId());
@@ -183,16 +176,14 @@ public class DishDaoTest {
     }
 
     @Test
-    public void givenDishHasNotExistingId_whenDeleteUserByIdCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenDishHasNotExistingId_whenDeleteUserByIdCalled_thenReturn() {
         int size = dishDao.findAll().size();
         dishDao.deleteById(100);
         Assert.assertEquals(size, dishDao.findAll().size());
     }
 
     @Test
-    public void whenDeleteDishCalled_thenDeleteDish() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenDeleteDishCalled_thenDeleteDish() {
         dishDao.save(dish);
         int size = dishDao.findAll().size();
         dishDao.delete(dish);
@@ -201,8 +192,7 @@ public class DishDaoTest {
     }
 
     @Test
-    public void givenDishObjectIsNull_whenDeleteCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenDishObjectIsNull_whenDeleteCalled_thenReturn() {
         int size = dishDao.findAll().size();
         dishDao.delete(null);
         Assert.assertEquals(size, dishDao.findAll().size());

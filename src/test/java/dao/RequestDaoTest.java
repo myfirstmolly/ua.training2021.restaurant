@@ -19,7 +19,6 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-//TODO: add tests for find by user and status id
 public class RequestDaoTest {
 
     private static final String DB_URL =
@@ -41,13 +40,13 @@ public class RequestDaoTest {
     }
 
     @Test
-    public void whenFindAllCalled_thenReturnListOfRequests() throws SQLException {
+    public void whenFindAllCalled_thenReturnListOfRequests() {
         List<Request> requests = requestDao.findAll();
         Assert.assertNotNull(requests);
     }
 
     @Test
-    public void whenFindByIdCalled_thenReturnRequest() throws SQLException {
+    public void whenFindByIdCalled_thenReturnRequest() {
         requestDao.save(request);
         int id = request.getId();
         Request request = requestDao.findById(id).get();
@@ -56,13 +55,96 @@ public class RequestDaoTest {
     }
 
     @Test
-    public void givenRequestNotExists_whenFindByIdCalled_thenReturnNull() throws SQLException {
+    public void givenRequestNotExists_whenFindByIdCalled_thenReturnNull() {
         Assert.assertFalse(requestDao.findById(-10).isPresent());
     }
 
     @Test
-    public void whenSaveCalled_thenUpdateRequestId() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenFindByUserIdCalled_thenReturnListOfRequests() {
+        requestDao.save(request);
+        List<Request> requests = requestDao.findAllByUserId(request.getCustomer().getId());
+        Assert.assertNotNull(requests);
+        Assert.assertTrue(requests.contains(request));
+    }
+
+    @Test
+    public void givenUserIdIsNegative_whenFindByUserIdCalled_thenReturnEmptyList() {
+        requestDao.save(request);
+        List<Request> requests = requestDao.findAllByUserId(-100);
+        Assert.assertNotNull(requests);
+        Assert.assertTrue(requests.isEmpty());
+    }
+
+    @Test
+    public void givenUserNotExists_whenFindByUserIdCalled_thenReturnEmptyList() {
+        requestDao.save(request);
+        List<Request> requests = requestDao.findAllByUserId(100);
+        Assert.assertNotNull(requests);
+        Assert.assertTrue(requests.isEmpty());
+    }
+
+    @Test
+    public void whenFindByStatusIdCalled_thenReturnListOfRequests() {
+        requestDao.save(request);
+        List<Request> requests = requestDao.findAllByStatusId(request.getStatus().toInt());
+        Assert.assertNotNull(requests);
+        Assert.assertTrue(requests.contains(request));
+    }
+
+    @Test
+    public void givenStatusIdIsNegative_whenFindByStatusIdCalled_thenReturnEmptyList() {
+        requestDao.save(request);
+        List<Request> requests = requestDao.findAllByStatusId(-100);
+        Assert.assertNotNull(requests);
+        Assert.assertTrue(requests.isEmpty());
+    }
+
+    @Test
+    public void givenStatusNotExists_whenFindByStatusIdCalled_thenReturnEmptyList() {
+        requestDao.save(request);
+        List<Request> requests = requestDao.findAllByStatusId(100);
+        Assert.assertNotNull(requests);
+        Assert.assertTrue(requests.isEmpty());
+    }
+
+    @Test
+    public void whenFindByUserAndStatusIdCalled_thenReturnListOfRequests() {
+        requestDao.save(request);
+        List<Request> requests = requestDao.findAllByUserAndStatus
+                (request.getCustomer().getId(), request.getStatus().toInt());
+        Assert.assertNotNull(requests);
+        Assert.assertTrue(requests.contains(request));
+    }
+
+    @Test
+    public void givenStatusNotExists_whenFindByUserAndStatusIdCalled_thenReturnEmptyList() {
+        requestDao.save(request);
+        List<Request> requests = requestDao.findAllByUserAndStatus
+                (request.getCustomer().getId(),100);
+        Assert.assertNotNull(requests);
+        Assert.assertTrue(requests.isEmpty());
+    }
+
+    @Test
+    public void givenUserNotExists_whenFindByUserAndStatusIdCalled_thenReturnEmptyList() {
+        requestDao.save(request);
+        List<Request> requests = requestDao.findAllByUserAndStatus
+                (100, request.getStatus().toInt());
+        Assert.assertNotNull(requests);
+        Assert.assertTrue(requests.isEmpty());
+    }
+
+    @Test
+    public void givenUserAndStatusNotExist_whenFindByUserAndStatusIdCalled_thenReturnEmptyList() {
+        requestDao.save(request);
+        List<Request> requests = requestDao.findAllByUserAndStatus
+                (100, 100);
+        Assert.assertNotNull(requests);
+        Assert.assertTrue(requests.isEmpty());
+    }
+
+    @Test
+    public void whenSaveCalled_thenUpdateRequestId() {
         int id = request.getId();
         requestDao.save(request);
         Assert.assertNotEquals(id, request.getId());
@@ -71,25 +153,20 @@ public class RequestDaoTest {
     }
 
     @Test
-    public void whenSaveCalled_thenSaveRequestToDb() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenSaveCalled_thenSaveRequestToDb() {
         requestDao.save(request);
         Assert.assertNotNull(requestDao.findById(request.getId()));
         Assert.assertTrue(requestDao.findAll().contains(request));
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void givenRequestObjectHasNullDeliveryAddress_whenSaveCalled_thenThrowDataIntegrityViolationException()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenRequestObjectHasNullDeliveryAddress_whenSaveCalled_thenThrowDataIntegrityViolationException() {
         request.setDeliveryAddress(null);
         requestDao.save(request);
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void givenRequestObjectHasNullFields_whenSaveCalled_thenThrowDataIntegrityViolationException()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenRequestObjectHasNullFields_whenSaveCalled_thenThrowDataIntegrityViolationException() {
         request.setCustomer(null);
         request.setDeliveryAddress(null);
         request.setStatus(null);
@@ -97,8 +174,7 @@ public class RequestDaoTest {
     }
 
     @Test
-    public void givenRequestObjectHasNullApprovedBy_whenSaveCalled_thenSaveRequestToDb() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenRequestObjectHasNullApprovedBy_whenSaveCalled_thenSaveRequestToDb() {
         request.setApprovedBy(null);
         requestDao.save(request);
         Assert.assertNotNull(requestDao.findById(request.getId()));
@@ -106,8 +182,7 @@ public class RequestDaoTest {
     }
 
     @Test
-    public void givenRequestObjectHasNegativeId_whenSaveCalled_thenSaveRequestToDbAndUpdateId() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenRequestObjectHasNegativeId_whenSaveCalled_thenSaveRequestToDbAndUpdateId() {
         int id = -10;
         request.setId(id);
         requestDao.save(request);
@@ -117,15 +192,13 @@ public class RequestDaoTest {
     }
 
     @Test
-    public void givenRequestObjectIsNull_whenSaveCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenRequestObjectIsNull_whenSaveCalled_thenReturn() {
         requestDao.save(null);
         Assert.assertFalse(requestDao.findAll().contains(request));
     }
 
     @Test
-    public void whenUpdateCalled_thenUpdateRequest() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenUpdateCalled_thenUpdateRequest() {
         requestDao.save(request);
         request.setDeliveryAddress("new address");
         requestDao.update(request);
@@ -137,9 +210,7 @@ public class RequestDaoTest {
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void givenRequestObjectHasNullFields_whenUpdateCalled_thenThrowDataIntegrityViolationException()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenRequestObjectHasNullFields_whenUpdateCalled_thenThrowDataIntegrityViolationException() {
         request.setDeliveryAddress(null);
         request.setCustomer(null);
         request.setStatus(null);
@@ -147,8 +218,7 @@ public class RequestDaoTest {
     }
 
     @Test
-    public void givenRequestObjectHasNotExistingId_whenUpdateCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenRequestObjectHasNotExistingId_whenUpdateCalled_thenReturn() {
         request.setId(1000);
         requestDao.update(request);
         Assert.assertFalse(requestDao.findById(request.getId()).isPresent());
@@ -158,15 +228,13 @@ public class RequestDaoTest {
     }
 
     @Test
-    public void givenRequestObjectIsNull_whenUpdateCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenRequestObjectIsNull_whenUpdateCalled_thenReturn() {
         requestDao.update(null);
         Assert.assertFalse(requestDao.findAll().contains(null));
     }
 
     @Test
-    public void whenDeleteRequestByIdCalled_thenDeleteRequest() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenDeleteRequestByIdCalled_thenDeleteRequest() {
         requestDao.save(request);
         int size = requestDao.findAll().size();
         requestDao.deleteById(request.getId());
@@ -175,16 +243,14 @@ public class RequestDaoTest {
     }
 
     @Test
-    public void givenRequestObjectHasNotExistingId_whenDeleteRequestByIdCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenRequestObjectHasNotExistingId_whenDeleteRequestByIdCalled_thenReturn() {
         int size = requestDao.findAll().size();
         requestDao.deleteById(100);
         Assert.assertEquals(size, requestDao.findAll().size());
     }
 
     @Test
-    public void whenDeleteRequestCalled_thenDeleteRequest() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenDeleteRequestCalled_thenDeleteRequest() {
         requestDao.save(request);
         int size = requestDao.findAll().size();
         requestDao.delete(request);
@@ -193,8 +259,7 @@ public class RequestDaoTest {
     }
 
     @Test
-    public void givenRequestObjectIsNull_whenDeleteRequestCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenRequestObjectIsNull_whenDeleteRequestCalled_thenReturn() {
         int size = requestDao.findAll().size();
         requestDao.delete(null);
         Assert.assertEquals(size, requestDao.findAll().size());

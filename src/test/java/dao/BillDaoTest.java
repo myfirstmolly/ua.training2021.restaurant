@@ -39,15 +39,13 @@ public class BillDaoTest {
     }
 
     @Test
-    public void whenFindAllCalled_thenReturnListOfBillItems() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenFindAllCalled_thenReturnListOfBillItems() {
         List<Bill> bills = billItemDao.findAll();
         Assert.assertNotNull(bills);
     }
 
     @Test
-    public void whenFindByIdCalled_thenReturnBillItem() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenFindByIdCalled_thenReturnBillItem() {
         billItemDao.save(this.bill);
         int id = this.bill.getId();
         Bill bill = billItemDao.findById(id).get();
@@ -56,14 +54,12 @@ public class BillDaoTest {
     }
 
     @Test
-    public void givenBillItemNotExists_whenFindByIdCalled_thenReturnNull() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenBillItemNotExists_whenFindByIdCalled_thenReturnNull() {
         Assert.assertFalse(billItemDao.findById(-10).isPresent());
     }
 
     @Test
-    public void whenFindByRequestIdCalled_thenReturnListOfBillItems() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenFindByRequestIdCalled_thenReturnListOfBillItems() {
         billItemDao.save(bill);
         List<Bill> bills = billItemDao.findAllByRequestId(1);
         Assert.assertNotNull(bills);
@@ -71,49 +67,40 @@ public class BillDaoTest {
     }
 
     @Test
-    public void givenRequestNotExists_whenFindByRequestIdCalled_thenReturnEmptyList() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenRequestNotExists_whenFindByRequestIdCalled_thenReturnEmptyList() {
         List<Bill> bills = billItemDao.findAllByRequestId(100);
         Assert.assertNotNull(bills);
         Assert.assertTrue(bills.isEmpty());
     }
 
     @Test
-    public void whenSaveCalled_thenUpdateBillItemId() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenSaveCalled_thenUpdateBillItemId() {
         int id = bill.getId();
         billItemDao.save(bill);
         Assert.assertNotEquals(id, bill.getId());
     }
 
     @Test
-    public void whenSaveCalled_thenSaveBillItemToDb() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenSaveCalled_thenSaveBillItemToDb() {
         billItemDao.save(bill);
         Assert.assertTrue(billItemDao.findAll().contains(bill));
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void givenBillItemObjectHasNegativeQuantity_whenSaveCalled_thenThrowDataIntegrityViolationException()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenBillItemObjectHasNegativeQuantity_whenSaveCalled_thenThrowDataIntegrityViolationException() {
         bill.setQuantity(-10);
         billItemDao.save(bill);
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void givenBillItemObjectHasWrongFields_whenSaveCalled_thenThrowDataIntegrityViolationException()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenBillItemObjectHasWrongFields_whenSaveCalled_thenThrowDataIntegrityViolationException() {
         bill.setDish(null);
         bill.setRequestId(-99);
         billItemDao.save(bill);
     }
 
     @Test
-    public void givenBillItemObjectHasNegativeId_whenSaveCalled_thenSaveBillItemToDbAndUpdateId()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenBillItemObjectHasNegativeId_whenSaveCalled_thenSaveBillItemToDbAndUpdateId() {
         int id = -10;
         bill.setId(id);
         billItemDao.save(bill);
@@ -123,15 +110,13 @@ public class BillDaoTest {
     }
 
     @Test
-    public void givenBillItemObjectIsNull_whenSaveCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenBillItemObjectIsNull_whenSaveCalled_thenReturn() {
         billItemDao.save(null);
         Assert.assertFalse(billItemDao.findAll().contains(bill));
     }
 
     @Test
-    public void whenUpdateCalled_thenUpdateBillItem() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenUpdateCalled_thenUpdateBillItem() {
         billItemDao.save(bill);
         bill.setQuantity(10);
         billItemDao.update(bill);
@@ -143,17 +128,14 @@ public class BillDaoTest {
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void givenBillItemHasNegativeQuantity_whenUpdateCalled_thenThrowDataIntegrityViolationException()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenBillItemHasNegativeQuantity_whenUpdateCalled_thenThrowDataIntegrityViolationException() {
         billItemDao.save(bill);
         bill.setQuantity(-10);
         billItemDao.update(bill);
     }
 
     @Test
-    public void givenBillItemHasNotExistingId_whenUpdateCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenBillItemHasNotExistingId_whenUpdateCalled_thenReturn() {
         bill.setId(1000);
         billItemDao.update(bill);
         Assert.assertFalse(billItemDao.findById(bill.getId()).isPresent());
@@ -163,15 +145,13 @@ public class BillDaoTest {
     }
 
     @Test
-    public void givenBillItemObjectIsNull_whenUpdateCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenBillItemObjectIsNull_whenUpdateCalled_thenReturn() {
         billItemDao.update(null);
         Assert.assertFalse(billItemDao.findAll().contains(null));
     }
 
     @Test
-    public void whenDeleteBillItemByIdCalled_thenDeleteBillItem() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenDeleteBillItemByIdCalled_thenDeleteBillItem() {
         billItemDao.save(bill);
         int size = billItemDao.findAll().size();
         billItemDao.deleteById(bill.getId());
@@ -180,16 +160,14 @@ public class BillDaoTest {
     }
 
     @Test
-    public void givenBillItemHasNotExistingId_whenDeleteUserByIdCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenBillItemHasNotExistingId_whenDeleteUserByIdCalled_thenReturn() {
         int size = billItemDao.findAll().size();
         billItemDao.deleteById(100);
         Assert.assertEquals(size, billItemDao.findAll().size());
     }
 
     @Test
-    public void whenDeleteBillItemCalled_thenDeleteBillItem() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenDeleteBillItemCalled_thenDeleteBillItem() {
         billItemDao.save(bill);
         int size = billItemDao.findAll().size();
         billItemDao.delete(bill);
@@ -198,8 +176,7 @@ public class BillDaoTest {
     }
 
     @Test
-    public void givenBillItemObjectIsNull_whenDeleteCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenBillItemObjectIsNull_whenDeleteCalled_thenReturn() {
         int size = billItemDao.findAll().size();
         billItemDao.delete(null);
         Assert.assertEquals(size, billItemDao.findAll().size());

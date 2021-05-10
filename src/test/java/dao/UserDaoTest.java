@@ -19,7 +19,8 @@ import static org.mockito.Mockito.when;
 
 public class UserDaoTest {
 
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/restaurant_test?serverTimezone=UTC";
+    private static final String DB_URL =
+            "jdbc:mysql://localhost:3306/restaurant_test?serverTimezone=UTC";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "password";
     private DBManager dbManager;

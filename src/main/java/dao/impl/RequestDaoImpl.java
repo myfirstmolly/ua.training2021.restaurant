@@ -12,7 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
-import java.util.Optional;
 
 public final class RequestDaoImpl extends AbstractDao<Request> implements RequestDao {
 
@@ -35,8 +34,8 @@ public final class RequestDaoImpl extends AbstractDao<Request> implements Reques
     }
 
     @Override
-    public Optional<Request> findByUserAndStatus(int userId, int statusId) {
-        return super.findOneByParameter(
+    public List<Request> findAllByUserAndStatus(int userId, int statusId) {
+        return super.findAllByParameter(
                 new Param(userId, "customer_id"),
                 new Param(statusId, "status_id")
         );

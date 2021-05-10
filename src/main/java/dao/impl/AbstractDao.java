@@ -147,8 +147,8 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
 
         if (params.length == 1) return sb.toString();
 
-        for (Param p : params)
-            sb.append(" and ").append(p.name).append("=?");
+        for (int i = 1; i < params.length; i++)
+            sb.append(" and ").append(params[i].name).append("=?");
 
         return sb.toString();
     }
