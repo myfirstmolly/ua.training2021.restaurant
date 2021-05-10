@@ -2,13 +2,21 @@ package entities;
 
 import java.util.Objects;
 
-public final class Category {
+public final class Category implements Entity {
 
     private int id;
 
-    private int nameEng;
+    private String nameEng;
 
-    private int nameUkr;
+    private String nameUkr;
+
+    public Category() {
+    }
+
+    public Category(String nameEng, String nameUkr) {
+        this.nameEng = nameEng;
+        this.nameUkr = nameUkr;
+    }
 
     @Override
     public String toString() {
@@ -32,27 +40,29 @@ public final class Category {
         return Objects.hash(id);
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }
 
-    public int getNameEng() {
+    public String getNameEng() {
         return nameEng;
     }
 
-    public void setNameEng(int nameEng) {
+    public void setNameEng(String nameEng) {
         this.nameEng = nameEng;
     }
 
-    public int getNameUkr() {
+    public String getNameUkr() {
         return nameUkr;
     }
 
-    public void setNameUkr(int nameUkr) {
+    public void setNameUkr(String nameUkr) {
         this.nameUkr = nameUkr;
     }
 

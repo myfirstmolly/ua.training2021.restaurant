@@ -1,16 +1,16 @@
 package dao;
 
 import entities.Request;
-import entities.Status;
-import entities.User;
-import exceptions.DaoException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RequestDao extends CrudDao<Request> {
 
-    List<Request> findAllByUser(User user) throws DaoException;
+    List<Request> findAllByUserId(int id);
 
-    List<Request> findAllByStatus(Status status) throws DaoException;
+    List<Request> findAllByStatusId(int id);
+
+    Optional<Request> findByUserAndStatus(int userId, int statusId);
 
 }

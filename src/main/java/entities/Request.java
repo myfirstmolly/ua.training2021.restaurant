@@ -4,7 +4,7 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Objects;
 
-public final class Request {
+public final class Request implements Entity {
 
     private int id;
 
@@ -22,7 +22,16 @@ public final class Request {
 
     private Date updatedAt;
 
-    private List<BillItem> bill;
+    private List<Bill> bill;
+
+    public Request() {
+    }
+
+    public Request(User customer, Status status, String deliveryAddress) {
+        this.customer = customer;
+        this.status = status;
+        this.deliveryAddress = deliveryAddress;
+    }
 
     @Override
     public String toString() {
@@ -52,10 +61,12 @@ public final class Request {
         return Objects.hash(id);
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }
@@ -116,11 +127,11 @@ public final class Request {
         this.updatedAt = updatedAt;
     }
 
-    public List<BillItem> getBill() {
+    public List<Bill> getBill() {
         return bill;
     }
 
-    public void setBill(List<BillItem> bill) {
+    public void setBill(List<Bill> bill) {
         this.bill = bill;
     }
 

@@ -2,7 +2,7 @@ package entities;
 
 import java.util.Objects;
 
-public final class Dish {
+public final class Dish implements Entity {
 
     private int id;
 
@@ -19,6 +19,25 @@ public final class Dish {
     private String imagePath;
 
     private Category category;
+
+    public Dish() {
+    }
+
+    public Dish(String nameEng,
+                String nameUkr,
+                int price,
+                String descriptionEng,
+                String descriptionUkr,
+                String imagePath,
+                Category category) {
+        this.nameEng = nameEng;
+        this.nameUkr = nameUkr;
+        this.price = price;
+        this.descriptionEng = descriptionEng;
+        this.descriptionUkr = descriptionUkr;
+        this.imagePath = imagePath;
+        this.category = category;
+    }
 
     @Override
     public String toString() {
@@ -47,10 +66,12 @@ public final class Dish {
         return Objects.hash(id);
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }

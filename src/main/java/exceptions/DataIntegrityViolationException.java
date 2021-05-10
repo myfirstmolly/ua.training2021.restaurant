@@ -1,6 +1,7 @@
 package exceptions;
 
-public class DataIntegrityViolationException extends Exception {
+public class DataIntegrityViolationException extends RuntimeException {
     public DataIntegrityViolationException() {
+        super();
     }
 }

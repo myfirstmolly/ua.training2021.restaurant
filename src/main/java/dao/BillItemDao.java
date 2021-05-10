@@ -1,6 +1,11 @@
 package dao;
 
-import entities.BillItem;
+import entities.Bill;
 
-public interface BillItemDao extends CrudDao<BillItem> {
+import java.util.List;
+
+public interface BillItemDao extends CrudDao<Bill> {
+
+    List<Bill> findAllByRequestId(int id);
+
 }

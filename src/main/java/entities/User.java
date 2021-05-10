@@ -2,7 +2,7 @@ package entities;
 
 import java.util.Objects;
 
-public final class User {
+public final class User implements Entity {
 
     private int id;
 
@@ -17,6 +17,23 @@ public final class User {
     private String email;
 
     private Role role;
+
+    public User() {
+    }
+
+    public User(String username,
+                String password,
+                String name,
+                String phoneNumber,
+                String email,
+                Role role) {
+        this.username = username;
+        this.password = password;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.role = role;
+    }
 
     @Override
     public String toString() {
@@ -45,10 +62,12 @@ public final class User {
         return Objects.hash(id, username);
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }

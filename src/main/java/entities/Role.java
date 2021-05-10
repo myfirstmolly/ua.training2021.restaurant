@@ -1,8 +1,8 @@
 package entities;
 
 public enum Role {
-    MANAGER (0),
-    CUSTOMER (1);
+    MANAGER(0),
+    CUSTOMER(1);
 
     int value;
 

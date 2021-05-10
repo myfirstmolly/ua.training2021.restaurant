@@ -3,22 +3,36 @@ package entities;
 import java.sql.Date;
 import java.util.Objects;
 
-public final class BillItem {
+public final class Bill implements Entity {
 
-    private Request request;
+    private int id;
+
+    private int requestId;
 
     private Dish dish;
 
     private int quantity;
 
+    private int price;
+
     private Date createdAt;
+
+    public Bill() {
+    }
+
+    public Bill(int requestId, Dish dish, int quantity) {
+        this.requestId = requestId;
+        this.dish = dish;
+        this.quantity = quantity;
+    }
 
     @Override
     public String toString() {
         return "BillItem{" +
-                "request=" + request +
+                "request=" + requestId +
                 ", dish=" + dish +
                 ", quantity=" + quantity +
+                ", price=" + price +
                 ", createdAt=" + createdAt +
                 '}';
     }
@@ -27,22 +41,32 @@ public final class BillItem {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BillItem billItem = (BillItem) o;
-        return request.equals(billItem.request) &&
-                dish.equals(billItem.dish);
+        Bill bill = (Bill) o;
+        return requestId == bill.requestId &&
+                dish.equals(bill.dish);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(request, dish);
+        return Objects.hash(requestId, dish);
     }
 
-    public Request getRequest() {
-        return request;
+    @Override
+    public int getId() {
+        return id;
     }
 
-    public void setRequest(Request request) {
-        this.request = request;
+    @Override
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(int requestId) {
+        this.requestId = requestId;
     }
 
     public Dish getDish() {
@@ -59,6 +83,14 @@ public final class BillItem {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     public Date getCreatedAt() {
