@@ -2,9 +2,10 @@ package entities;
 
 public enum Status {
     OPENED(0),
-    COOKING(1),
-    DELIVERING(2),
-    DONE(3);
+    PENDING(1),
+    COOKING(2),
+    DELIVERING(3),
+    DONE(4);
 
     int value;
 

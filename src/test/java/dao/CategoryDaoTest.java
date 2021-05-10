@@ -22,13 +22,12 @@ public class CategoryDaoTest {
             "jdbc:mysql://localhost:3306/restaurant_test?serverTimezone=UTC";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "password";
-    private DBManager dbManager;
     private CategoryDao categoryDao;
     private Category category;
 
     @Before
     public void before() throws SQLException {
-        dbManager = mock(DBManager.class);
+        DBManager dbManager = mock(DBManager.class);
         when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         categoryDao = new CategoryDaoImpl(dbManager);
         category = new Category("test", "test");

@@ -1,6 +1,7 @@
 package dao.impl;
 
 import dao.RequestDao;
+import dao.RequestItemDao;
 import dao.UserDao;
 import database.DBManager;
 import entities.Request;
@@ -52,7 +53,7 @@ public final class RequestDaoImpl extends AbstractDao<Request> implements Reques
         @Override
         public void setSaveStatementParams(Request request, PreparedStatement ps) throws SQLException {
             if (request.getCustomer() == null || request.getCustomer().getId() <= 0 ||
-                    request.getStatus() == null || request.getDeliveryAddress() == null)
+                    request.getStatus() == null)
                 throw new DataIntegrityViolationException();
 
             ps.setInt(1, request.getCustomer().getId());
@@ -81,6 +82,8 @@ public final class RequestDaoImpl extends AbstractDao<Request> implements Reques
             request.setApprovedBy(userDao.findById(rs.getInt("approved_by")).orElse(null));
             request.setCreatedAt(rs.getDate("created_at"));
             request.setUpdatedAt(rs.getDate("updated_at"));
+            RequestItemDao requestItemDao = new RequestItemDaoImpl(dbManager);
+            request.setRequestItems(requestItemDao.findAllByRequestId(request.getId()));
             return request;
         }
     }

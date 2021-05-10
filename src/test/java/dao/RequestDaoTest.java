@@ -25,18 +25,17 @@ public class RequestDaoTest {
             "jdbc:mysql://localhost:3306/restaurant_test?serverTimezone=UTC";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "password";
-    private DBManager dbManager;
     private RequestDao requestDao;
     private Request request;
 
     @Before
     public void before() throws SQLException {
-        dbManager = mock(DBManager.class);
+        DBManager dbManager = mock(DBManager.class);
         when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         requestDao = new RequestDaoImpl(dbManager);
         UserDao userDao = new UserDaoImpl(dbManager);
         User user = userDao.findById(1).get();
-        request = new Request(user, Status.OPENED, "test");
+        request = new Request(user, Status.OPENED);
     }
 
     @Test
@@ -60,7 +59,7 @@ public class RequestDaoTest {
     }
 
     @Test
-    public void whenFindByUserIdCalled_thenReturnListOfRequests() {
+    public void whenFindByRequestIdCalled_thenReturnListOfRequests() {
         requestDao.save(request);
         List<Request> requests = requestDao.findAllByUserId(request.getCustomer().getId());
         Assert.assertNotNull(requests);
@@ -68,7 +67,7 @@ public class RequestDaoTest {
     }
 
     @Test
-    public void givenUserIdIsNegative_whenFindByUserIdCalled_thenReturnEmptyList() {
+    public void givenRequestIdIsNegative_whenFindByUserIdCalled_thenReturnEmptyList() {
         requestDao.save(request);
         List<Request> requests = requestDao.findAllByUserId(-100);
         Assert.assertNotNull(requests);
@@ -76,7 +75,7 @@ public class RequestDaoTest {
     }
 
     @Test
-    public void givenUserNotExists_whenFindByUserIdCalled_thenReturnEmptyList() {
+    public void givenRequestNotExists_whenFindByUserIdCalled_thenReturnEmptyList() {
         requestDao.save(request);
         List<Request> requests = requestDao.findAllByUserId(100);
         Assert.assertNotNull(requests);
@@ -160,8 +159,8 @@ public class RequestDaoTest {
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void givenRequestObjectHasNullDeliveryAddress_whenSaveCalled_thenThrowDataIntegrityViolationException() {
-        request.setDeliveryAddress(null);
+    public void givenRequestObjectHasNullStatusyAddress_whenSaveCalled_thenThrowDataIntegrityViolationException() {
+        request.setStatus(null);
         requestDao.save(request);
     }
 

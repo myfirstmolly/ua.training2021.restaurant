@@ -3,7 +3,7 @@ package entities;
 import java.sql.Date;
 import java.util.Objects;
 
-public final class Bill implements Entity {
+public final class RequestItem implements Entity {
 
     private int id;
 
@@ -17,10 +17,10 @@ public final class Bill implements Entity {
 
     private Date createdAt;
 
-    public Bill() {
+    public RequestItem() {
     }
 
-    public Bill(int requestId, Dish dish, int quantity) {
+    public RequestItem(int requestId, Dish dish, int quantity) {
         this.requestId = requestId;
         this.dish = dish;
         this.quantity = quantity;
@@ -41,9 +41,9 @@ public final class Bill implements Entity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Bill bill = (Bill) o;
-        return requestId == bill.requestId &&
-                dish.equals(bill.dish);
+        RequestItem requestItem = (RequestItem) o;
+        return requestId == requestItem.requestId &&
+                dish.equals(requestItem.dish);
     }
 
     @Override

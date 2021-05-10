@@ -22,15 +22,14 @@ public final class Request implements Entity {
 
     private Date updatedAt;
 
-    private List<Bill> bill;
+    private List<RequestItem> requestItems;
 
     public Request() {
     }
 
-    public Request(User customer, Status status, String deliveryAddress) {
+    public Request(User customer, Status status) {
         this.customer = customer;
         this.status = status;
-        this.deliveryAddress = deliveryAddress;
     }
 
     @Override
@@ -44,7 +43,7 @@ public final class Request implements Entity {
                 ", approvedBy=" + approvedBy +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", bill=" + bill +
+                ", bill=" + requestItems +
                 '}';
     }
 
@@ -127,12 +126,12 @@ public final class Request implements Entity {
         this.updatedAt = updatedAt;
     }
 
-    public List<Bill> getBill() {
-        return bill;
+    public List<RequestItem> getRequestItems() {
+        return requestItems;
     }
 
-    public void setBill(List<Bill> bill) {
-        this.bill = bill;
+    public void setRequestItems(List<RequestItem> requestItems) {
+        this.requestItems = requestItems;
     }
 
 }

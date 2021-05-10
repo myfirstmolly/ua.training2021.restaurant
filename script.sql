@@ -3,7 +3,7 @@ use restaurant;
 
 -- clear prev tables
 
-drop table if exists bill;
+drop table if exists requestItem;
 drop table if exists dish;
 drop table if exists category;
 drop table if exists request;
@@ -137,7 +137,7 @@ insert into dish values
     'quesadilla.jpg', 4);
     
 
-create table if not exists bill (
+create table if not exists requestItem (
     request_id int,
     dish_id int,
     quantity int unsigned not null default 1,
@@ -155,7 +155,7 @@ create table if not exists bill (
 );
 
 delimiter //
-create trigger bill_before_insert_update_price before insert on bill 
+create trigger bill_before_insert_update_price before insert on requestItem
 for each row
 begin
 	declare pr int;
@@ -165,5 +165,5 @@ begin
 end;
 // delimiter ;
     
-insert into bill values
+insert into requestItem values
 	(1, 1, 2, null, default);

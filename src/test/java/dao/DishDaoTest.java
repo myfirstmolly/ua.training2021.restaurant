@@ -24,13 +24,12 @@ public class DishDaoTest {
             "jdbc:mysql://localhost:3306/restaurant_test?serverTimezone=UTC";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "password";
-    private DBManager dbManager;
     private DishDao dishDao;
     private Dish dish;
 
     @Before
     public void before() throws SQLException {
-        dbManager = mock(DBManager.class);
+        DBManager dbManager = mock(DBManager.class);
         when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         dishDao = new DishDaoImpl(dbManager);
         CategoryDao categoryDao = new CategoryDaoImpl(dbManager);

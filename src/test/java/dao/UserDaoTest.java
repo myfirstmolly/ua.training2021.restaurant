@@ -23,44 +23,41 @@ public class UserDaoTest {
             "jdbc:mysql://localhost:3306/restaurant_test?serverTimezone=UTC";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "password";
-    private DBManager dbManager;
     private UserDao userDao;
     private User user;
 
     @Before
-    public void before() {
-        dbManager = mock(DBManager.class);
+    public void before() throws SQLException {
+        DBManager dbManager = mock(DBManager.class);
+        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         userDao = new UserDaoImpl(dbManager);
         user = new User("test", "test", "test",
                 "test", "test", Role.CUSTOMER);
     }
 
     @Test
-    public void whenFindAllCalled_thenReturnListOfUsers() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenFindAllCalled_thenReturnListOfUsers() {
         List<User> users = userDao.findAll();
         Assert.assertNotNull(users);
     }
 
     @Test
-    public void whenFindByIdCalled_thenReturnUser() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenFindByIdCalled_thenReturnUser() {
         userDao.save(user);
         int id = user.getId();
         User user = userDao.findById(id).get();
         Assert.assertNotNull(user);
         Assert.assertEquals(id, user.getId());
+        Assert.assertEquals("test", user.getEmail());
     }
 
     @Test
-    public void givenUserNotExists_whenFindByIdCalled_thenReturnNull() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenUserNotExists_whenFindByIdCalled_thenReturnNull() {
         Assert.assertFalse(userDao.findById(-10).isPresent());
     }
 
     @Test
-    public void whenFindByUsernameCalled_thenReturnUser() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenFindByUsernameCalled_thenReturnUser() {
         userDao.save(user);
         User userFromDb = userDao.findByUsername(user.getUsername()).get();
         Assert.assertNotNull(userFromDb);
@@ -68,20 +65,17 @@ public class UserDaoTest {
     }
 
     @Test
-    public void givenUserNotExists_whenFindByUsernameCalled_thenReturnNull() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenUserNotExists_whenFindByUsernameCalled_thenReturnNull() {
         Assert.assertFalse(userDao.findByUsername("not existing user").isPresent());
     }
 
     @Test
-    public void givenUsernameIsNull_whenFindByUsernameCalled_thenReturnNull() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenUsernameIsNull_whenFindByUsernameCalled_thenReturnNull() {
         Assert.assertFalse(userDao.findByUsername(null).isPresent());
     }
 
     @Test
-    public void whenSaveCalled_thenUpdateUserId() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenSaveCalled_thenUpdateUserId() {
         int id = user.getId();
         userDao.save(user);
         Assert.assertNotEquals(id, user.getId());
@@ -91,8 +85,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void whenSaveCalled_thenSaveUserToDb() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenSaveCalled_thenSaveUserToDb() {
         userDao.save(user);
         Assert.assertNotNull(userDao.findByUsername("test"));
         Assert.assertNotNull(userDao.findById(user.getId()));
@@ -100,17 +93,13 @@ public class UserDaoTest {
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void givenUserObjectHasNullUsername_whenSaveCalled_thenThrowDataIntegrityViolationException()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenUserObjectHasNullUsername_whenSaveCalled_thenThrowDataIntegrityViolationException() {
         user.setUsername(null);
         userDao.save(user);
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void givenUserObjectHasNullFields_whenSaveCalled_thenThrowDataIntegrityViolationException()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenUserObjectHasNullFields_whenSaveCalled_thenThrowDataIntegrityViolationException() {
         user.setPassword(null);
         user.setRole(null);
         user.setPhoneNumber(null);
@@ -119,8 +108,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void givenUserObjectHasNullEmail_whenSaveCalled_thenSaveUserToDb() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenUserObjectHasNullEmail_whenSaveCalled_thenSaveUserToDb() {
         user.setEmail(null);
         userDao.save(user);
         Assert.assertNotNull(userDao.findByUsername("test"));
@@ -129,8 +117,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void givenUserObjectHasNegativeId_whenSaveCalled_thenSaveUserToDbAndUpdateId() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenUserObjectHasNegativeId_whenSaveCalled_thenSaveUserToDbAndUpdateId() {
         int id = -10;
         user.setId(id);
         userDao.save(user);
@@ -140,15 +127,13 @@ public class UserDaoTest {
     }
 
     @Test
-    public void givenUserObjectIsNull_whenSaveCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenUserObjectIsNull_whenSaveCalled_thenReturn() {
         userDao.save(null);
         Assert.assertFalse(userDao.findAll().contains(user));
     }
 
     @Test
-    public void whenUpdateCalled_thenUpdateUser() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenUpdateCalled_thenUpdateUser() {
         userDao.save(user);
         user.setName("new name");
         userDao.update(user);
@@ -160,8 +145,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void whenUpdateUsernameCalled_thenUpdateUsername() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenUpdateUsernameCalled_thenUpdateUsername() {
         userDao.save(user);
         user.setUsername("new name");
         userDao.update(user);
@@ -173,9 +157,7 @@ public class UserDaoTest {
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void givenUserObjectHasNullFields_whenUpdateCalled_thenThrowDataIntegrityViolationException()
-            throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenUserObjectHasNullFields_whenUpdateCalled_thenThrowDataIntegrityViolationException() {
         user.setPassword(null);
         user.setRole(null);
         user.setPhoneNumber(null);
@@ -184,8 +166,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void givenUserObjectHasNotExistingId_whenUpdateCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenUserObjectHasNotExistingId_whenUpdateCalled_thenReturn() {
         user.setId(1000);
         userDao.update(user);
         Assert.assertFalse(userDao.findById(user.getId()).isPresent());
@@ -195,15 +176,13 @@ public class UserDaoTest {
     }
 
     @Test
-    public void givenUserObjectIsNull_whenUpdateCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenUserObjectIsNull_whenUpdateCalled_thenReturn() {
         userDao.update(null);
         Assert.assertFalse(userDao.findAll().contains(null));
     }
 
     @Test
-    public void whenDeleteUserByIdCalled_thenDeleteUser() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenDeleteUserByIdCalled_thenDeleteUser() {
         userDao.save(user);
         int size = userDao.findAll().size();
         userDao.deleteById(user.getId());
@@ -212,16 +191,14 @@ public class UserDaoTest {
     }
 
     @Test
-    public void givenUserObjectHasNotExistingId_whenDeleteUserByIdCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenUserObjectHasNotExistingId_whenDeleteUserByIdCalled_thenReturn() {
         int size = userDao.findAll().size();
         userDao.deleteById(100);
         Assert.assertEquals(size, userDao.findAll().size());
     }
 
     @Test
-    public void whenDeleteUserCalled_thenDeleteUser() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void whenDeleteUserCalled_thenDeleteUser() {
         userDao.save(user);
         int size = userDao.findAll().size();
         userDao.delete(user);
@@ -230,8 +207,7 @@ public class UserDaoTest {
     }
 
     @Test
-    public void givenUserObjectIsNull_whenDeleteUserCalled_thenReturn() throws SQLException {
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+    public void givenUserObjectIsNull_whenDeleteUserCalled_thenReturn() {
         int size = userDao.findAll().size();
         userDao.delete(null);
         Assert.assertEquals(size, userDao.findAll().size());

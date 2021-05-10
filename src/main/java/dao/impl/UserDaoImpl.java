@@ -16,8 +16,6 @@ import java.util.Optional;
  */
 public final class UserDaoImpl extends AbstractDao<User> implements UserDao {
 
-    private static final String FIND_BY_USERNAME = "select * from user where username=?";
-
     public UserDaoImpl(DBManager dbManager) {
         super(dbManager, "user", new Mapper());
         super.saveStmt = "insert into user (username, password, name, phone_number, " +
