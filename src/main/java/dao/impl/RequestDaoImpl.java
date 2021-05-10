@@ -8,20 +8,14 @@ import entities.Request;
 import entities.Status;
 import exceptions.DataIntegrityViolationException;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.List;
 
 public final class RequestDaoImpl extends AbstractDao<Request> implements RequestDao {
 
     public RequestDaoImpl(DBManager dbManager) {
         super(dbManager, "request", new Mapper(dbManager));
-        super.saveStmt = "insert into request (customer_id, status_id, delivery_address)" +
-                "values (?,?,?)";
-        super.updateStmt = "update request set customer_id=?, status_id=?, delivery_address=?," +
-                "approved_by=? where id=?";
     }
 
     @Override
@@ -42,32 +36,44 @@ public final class RequestDaoImpl extends AbstractDao<Request> implements Reques
         );
     }
 
+    @Override
+    public void save(Request request) {
+        if (request == null) return;
+        super.save(request, getParams(request));
+    }
+
+    @Override
+    public void update(Request request) {
+        if (request == null) return;
+        Param approvedBy;
+
+        if (request.getApprovedBy() != null)
+            approvedBy = new Param(request.getApprovedBy().getId(), "approved_by");
+        else approvedBy = new Param(null, "approved_by");
+
+        Param [] params = new Param[getParams(request).length + 1];
+        System.arraycopy(getParams(request), 0, params, 0, getParams(request).length);
+        params[getParams(request).length] = approvedBy;
+        super.update(request.getId(), params);
+    }
+
+    private Param [] getParams(Request request) {
+        if (request.getCustomer() == null || request.getCustomer().getId() <= 0 ||
+                request.getStatus() == null)
+            throw new DataIntegrityViolationException();
+
+        Param customerId = new Param(request.getCustomer().getId(), "customer_id");
+        Param statusId = new Param(request.getStatus().toInt(), "status_id");
+        Param deliveryAddress = new Param(request.getDeliveryAddress(), "delivery_address");
+        return new Param[] {customerId, statusId, deliveryAddress};
+    }
+
     private static class Mapper implements AbstractDao.Mapper<Request> {
 
         private final DBManager dbManager;
 
         public Mapper(DBManager dbManager) {
             this.dbManager = dbManager;
-        }
-
-        @Override
-        public void setSaveStatementParams(Request request, PreparedStatement ps) throws SQLException {
-            if (request.getCustomer() == null || request.getCustomer().getId() <= 0 ||
-                    request.getStatus() == null)
-                throw new DataIntegrityViolationException();
-
-            ps.setInt(1, request.getCustomer().getId());
-            ps.setInt(2, request.getStatus().toInt());
-            ps.setString(3, request.getDeliveryAddress());
-        }
-
-        @Override
-        public void setUpdateStatementParams(Request request, PreparedStatement ps) throws SQLException {
-            setSaveStatementParams(request, ps);
-            if (request.getApprovedBy() != null)
-                ps.setInt(4, request.getApprovedBy().getId());
-            else ps.setNull(4, Types.INTEGER);
-            ps.setInt(5, request.getId());
         }
 
         @Override

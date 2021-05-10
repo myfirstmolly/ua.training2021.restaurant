@@ -15,17 +15,38 @@ public final class DishDaoImpl extends AbstractDao<Dish> implements DishDao {
 
     public DishDaoImpl(DBManager dbManager) {
         super(dbManager, "dish", new Mapper(dbManager));
-        super.saveStmt = "insert into dish (name_eng, name_ukr, price, " +
-                "description_eng, description_ukr, image_path, category_id) " +
-                "values (?,?,?,?,?,?,?)";
-        super.updateStmt = "update dish set name_eng=?, name_ukr=?, price=?," +
-                "description_eng=?, description_ukr=?, image_path=?, " +
-                "category_id=? where id=?";
     }
 
     @Override
     public List<Dish> findAllByCategoryId(int id) {
         return super.findAllByParameter(new Param(id, "category_id"));
+    }
+
+    @Override
+    public void save(Dish dish) {
+        if (dish == null) return;
+        super.save(dish, getParams(dish));
+    }
+
+    @Override
+    public void update(Dish dish) {
+        if (dish == null) return;
+        super.update(dish.getId(), getParams(dish));
+    }
+
+    private Param [] getParams(Dish dish) {
+        if (dish.getNameEng() == null || dish.getNameUkr() == null || dish.getPrice() < 0 ||
+                dish.getImagePath() == null)
+            throw new DataIntegrityViolationException();
+
+        Param nameEng = new Param(dish.getNameEng(), "name_eng");
+        Param nameUkr = new Param(dish.getNameUkr(), "name_ukr");
+        Param price = new Param(dish.getPrice(), "price");
+        Param descriptionEng = new Param(dish.getDescriptionEng(), "description_eng");
+        Param descriptionUkr = new Param(dish.getDescriptionUkr(), "description_ukr");
+        Param imagePath = new Param(dish.getImagePath(), "image_path");
+        Param categoryId = new Param(dish.getCategory().getId(), "category_id");
+        return new Param[] {nameEng, nameUkr, price, descriptionEng, descriptionUkr, imagePath, categoryId};
     }
 
     private static class Mapper implements AbstractDao.Mapper<Dish> {
@@ -34,27 +55,6 @@ public final class DishDaoImpl extends AbstractDao<Dish> implements DishDao {
 
         public Mapper(DBManager dbManager) {
             this.dbManager = dbManager;
-        }
-
-        @Override
-        public void setSaveStatementParams(Dish dish, PreparedStatement ps) throws SQLException {
-            if (dish.getNameEng() == null || dish.getNameUkr() == null || dish.getPrice() < 0 ||
-                    dish.getImagePath() == null)
-                throw new DataIntegrityViolationException();
-
-            ps.setString(1, dish.getNameEng());
-            ps.setString(2, dish.getNameUkr());
-            ps.setInt(3, dish.getPrice());
-            ps.setString(4, dish.getDescriptionEng());
-            ps.setString(5, dish.getDescriptionUkr());
-            ps.setString(6, dish.getImagePath());
-            ps.setInt(7, dish.getCategory().getId());
-        }
-
-        @Override
-        public void setUpdateStatementParams(Dish dish, PreparedStatement ps) throws SQLException {
-            setSaveStatementParams(dish, ps);
-            ps.setInt(8, dish.getId());
         }
 
         @Override

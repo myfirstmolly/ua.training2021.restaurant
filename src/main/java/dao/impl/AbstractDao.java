@@ -16,10 +16,6 @@ import java.util.Optional;
 public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
 
     private final String tableName;
-    private final String selectStmt = "select * from %s";
-    private final String deleteStmt = "delete from %s where id=?";
-    protected String saveStmt;
-    protected String updateStmt;
     protected final DBManager dbManager;
     private final Mapper<T> mapper;
 
@@ -36,7 +32,7 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
 
     protected List<T> findAllByParameter(Param... parameters) {
         List<T> entries = new ArrayList<>();
-        String statement = createStatement(String.format(selectStmt, tableName), parameters);
+        String statement = createSelectStatement(parameters);
 
         try (PreparedStatement ps = dbManager.getConnection()
                 .prepareStatement(statement)) {
@@ -61,11 +57,11 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
     }
 
     protected Optional<T> findOneByParameter(Param... parameters) {
-        String statement = createStatement(String.format(selectStmt, tableName), parameters);
+        String statement = createSelectStatement(parameters);
         try (PreparedStatement ps = dbManager.getConnection()
                 .prepareStatement(statement)) {
             for (int i = 1; i <= parameters.length; i++)
-                ps.setObject(i, parameters[i - 1].value);
+                ps.setObject(i, parameters[i-1].value);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next())
@@ -77,13 +73,15 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
         return Optional.empty();
     }
 
-    @Override
-    public void save(T t) {
-        if (t == null) return;
+    protected void save(T t, Param... parameters) {
+        if (parameters.length == 0) return;
 
+        String saveStmt = createInsertStatement(parameters);
         try (PreparedStatement ps = dbManager.getConnection()
                 .prepareStatement(saveStmt, Statement.RETURN_GENERATED_KEYS)) {
-            mapper.setSaveStatementParams(t, ps);
+            for (int i = 1; i <= parameters.length; i++) {
+                ps.setObject(i, parameters[i-1].value);
+            }
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
@@ -95,13 +93,16 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
         }
     }
 
-    @Override
-    public void update(T t) {
-        if (t == null) return;
+    protected void update(int id, Param... parameters) {
+        if (parameters.length == 0) return;
+        String updateStmt = createUpdateStatement(parameters);
 
         try (PreparedStatement ps = dbManager.getConnection()
                 .prepareStatement(updateStmt)) {
-            mapper.setUpdateStatementParams(t, ps);
+            for (int i = 1; i <= parameters.length; i++) {
+                ps.setObject(i, parameters[i-1].value);
+            }
+            ps.setInt(parameters.length + 1, id);
             ps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -112,6 +113,7 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
     public void deleteById(int id) {
         if (id <= 0) return;
 
+        String deleteStmt = "delete from %s where id=?";
         String statement = String.format(deleteStmt, tableName);
         try (PreparedStatement ps = dbManager.getConnection()
                 .prepareStatement(statement)) {
@@ -138,7 +140,29 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
         }
     }
 
-    private String createStatement(String sql, Param... params) {
+    protected interface Mapper<T> {
+        T map(ResultSet rs) throws SQLException;
+    }
+
+    private String createInsertStatement(Param... params) {
+        StringBuilder valuesNames = new StringBuilder();
+        StringBuilder questionMarks = new StringBuilder();
+        valuesNames.append(params[0].name);
+        questionMarks.append("?");
+
+        for (int i = 1; i < params.length; i++) {
+            valuesNames.append(", ").append(params[i].name);
+            questionMarks.append(", ").append("?");
+        }
+
+        String saveStmt = "insert into %s (%s) values (%s)";
+        return String.format(saveStmt, tableName, valuesNames.toString(), questionMarks);
+    }
+
+    private String createSelectStatement(Param... params) {
+        String selectStmt = "select * from %s";
+        String sql = String.format(selectStmt, tableName);
+
         if (params.length == 0)
             return sql;
 
@@ -153,12 +177,15 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
         return sb.toString();
     }
 
-    protected interface Mapper<T> {
-        void setSaveStatementParams(T t, PreparedStatement ps) throws SQLException;
+    private String createUpdateStatement(Param... params) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(params[0].name).append("=?");
 
-        void setUpdateStatementParams(T t, PreparedStatement ps) throws SQLException;
+        for (int i = 1; i < params.length; i++)
+            sb.append(", ").append(params[i].name).append("=?");
 
-        T map(ResultSet rs) throws SQLException;
+        String updateStmt = "update %s set %s where id=?";
+        return String.format(updateStmt, tableName, sb.toString());
     }
 
 }

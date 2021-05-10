@@ -1,12 +1,11 @@
 package dao.impl;
 
-import dao.RequestItemDao;
 import dao.DishDao;
+import dao.RequestItemDao;
 import database.DBManager;
 import entities.RequestItem;
 import exceptions.DataIntegrityViolationException;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -15,8 +14,6 @@ public final class RequestItemDaoImpl extends AbstractDao<RequestItem> implement
 
     public RequestItemDaoImpl(DBManager dbManager) {
         super(dbManager, "request_item", new Mapper(dbManager));
-        super.saveStmt = "insert into request_item (request_id, dish_id, quantity) values (?, ?, ?)";
-        super.updateStmt = "update request_item set quantity=? where id=?";
     }
 
     @Override
@@ -25,30 +22,36 @@ public final class RequestItemDaoImpl extends AbstractDao<RequestItem> implement
         return super.findAllByParameter(new Param(id, "request_id"));
     }
 
+    @Override
+    public void save(RequestItem requestItem) {
+        if (requestItem == null) return;
+
+        if (requestItem.getQuantity() <= 0 || requestItem.getDish() == null)
+            throw new DataIntegrityViolationException();
+
+        Param requestId = new Param(requestItem.getRequestId(), "request_id");
+        Param dishId = new Param(requestItem.getDish().getId(), "dish_id");
+        Param quantity = new Param(requestItem.getQuantity(), "quantity");
+        super.save(requestItem, requestId, dishId, quantity);
+    }
+
+    @Override
+    public void update(RequestItem requestItem) {
+        if (requestItem == null) return;
+
+        if (requestItem.getQuantity() <= 0)
+            throw new DataIntegrityViolationException();
+
+        Param quantity = new Param(requestItem.getQuantity(), "quantity");
+        super.update(requestItem.getId(), quantity);
+    }
+
     private static class Mapper implements AbstractDao.Mapper<RequestItem> {
+
         private final DBManager dbManager;
 
         public Mapper(DBManager dbManager) {
             this.dbManager = dbManager;
-        }
-
-        @Override
-        public void setSaveStatementParams(RequestItem requestItem, PreparedStatement ps) throws SQLException {
-            if (requestItem.getRequestId() <= 0 || requestItem.getDish() == null || requestItem.getQuantity() <= 0)
-                throw new DataIntegrityViolationException();
-
-            ps.setInt(1, requestItem.getRequestId());
-            ps.setInt(2, requestItem.getDish().getId());
-            ps.setInt(3, requestItem.getQuantity());
-        }
-
-        @Override
-        public void setUpdateStatementParams(RequestItem requestItem, PreparedStatement ps) throws SQLException {
-            if (requestItem.getQuantity() <= 0)
-                throw new DataIntegrityViolationException();
-
-            ps.setInt(1, requestItem.getQuantity());
-            ps.setInt(2, requestItem.getId());
         }
 
         @Override
@@ -63,6 +66,7 @@ public final class RequestItemDaoImpl extends AbstractDao<RequestItem> implement
             requestItem.setCreatedAt(rs.getDate("created_at"));
             return requestItem;
         }
+
     }
 
 }
