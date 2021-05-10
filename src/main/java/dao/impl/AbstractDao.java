@@ -61,9 +61,6 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
     }
 
     protected Optional<T> findOneByParameter(Param... parameters) {
-        if (parameters.length == 0)
-            return Optional.empty();
-
         String statement = createStatement(String.format(selectStmt, tableName), parameters);
         try (PreparedStatement ps = dbManager.getConnection()
                 .prepareStatement(statement)) {
