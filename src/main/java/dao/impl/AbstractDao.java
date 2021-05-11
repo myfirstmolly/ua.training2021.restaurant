@@ -30,6 +30,69 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
         return findAllByParameter();
     }
 
+    @Override
+    public Optional<T> findById(int param) {
+        if (param <= 0) return Optional.empty();
+
+        return findOneByParameter(new Param(param, "id"));
+    }
+
+    @Override
+    public void deleteById(int id) {
+        if (id <= 0) return;
+
+        String deleteStmt = "delete from %s where id=?";
+        String statement = String.format(deleteStmt, tableName);
+        try (PreparedStatement ps = dbManager.getConnection()
+                .prepareStatement(statement)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public void delete(T t) {
+        if (t == null) return;
+        deleteById(t.getId());
+    }
+
+    protected interface Mapper<T> {
+        T map(ResultSet rs) throws SQLException;
+    }
+
+    protected static class Param {
+        Object value;
+        String name;
+
+        public Param(Object value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+    }
+
+    protected List<T> findAllByParameter(int limit, int offset, Param... parameters) {
+        List<T> entries = new ArrayList<>();
+        String statement = createSelectStatement(parameters) + " limit ? offset ?";
+
+        try (PreparedStatement ps = dbManager.getConnection()
+                .prepareStatement(statement)) {
+            for (int i = 1; i <= parameters.length; i++)
+                ps.setObject(i, parameters[i - 1].value);
+            ps.setInt(parameters.length + 1, limit);
+            ps.setInt(parameters.length + 2, offset);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next())
+                    entries.add(mapper.map(rs));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return entries;
+    }
+
     protected List<T> findAllByParameter(Param... parameters) {
         List<T> entries = new ArrayList<>();
         String statement = createSelectStatement(parameters);
@@ -47,13 +110,6 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
             ex.printStackTrace();
         }
         return entries;
-    }
-
-    @Override
-    public Optional<T> findById(int param) {
-        if (param <= 0) return Optional.empty();
-
-        return findOneByParameter(new Param(param, "id"));
     }
 
     protected Optional<T> findOneByParameter(Param... parameters) {
@@ -83,6 +139,7 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
                 ps.setObject(i, parameters[i-1].value);
             }
             ps.executeUpdate();
+
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
                     t.setId(keys.getInt(1));
@@ -107,41 +164,6 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-    }
-
-    @Override
-    public void deleteById(int id) {
-        if (id <= 0) return;
-
-        String deleteStmt = "delete from %s where id=?";
-        String statement = String.format(deleteStmt, tableName);
-        try (PreparedStatement ps = dbManager.getConnection()
-                .prepareStatement(statement)) {
-            ps.setInt(1, id);
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    @Override
-    public void delete(T t) {
-        if (t == null) return;
-        deleteById(t.getId());
-    }
-
-    protected static class Param {
-        Object value;
-        String name;
-
-        public Param(Object value, String name) {
-            this.value = value;
-            this.name = name;
-        }
-    }
-
-    protected interface Mapper<T> {
-        T map(ResultSet rs) throws SQLException;
     }
 
     private String createInsertStatement(Param... params) {

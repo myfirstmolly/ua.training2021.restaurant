@@ -19,13 +19,18 @@ public final class RequestDaoImpl extends AbstractDao<Request> implements Reques
     }
 
     @Override
-    public List<Request> findAllByUserId(int id) {
-        return super.findAllByParameter(new Param(id, "customer_id"));
+    public List<Request> findAll(int limit, int offset) {
+        return super.findAllByParameter(limit, offset);
     }
 
     @Override
-    public List<Request> findAllByStatusId(int id) {
-        return super.findAllByParameter(new Param(id, "status_id"));
+    public List<Request> findAllByUserId(int id, int limit, int offset) {
+        return super.findAllByParameter(limit, offset, new Param(id, "customer_id"));
+    }
+
+    @Override
+    public List<Request> findAllByStatusId(int id, int limit, int offset) {
+        return super.findAllByParameter(limit, offset, new Param(id, "status_id"));
     }
 
     @Override

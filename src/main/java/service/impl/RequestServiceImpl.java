@@ -13,6 +13,7 @@ import java.util.List;
 
 public class RequestServiceImpl implements RequestService {
 
+    private final int LIMIT = 18;
     private final RequestDao requestDao;
     private final RequestItemDao requestItemDao;
 
@@ -22,13 +23,13 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<Request> findAllByCustomerId(int id) {
-        return requestDao.findAllByUserId(id);
+    public List<Request> findAllByCustomerId(int id, int page) {
+        return requestDao.findAllByUserId(id, LIMIT, LIMIT * (page - 1));
     }
 
     @Override
-    public List<Request> findAllPending() {
-        return requestDao.findAllByStatusId(Status.PENDING.toInt());
+    public List<Request> findAllPending(int page) {
+        return requestDao.findAllByStatusId(Status.PENDING.toInt(), LIMIT, LIMIT * (page - 1));
     }
 
     @Override
@@ -56,16 +57,6 @@ public class RequestServiceImpl implements RequestService {
         }
 
         requestItemDao.save(requestItem);
-    }
-
-    private RequestItem getDishRequestItem(Dish dish, List<RequestItem> requestItems) {
-        if (requestItems.size() == 0)
-            return null;
-        for (RequestItem rs : requestItems) {
-            if (rs.getDish().equals(dish))
-                return rs;
-        }
-        return null;
     }
 
     @Override
@@ -99,6 +90,16 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public void deleteById(int id) {
         requestDao.deleteById(id);
+    }
+
+    private RequestItem getDishRequestItem(Dish dish, List<RequestItem> requestItems) {
+        if (requestItems.size() == 0)
+            return null;
+        for (RequestItem rs : requestItems) {
+            if (rs.getDish().equals(dish))
+                return rs;
+        }
+        return null;
     }
 
 }

@@ -6,19 +6,19 @@ import java.util.List;
 
 public interface DishService {
 
-    List<Dish> findAll();
+    List<Dish> findAll(int page);
 
-    List<Dish> findAllSortedByNameEng();
+    List<Dish> findAllSortedByNameEng(int page);
 
-    List<Dish> findAllSortedByNameUkr();
+    List<Dish> findAllSortedByNameUkr(int page);
 
-    List<Dish> findAllSortedByPrice();
+    List<Dish> findAllSortedByPrice(int page);
 
-    List<Dish> findAllSortedByCategoryEng();
+    List<Dish> findAllSortedByCategoryEng(int page);
 
-    List<Dish> findAllSortedByCategoryUkr();
+    List<Dish> findAllSortedByCategoryUkr(int page);
 
-    List<Dish> findAllByCategoryId(int id);
+    List<Dish> findAllByCategoryId(int id, int page);
 
     Dish findById(int id);
 

@@ -6,7 +6,6 @@ import database.DBManager;
 import entities.Dish;
 import exceptions.DataIntegrityViolationException;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -18,8 +17,13 @@ public final class DishDaoImpl extends AbstractDao<Dish> implements DishDao {
     }
 
     @Override
-    public List<Dish> findAllByCategoryId(int id) {
-        return super.findAllByParameter(new Param(id, "category_id"));
+    public List<Dish> findAllByCategoryId(int id, int limit, int offset) {
+        return super.findAllByParameter(limit, offset, new Param(id, "category_id"));
+    }
+
+    @Override
+    public List<Dish> findAll(int limit, int offset) {
+        return super.findAllByParameter(limit, offset);
     }
 
     @Override

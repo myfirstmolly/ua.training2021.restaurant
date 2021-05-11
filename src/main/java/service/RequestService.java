@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface RequestService {
 
-    List<Request> findAllByCustomerId(int id);
+    List<Request> findAllByCustomerId(int id, int page);
 
-    List<Request> findAllPending();
+    List<Request> findAllPending(int page);
 
     Request findById(int id);
 

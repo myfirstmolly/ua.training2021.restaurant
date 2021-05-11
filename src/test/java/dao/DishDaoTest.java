@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -26,6 +27,7 @@ public class DishDaoTest {
     private static final String PASSWORD = "password";
     private DishDao dishDao;
     private Dish dish;
+    private List<Dish> dishes;
 
     @Before
     public void before() throws SQLException {
@@ -37,12 +39,38 @@ public class DishDaoTest {
         dish = new Dish("test", "test", 8000,
                 "test", "test", "test",
                 category);
+        String name = dish.getNameEng();
+        dishes = new ArrayList<>();
+        Dish temp = new Dish(null, null, 8000,
+                "test", "test", "test",
+                category);
+
+        for (int i = 0; i < 10; i++) {
+            temp.setNameEng(name + i);
+            temp.setNameUkr(name + i);
+            dishDao.save(temp);
+            dishes.add(dishDao.findById(temp.getId()).get());
+        }
     }
 
     @Test
     public void whenFindAllCalled_thenReturnListOfDishes() {
         List<Dish> dishes = dishDao.findAll();
         Assert.assertNotNull(dishes);
+    }
+
+    @Test
+    public void givenLimitIs5_whenFindAllCalled_thenReturnListOf5OrLessDishes() {
+        List<Dish> dishes = dishDao.findAll(5, 0);
+        Assert.assertNotNull(dishes);
+        Assert.assertTrue(dishes.size() <= 5);
+    }
+
+    @Test
+    public void given11DishesLimit5Offset11_whenFindAllCalled_thenReturnEmptyList() {
+        List<Dish> dishes = dishDao.findAll(5, 11);
+        Assert.assertNotNull(dishes);
+        Assert.assertTrue(dishes.isEmpty());
     }
 
     @Test
@@ -62,14 +90,24 @@ public class DishDaoTest {
     @Test
     public void whenFindByCategoryIdCalled_thenReturnListOfDishes() {
         dishDao.save(dish);
-        List<Dish> dishes = dishDao.findAllByCategoryId(dish.getCategory().getId());
+        List<Dish> dishes = dishDao.findAllByCategoryId(dish.getCategory().getId(), 100, 0);
         Assert.assertNotNull(dishes);
         Assert.assertTrue(dishes.contains(dish));
     }
 
     @Test
+    public void givenLimitIs5_whenFindByCategoryIdCalled_thenReturnListOf5OrLessDishes() {
+        Dish template = new Dish("test", "test", 8000,
+                "test", "test", "test",
+                dish.getCategory());
+        List<Dish> dishes = dishDao.findAllByCategoryId(template.getCategory().getId(), 5, 0);
+        Assert.assertNotNull(dishes);
+        Assert.assertTrue(dishes.size() <= 5);
+    }
+
+    @Test
     public void givenCategoryNotExists_whenFindByCategoryIdCalled_thenReturnEmptyList() {
-        List<Dish> dishes = dishDao.findAllByCategoryId(100);
+        List<Dish> dishes = dishDao.findAllByCategoryId(100, 100, 0);
         Assert.assertNotNull(dishes);
         Assert.assertTrue(dishes.isEmpty());
     }
@@ -200,5 +238,7 @@ public class DishDaoTest {
     @After
     public void clearDatabase() {
         dishDao.delete(dish);
+        for (Dish dish : dishes)
+            dishDao.delete(dish);
     }
 }

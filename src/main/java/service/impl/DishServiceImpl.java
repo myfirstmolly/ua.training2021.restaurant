@@ -14,61 +14,45 @@ import java.util.stream.Collectors;
 public class DishServiceImpl implements DishService {
 
     private final DishDao dishDao;
+    private final int LIMIT = 18;
 
     public DishServiceImpl(DBManager dbManager) {
         dishDao = new DishDaoImpl(dbManager);
     }
 
     @Override
-    public List<Dish> findAll() {
-        return dishDao.findAll();
+    public List<Dish> findAll(int page) {
+        return dishDao.findAll(LIMIT, LIMIT * (page - 1));
     }
 
     @Override
-    public List<Dish> findAllSortedByNameEng() {
-        return dishDao.findAll()
-                .stream()
-                .sorted(Comparator.comparing(Dish::getNameEng))
-                .collect(Collectors.toList());
+    public List<Dish> findAllSortedByNameEng(int page) {
+        return getSortedDishes(page, Comparator.comparing(Dish::getNameEng));
     }
 
     @Override
-    public List<Dish> findAllSortedByNameUkr() {
-        return dishDao.findAll()
-                .stream()
-                .sorted(Comparator.comparing(Dish::getNameUkr))
-                .collect(Collectors.toList());
+    public List<Dish> findAllSortedByNameUkr(int page) {
+        return getSortedDishes(page, Comparator.comparing(Dish::getNameUkr));
     }
 
     @Override
-    public List<Dish> findAllSortedByPrice() {
-        return dishDao.findAll()
-                .stream()
-                .sorted(Comparator.comparing(Dish::getPrice))
-                .collect(Collectors.toList());
+    public List<Dish> findAllSortedByPrice(int page) {
+        return getSortedDishes(page, Comparator.comparing(Dish::getPrice));
     }
 
     @Override
-    public List<Dish> findAllSortedByCategoryEng() {
-        return dishDao.findAll()
-                .stream()
-                .sorted(Comparator.comparing(d ->
-                        d.getCategory().getNameEng()))
-                .collect(Collectors.toList());
+    public List<Dish> findAllSortedByCategoryEng(int page) {
+        return getSortedDishes(page, Comparator.comparing(d -> d.getCategory().getNameEng()));
     }
 
     @Override
-    public List<Dish> findAllSortedByCategoryUkr() {
-        return dishDao.findAll()
-                .stream()
-                .sorted(Comparator.comparing(d ->
-                        d.getCategory().getNameUkr()))
-                .collect(Collectors.toList());
+    public List<Dish> findAllSortedByCategoryUkr(int page) {
+        return getSortedDishes(page, Comparator.comparing(d -> d.getCategory().getNameUkr()));
     }
 
     @Override
-    public List<Dish> findAllByCategoryId(int id) {
-        return dishDao.findAllByCategoryId(id);
+    public List<Dish> findAllByCategoryId(int id, int page) {
+        return dishDao.findAllByCategoryId(id, LIMIT, LIMIT * (page - 1));
     }
 
     @Override
@@ -89,6 +73,15 @@ public class DishServiceImpl implements DishService {
     @Override
     public void deleteById(int id) {
         dishDao.deleteById(id);
+    }
+
+    private List<Dish> getSortedDishes(int page, Comparator<Dish> comparator) {
+        page--;
+        return dishDao.findAll()
+                .stream()
+                .sorted(comparator)
+                .collect(Collectors.toList())
+                .subList(LIMIT * (page - 1), LIMIT * page);
     }
 
 }

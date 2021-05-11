@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -27,6 +28,7 @@ public class RequestDaoTest {
     private static final String PASSWORD = "password";
     private RequestDao requestDao;
     private Request request;
+    private List<Request> requests;
 
     @Before
     public void before() throws SQLException {
@@ -36,12 +38,33 @@ public class RequestDaoTest {
         UserDao userDao = new UserDaoImpl(dbManager);
         User user = userDao.findById(1).get();
         request = new Request(user, Status.OPENED);
+        requests = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            Request temp = new Request(user, Status.OPENED);
+            requestDao.save(temp);
+            requests.add(temp);
+        }
     }
 
     @Test
     public void whenFindAllCalled_thenReturnListOfRequests() {
         List<Request> requests = requestDao.findAll();
         Assert.assertNotNull(requests);
+    }
+
+    @Test
+    public void givenLimit5_whenFindAllCalled_thenReturnListOf5OrLessRequests() {
+        List<Request> requests = requestDao.findAll(5, 0);
+        Assert.assertNotNull(requests);
+        Assert.assertTrue(requests.size() <= 5);
+    }
+
+    @Test
+    public void given11RequestsLimit5Offset11_whenFindAllCalled_thenReturnEmptyList() {
+        List<Request> requests = requestDao.findAll(5, 11);
+        Assert.assertNotNull(requests);
+        Assert.assertTrue(requests.isEmpty());
     }
 
     @Test
@@ -61,7 +84,7 @@ public class RequestDaoTest {
     @Test
     public void whenFindByRequestIdCalled_thenReturnListOfRequests() {
         requestDao.save(request);
-        List<Request> requests = requestDao.findAllByUserId(request.getCustomer().getId());
+        List<Request> requests = requestDao.findAllByUserId(request.getCustomer().getId(), 100, 0);
         Assert.assertNotNull(requests);
         Assert.assertTrue(requests.contains(request));
     }
@@ -69,7 +92,7 @@ public class RequestDaoTest {
     @Test
     public void givenRequestIdIsNegative_whenFindByUserIdCalled_thenReturnEmptyList() {
         requestDao.save(request);
-        List<Request> requests = requestDao.findAllByUserId(-100);
+        List<Request> requests = requestDao.findAllByUserId(-100, 100, 0);
         Assert.assertNotNull(requests);
         Assert.assertTrue(requests.isEmpty());
     }
@@ -77,7 +100,7 @@ public class RequestDaoTest {
     @Test
     public void givenRequestNotExists_whenFindByUserIdCalled_thenReturnEmptyList() {
         requestDao.save(request);
-        List<Request> requests = requestDao.findAllByUserId(100);
+        List<Request> requests = requestDao.findAllByUserId(100, 100, 0);
         Assert.assertNotNull(requests);
         Assert.assertTrue(requests.isEmpty());
     }
@@ -85,7 +108,7 @@ public class RequestDaoTest {
     @Test
     public void whenFindByStatusIdCalled_thenReturnListOfRequests() {
         requestDao.save(request);
-        List<Request> requests = requestDao.findAllByStatusId(request.getStatus().toInt());
+        List<Request> requests = requestDao.findAllByStatusId(request.getStatus().toInt(), 100, 0);
         Assert.assertNotNull(requests);
         Assert.assertTrue(requests.contains(request));
     }
@@ -93,7 +116,7 @@ public class RequestDaoTest {
     @Test
     public void givenStatusIdIsNegative_whenFindByStatusIdCalled_thenReturnEmptyList() {
         requestDao.save(request);
-        List<Request> requests = requestDao.findAllByStatusId(-100);
+        List<Request> requests = requestDao.findAllByStatusId(-100, 100, 0);
         Assert.assertNotNull(requests);
         Assert.assertTrue(requests.isEmpty());
     }
@@ -101,7 +124,7 @@ public class RequestDaoTest {
     @Test
     public void givenStatusNotExists_whenFindByStatusIdCalled_thenReturnEmptyList() {
         requestDao.save(request);
-        List<Request> requests = requestDao.findAllByStatusId(100);
+        List<Request> requests = requestDao.findAllByStatusId(100, 100, 0);
         Assert.assertNotNull(requests);
         Assert.assertTrue(requests.isEmpty());
     }
@@ -119,7 +142,7 @@ public class RequestDaoTest {
     public void givenStatusNotExists_whenFindByUserAndStatusIdCalled_thenReturnEmptyList() {
         requestDao.save(request);
         List<Request> requests = requestDao.findAllByUserAndStatus
-                (request.getCustomer().getId(),100);
+                (request.getCustomer().getId(), 100);
         Assert.assertNotNull(requests);
         Assert.assertTrue(requests.isEmpty());
     }
@@ -267,5 +290,7 @@ public class RequestDaoTest {
     @After
     public void clearDatabase() {
         requestDao.delete(request);
+        for (Request r : requests)
+            requestDao.delete(r);
     }
 }
