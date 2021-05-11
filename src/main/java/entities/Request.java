@@ -1,6 +1,7 @@
 package entities;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,6 +31,7 @@ public final class Request implements Entity {
     public Request(User customer, Status status) {
         this.customer = customer;
         this.status = status;
+        requestItems = new ArrayList<>();
     }
 
     @Override
@@ -41,8 +43,6 @@ public final class Request implements Entity {
                 ", deliveryAddress='" + deliveryAddress + '\'' +
                 ", totalPrice=" + totalPrice +
                 ", approvedBy=" + approvedBy +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
                 ", bill=" + requestItems +
                 '}';
     }

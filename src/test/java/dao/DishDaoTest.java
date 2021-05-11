@@ -80,6 +80,8 @@ public class DishDaoTest {
         Dish dishFromDb = dishDao.findById(id).get();
         Assert.assertNotNull(dishFromDb);
         Assert.assertEquals(id, dishFromDb.getId());
+        Assert.assertEquals(dish.toString(), dishFromDb.toString());
+        Assert.assertEquals(dish.hashCode(), dishFromDb.hashCode());
     }
 
     @Test

@@ -71,9 +71,11 @@ public class RequestDaoTest {
     public void whenFindByIdCalled_thenReturnRequest() {
         requestDao.save(request);
         int id = request.getId();
-        Request request = requestDao.findById(id).get();
-        Assert.assertNotNull(request);
-        Assert.assertEquals(id, request.getId());
+        Request requestFromDb = requestDao.findById(id).get();
+        Assert.assertNotNull(requestFromDb);
+        Assert.assertEquals(id, requestFromDb.getId());
+        Assert.assertEquals(request.toString(), requestFromDb.toString());
+        Assert.assertEquals(request.hashCode(), requestFromDb.hashCode());
     }
 
     @Test

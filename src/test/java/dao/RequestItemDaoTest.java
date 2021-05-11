@@ -47,9 +47,12 @@ public class RequestItemDaoTest {
     public void whenFindByIdCalled_thenReturnRequestItem() {
         requestItemDao.save(this.requestItem);
         int id = this.requestItem.getId();
-        RequestItem requestItem = requestItemDao.findById(id).get();
-        Assert.assertNotNull(requestItem);
-        Assert.assertEquals(id, requestItem.getId());
+        RequestItem requestItemFromDb = requestItemDao.findById(id).get();
+        Assert.assertNotNull(requestItemFromDb);
+        Assert.assertEquals(id, requestItemFromDb.getId());
+        requestItem.setPrice(requestItemFromDb.getPrice());
+        Assert.assertEquals(requestItem.toString(), requestItemFromDb.toString());
+        Assert.assertEquals(requestItem.hashCode(), requestItemFromDb.hashCode());
     }
 
     @Test

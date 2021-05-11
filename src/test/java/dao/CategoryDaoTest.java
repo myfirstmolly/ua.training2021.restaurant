@@ -43,9 +43,11 @@ public class CategoryDaoTest {
     public void whenFindByIdCalled_thenReturnCategory() {
         categoryDao.save(category);
         int id = category.getId();
-        Category category = categoryDao.findById(id).get();
-        Assert.assertNotNull(category);
-        Assert.assertEquals(id, category.getId());
+        Category categoryFromDb = categoryDao.findById(id).get();
+        Assert.assertNotNull(categoryFromDb);
+        Assert.assertEquals(id, categoryFromDb.getId());
+        Assert.assertEquals(category.toString(), categoryFromDb.toString());
+        Assert.assertEquals(category.hashCode(), categoryFromDb.hashCode());
     }
 
     @Test

@@ -45,10 +45,11 @@ public class UserDaoTest {
     public void whenFindByIdCalled_thenReturnUser() {
         userDao.save(user);
         int id = user.getId();
-        User user = userDao.findById(id).get();
-        Assert.assertNotNull(user);
-        Assert.assertEquals(id, user.getId());
-        Assert.assertEquals("test", user.getEmail());
+        User userFromDb = userDao.findById(id).get();
+        Assert.assertNotNull(userFromDb);
+        Assert.assertEquals(id, userFromDb.getId());
+        Assert.assertEquals(user.toString(), userFromDb.toString());
+        Assert.assertEquals(user.hashCode(), userFromDb.hashCode());
     }
 
     @Test

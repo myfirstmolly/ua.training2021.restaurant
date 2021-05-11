@@ -33,7 +33,6 @@ public final class RequestItem implements Entity {
                 ", dish=" + dish +
                 ", quantity=" + quantity +
                 ", price=" + price +
-                ", createdAt=" + createdAt +
                 '}';
     }
 
