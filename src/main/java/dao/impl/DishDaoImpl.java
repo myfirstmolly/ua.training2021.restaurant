@@ -21,35 +21,35 @@ public final class DishDaoImpl extends AbstractDao<Dish> implements DishDao {
     public Page<Dish> findAllByCategoryId(int id, int limit, int index) {
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
         s.select().where("category_id").limit().offset();
-        return super.getPage(limit, index, s.build(), " where category_id=?", id);
+        return super.getPage(limit, index, s.build(), id);
     }
 
     @Override
     public Page<Dish> findAll(int limit, int index) {
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
         s.select().limit().offset();
-        return super.getPage(limit, index, s.build(), "");
+        return super.getPage(limit, index, s.build());
     }
 
     @Override
     public Page<Dish> findAllSortedByName(String locale, int limit, int index) {
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
         s.select().orderBy("name_" + locale).limit().offset();
-        return super.getPage(limit, index, s.build(), "");
+        return super.getPage(limit, index, s.build());
     }
 
     @Override
     public Page<Dish> findAllSortedByCategory(String locale, int limit, int index) {
         String statement = String.format("select d.* from dish d inner join category c on d.category_id=c.id " +
                 "order by %s limit ? offset ?", "c.name_" + locale);
-        return super.getPage(limit, index, statement, "");
+        return super.getPage(limit, index, statement);
     }
 
     @Override
     public Page<Dish> findAllSortedByPrice(int limit, int index) {
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
         s.select().orderBy("price").limit().offset();
-        return super.getPage(limit, index, s.build(), "");
+        return super.getPage(limit, index, s.build());
     }
 
     @Override

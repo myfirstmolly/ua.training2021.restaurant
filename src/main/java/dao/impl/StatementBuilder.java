@@ -65,11 +65,6 @@ public class StatementBuilder {
         return this;
     }
 
-    public StatementBuilder clear() {
-        sb = new StringBuilder(tableName);
-        return this;
-    }
-
     public String build() {
         return sb.toString();
     }

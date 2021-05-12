@@ -62,7 +62,7 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
         T map(ResultSet rs) throws SQLException;
     }
 
-    protected Page<T> getPage(int limit, int index, String sql, String where, Object... values) {
+    protected Page<T> getPage(int limit, int index, String sql, Object... values) {
         if (limit < 0 || index < 1)
             throw new IllegalArgumentException();
 
@@ -72,7 +72,7 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
         valuesCopy[values.length] = limit;
         valuesCopy[values.length + 1] = offset;
         List<T> entries = getList(sql, valuesCopy);
-        int total = getTotal(where, values);
+        int total = getTotal(sql, values);
         return new Page<>(index, total, entries);
     }
 
@@ -148,8 +148,11 @@ public abstract class AbstractDao<T extends Entity> implements CrudDao<T> {
         }
     }
 
-    private int getTotal(String where, Object... values) {
-        String count = String.format("select count(id) as count from %s ", tableName) + where;
+    private int getTotal(String sql, Object... values) {
+        String count = String.format("select count(id) as count from %s ", tableName);
+        if (sql.contains("where"))
+            count = count + sql.substring(sql.indexOf("where"), sql.indexOf("limit"));
+
         try (PreparedStatement ps = dbManager.getConnection()
                 .prepareStatement(count)) {
             for (int i = 1; i <= values.length; i++) {
