@@ -3,14 +3,13 @@ package service;
 import entities.Dish;
 import entities.Request;
 import entities.User;
-
-import java.util.List;
+import util.Page;
 
 public interface RequestService {
 
-    List<Request> findAllByCustomerId(int id, int page);
+    Page<Request> findAllByCustomerId(int id, int page);
 
-    List<Request> findAllPending(int page);
+    Page<Request> findAllByStatus(int id, int page);
 
     Request findById(int id);
 

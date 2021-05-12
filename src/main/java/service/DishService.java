@@ -1,24 +1,23 @@
 package service;
 
 import entities.Dish;
-
-import java.util.List;
+import util.Page;
 
 public interface DishService {
 
-    List<Dish> findAll(int page);
+    Page<Dish> findAll(int page);
 
-    List<Dish> findAllSortedByNameEng(int page);
+    Page<Dish> findAllSortedByNameEng(int page);
 
-    List<Dish> findAllSortedByNameUkr(int page);
+    Page<Dish> findAllSortedByNameUkr(int page);
 
-    List<Dish> findAllSortedByPrice(int page);
+    Page<Dish> findAllSortedByPrice(int page);
 
-    List<Dish> findAllSortedByCategoryEng(int page);
+    Page<Dish> findAllSortedByCategoryEng(int page);
 
-    List<Dish> findAllSortedByCategoryUkr(int page);
+    Page<Dish> findAllSortedByCategoryUkr(int page);
 
-    List<Dish> findAllByCategoryId(int id, int page);
+    Page<Dish> findAllByCategoryId(int id, int page);
 
     Dish findById(int id);
 

@@ -4,9 +4,12 @@ import dao.CategoryDao;
 import dao.DishDao;
 import database.DBManager;
 import entities.Dish;
+import util.Page;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class DishDaoImpl extends AbstractDao<Dish> implements DishDao {
@@ -16,13 +19,37 @@ public final class DishDaoImpl extends AbstractDao<Dish> implements DishDao {
     }
 
     @Override
-    public List<Dish> findAllByCategoryId(int id, int limit, int offset) {
-        return super.findAllByParameter(limit, offset, new Param(id, "category_id"));
+    public Page<Dish> findAllByCategoryId(int id, int limit, int index) {
+        Param category = new Param(id, "category_id");
+        return super.findAllByParameter(limit, index, category);
     }
 
     @Override
-    public List<Dish> findAll(int limit, int offset) {
-        return super.findAllByParameter(limit, offset);
+    public Page<Dish> findAll(int limit, int index) {
+        return super.findAllByParameter(limit, index);
+    }
+
+    @Override
+    public Page<Dish> findAllSortedByName(String locale, int limit, int index) {
+        return super.findAllByParameter(limit, index, "name_" + locale);
+    }
+
+    @Override
+    public Page<Dish> findAllSortedByCategory(String locale, int limit, int index) {
+        if (limit < 0 || index < 1)
+            throw new IllegalArgumentException();
+
+        int offset = limit * (index - 1);
+        String statement = "select d.* from dish d inner join category c on d.category_id=c.id " +
+                "order by c.? limit ? offset ?";
+        List<Dish> page = super.findAllByParameter(statement, "name_" + locale, limit, offset);
+        int total = super.getTotal();
+        return new Page<>(index, total, page);
+    }
+
+    @Override
+    public Page<Dish> findAllSortedByPrice(int limit, int index) {
+        return super.findAllByParameter(limit, index, "price");
     }
 
     @Override

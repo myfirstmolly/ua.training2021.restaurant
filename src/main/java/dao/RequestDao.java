@@ -1,16 +1,17 @@
 package dao;
 
 import entities.Request;
+import util.Page;
 
 import java.util.List;
 
 public interface RequestDao extends CrudDao<Request> {
 
-    List<Request> findAll(int limit, int offset);
+    Page<Request> findAll(int limit, int index);
 
-    List<Request> findAllByUserId(int id, int limit, int offset);
+    Page<Request> findAllByUserId(int id, int limit, int index);
 
-    List<Request> findAllByStatusId(int id, int limit, int offset);
+    Page<Request> findAllByStatusId(int id, int limit, int index);
 
     List<Request> findAllByUserAndStatus(int userId, int statusId);
 

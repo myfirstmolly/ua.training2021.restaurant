@@ -1,13 +1,14 @@
 package service.impl;
 
-import dao.RequestItemDao;
 import dao.RequestDao;
-import dao.impl.RequestItemDaoImpl;
+import dao.RequestItemDao;
 import dao.impl.RequestDaoImpl;
+import dao.impl.RequestItemDaoImpl;
 import database.DBManager;
 import entities.*;
 import exceptions.ObjectNotFoundException;
 import service.RequestService;
+import util.Page;
 
 import java.util.List;
 
@@ -23,13 +24,13 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<Request> findAllByCustomerId(int id, int page) {
+    public Page<Request> findAllByCustomerId(int id, int page) {
         return requestDao.findAllByUserId(id, LIMIT, LIMIT * (page - 1));
     }
 
     @Override
-    public List<Request> findAllPending(int page) {
-        return requestDao.findAllByStatusId(Status.PENDING.toInt(), LIMIT, LIMIT * (page - 1));
+    public Page<Request> findAllByStatus(int id, int page) {
+        return requestDao.findAllByStatusId(id, LIMIT, page);
     }
 
     @Override

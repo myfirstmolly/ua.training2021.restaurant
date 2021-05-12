@@ -6,6 +6,7 @@ import dao.UserDao;
 import database.DBManager;
 import entities.Request;
 import entities.Status;
+import util.Page;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,18 +19,20 @@ public final class RequestDaoImpl extends AbstractDao<Request> implements Reques
     }
 
     @Override
-    public List<Request> findAll(int limit, int offset) {
-        return super.findAllByParameter(limit, offset);
+    public Page<Request> findAll(int limit, int index) {
+        return super.findAllByParameter(limit, index, "updated_at desc");
     }
 
     @Override
-    public List<Request> findAllByUserId(int id, int limit, int offset) {
-        return super.findAllByParameter(limit, offset, new Param(id, "customer_id"));
+    public Page<Request> findAllByUserId(int id, int limit, int index) {
+        return super.findAllByParameter(limit, index, "updated_at desc",
+                new Param(id, "customer_id"));
     }
 
     @Override
-    public List<Request> findAllByStatusId(int id, int limit, int offset) {
-        return super.findAllByParameter(limit, offset, new Param(id, "status_id"));
+    public Page<Request> findAllByStatusId(int id, int limit, int index) {
+        return super.findAllByParameter(limit, index, "updated_at desc",
+                new Param(id, "status_id"));
     }
 
     @Override

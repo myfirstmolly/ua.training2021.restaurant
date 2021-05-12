@@ -1,13 +1,18 @@
 package dao;
 
 import entities.Dish;
-
-import java.util.List;
+import util.Page;
 
 public interface DishDao extends CrudDao<Dish> {
 
-    List<Dish> findAllByCategoryId(int id, int limit, int offset);
+    Page<Dish> findAllByCategoryId(int id, int limit, int index);
 
-    List<Dish> findAll (int limit, int offset);
+    Page<Dish> findAll (int limit, int index);
+
+    Page<Dish> findAllSortedByName (String locale, int limit, int index);
+
+    Page<Dish> findAllSortedByCategory (String locale, int limit, int index);
+
+    Page<Dish> findAllSortedByPrice (int limit, int index);
 
 }

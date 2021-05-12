@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,16 +60,23 @@ public class DishDaoTest {
 
     @Test
     public void givenLimitIs5_whenFindAllCalled_thenReturnListOf5OrLessDishes() {
-        List<Dish> dishes = dishDao.findAll(5, 0);
+        List<Dish> dishes = dishDao.findAll(5, 1).getContent();
         Assert.assertNotNull(dishes);
         Assert.assertTrue(dishes.size() <= 5);
     }
 
     @Test
-    public void given11DishesLimit5Offset11_whenFindAllCalled_thenReturnEmptyList() {
-        List<Dish> dishes = dishDao.findAll(5, 11);
+    public void given11DishesLimit6Index3_whenFindAllCalled_thenReturnEmptyList() {
+        List<Dish> dishes = dishDao.findAll(6, 3).getContent();
         Assert.assertNotNull(dishes);
         Assert.assertTrue(dishes.isEmpty());
+    }
+
+    @Test
+    public void given11DishesLimit6Index2_whenFindAllCalled_thenReturnListOf5Elements() {
+        List<Dish> dishes = dishDao.findAll(6, 2).getContent();
+        Assert.assertNotNull(dishes);
+        Assert.assertEquals(5, dishes.size());
     }
 
     @Test
@@ -92,7 +98,7 @@ public class DishDaoTest {
     @Test
     public void whenFindByCategoryIdCalled_thenReturnListOfDishes() {
         dishDao.save(dish);
-        List<Dish> dishes = dishDao.findAllByCategoryId(dish.getCategory().getId(), 100, 0);
+        List<Dish> dishes = dishDao.findAllByCategoryId(dish.getCategory().getId(), 100, 1).getContent();
         Assert.assertNotNull(dishes);
         Assert.assertTrue(dishes.contains(dish));
     }
@@ -102,14 +108,14 @@ public class DishDaoTest {
         Dish template = new Dish("test", "test", 8000,
                 "test", "test", "test",
                 dish.getCategory());
-        List<Dish> dishes = dishDao.findAllByCategoryId(template.getCategory().getId(), 5, 0);
+        List<Dish> dishes = dishDao.findAllByCategoryId(template.getCategory().getId(), 5, 1).getContent();
         Assert.assertNotNull(dishes);
         Assert.assertTrue(dishes.size() <= 5);
     }
 
     @Test
     public void givenCategoryNotExists_whenFindByCategoryIdCalled_thenReturnEmptyList() {
-        List<Dish> dishes = dishDao.findAllByCategoryId(100, 100, 0);
+        List<Dish> dishes = dishDao.findAllByCategoryId(100, 100, 1).getContent();
         Assert.assertNotNull(dishes);
         Assert.assertTrue(dishes.isEmpty());
     }
