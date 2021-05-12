@@ -4,7 +4,6 @@ import dao.UserDao;
 import database.DBManager;
 import entities.Role;
 import entities.User;
-import exceptions.DataIntegrityViolationException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,17 +42,13 @@ public final class UserDaoImpl extends AbstractDao<User> implements UserDao {
     }
 
     private Param [] getParams(User user) {
-        if (user.getUsername() == null || user.getPassword() == null ||
-                user.getName() == null || user.getPhoneNumber() == null ||
-                user.getRole() == null)
-            throw new DataIntegrityViolationException();
-
         Param username = new Param(user.getUsername(), "username");
         Param password = new Param(user.getPassword(), "password");
         Param name = new Param(user.getName(), "name");
         Param phoneNumber = new Param(user.getPhoneNumber(), "phone_number");
         Param email = new Param(user.getEmail(), "email");
-        Param roleId = new Param(user.getRole().toInt(), "role_id");
+        Param roleId = new Param(user.getRole() != null ? user.getRole().toInt() : null,
+                "role_id");
         return new Param[] {username, password, name, phoneNumber, email, roleId};
     }
 

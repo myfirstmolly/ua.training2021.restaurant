@@ -5,7 +5,6 @@ import dao.impl.DishDaoImpl;
 import database.DBManager;
 import entities.Category;
 import entities.Dish;
-import exceptions.DataIntegrityViolationException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,6 +12,7 @@ import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,23 +126,12 @@ public class DishDaoTest {
         dishDao.save(dish);
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void givenDishObjectHasNullNames_whenSaveCalled_thenThrowDataIntegrityViolationException() {
+    @Test
+    public void givenDishObjectHasNullNames_whenSaveCalled_thenReturn() {
         dish.setNameUkr(null);
         dish.setNameEng(null);
         dishDao.save(dish);
-    }
-
-    @Test(expected = DataIntegrityViolationException.class)
-    public void givenDishObjectHasNullEngName_whenSaveCalled_thenThrowDataIntegrityViolationException() {
-        dish.setNameEng(null);
-        dishDao.save(dish);
-    }
-
-    @Test(expected = DataIntegrityViolationException.class)
-    public void givenDishObjectHasNullUkrName_whenSaveCalled_thenThrowDataIntegrityViolationException() {
-        dish.setNameUkr(null);
-        dishDao.save(dish);
+        Assert.assertFalse(dishDao.findById(dish.getId()).isPresent());
     }
 
     @Test
@@ -182,11 +171,12 @@ public class DishDaoTest {
         Assert.assertEquals(dish, updated);
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void givenDishHasNullEngName_whenUpdateCalled_thenThrowDataIntegrityViolationException() {
+    @Test
+    public void givenDishHasNullEngName_whenUpdateCalled_thenReturn() {
         dishDao.save(dish);
         dish.setNameEng(null);
         dishDao.update(dish);
+        Assert.assertNotNull(dishDao.findById(dish.getId()).get().getNameEng());
     }
 
     @Test

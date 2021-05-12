@@ -6,7 +6,6 @@ import database.DBManager;
 import entities.Request;
 import entities.Status;
 import entities.User;
-import exceptions.DataIntegrityViolationException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,6 +13,7 @@ import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -183,18 +183,13 @@ public class RequestDaoTest {
         Assert.assertTrue(requestDao.findAll().contains(request));
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void givenRequestObjectHasNullStatusyAddress_whenSaveCalled_thenThrowDataIntegrityViolationException() {
-        request.setStatus(null);
-        requestDao.save(request);
-    }
-
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void givenRequestObjectHasNullFields_whenSaveCalled_thenThrowDataIntegrityViolationException() {
         request.setCustomer(null);
         request.setDeliveryAddress(null);
         request.setStatus(null);
         requestDao.save(request);
+        Assert.assertFalse(requestDao.findById(request.getId()).isPresent());
     }
 
     @Test
@@ -233,12 +228,17 @@ public class RequestDaoTest {
         Assert.assertEquals(request, updated);
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void givenRequestObjectHasNullFields_whenUpdateCalled_thenThrowDataIntegrityViolationException() {
+    @Test
+    public void givenRequestObjectHasNullFields_whenUpdateCalled_thenReturn() {
+        requestDao.save(request);
         request.setDeliveryAddress(null);
         request.setCustomer(null);
         request.setStatus(null);
         requestDao.update(request);
+        Request r = requestDao.findById(request.getId()).get();
+        Assert.assertNull(r.getDeliveryAddress());
+        Assert.assertNotNull(r.getCustomer());
+        Assert.assertNotNull(r.getStatus());
     }
 
     @Test

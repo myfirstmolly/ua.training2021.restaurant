@@ -4,7 +4,6 @@ import dao.CategoryDao;
 import dao.DishDao;
 import database.DBManager;
 import entities.Dish;
-import exceptions.DataIntegrityViolationException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,10 +38,6 @@ public final class DishDaoImpl extends AbstractDao<Dish> implements DishDao {
     }
 
     private Param [] getParams(Dish dish) {
-        if (dish.getNameEng() == null || dish.getNameUkr() == null || dish.getPrice() < 0 ||
-                dish.getImagePath() == null)
-            throw new DataIntegrityViolationException();
-
         Param nameEng = new Param(dish.getNameEng(), "name_eng");
         Param nameUkr = new Param(dish.getNameUkr(), "name_ukr");
         Param price = new Param(dish.getPrice(), "price");

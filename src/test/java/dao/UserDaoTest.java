@@ -4,7 +4,6 @@ import dao.impl.UserDaoImpl;
 import database.DBManager;
 import entities.Role;
 import entities.User;
-import exceptions.DataIntegrityViolationException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,6 +11,7 @@ import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -93,19 +93,14 @@ public class UserDaoTest {
         Assert.assertTrue(userDao.findAll().contains(user));
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void givenUserObjectHasNullUsername_whenSaveCalled_thenThrowDataIntegrityViolationException() {
-        user.setUsername(null);
-        userDao.save(user);
-    }
-
-    @Test(expected = DataIntegrityViolationException.class)
-    public void givenUserObjectHasNullFields_whenSaveCalled_thenThrowDataIntegrityViolationException() {
+    @Test
+    public void givenUserObjectHasNullFields_whenSaveCalled_thenReturn() {
         user.setPassword(null);
         user.setRole(null);
         user.setPhoneNumber(null);
         user.setName(null);
         userDao.save(user);
+        Assert.assertFalse(userDao.findById(user.getId()).isPresent());
     }
 
     @Test
@@ -157,13 +152,18 @@ public class UserDaoTest {
         Assert.assertEquals(user.getId(), updated.getId());
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void givenUserObjectHasNullFields_whenUpdateCalled_thenThrowDataIntegrityViolationException() {
+    @Test
+    public void givenUserObjectHasNullFields_whenUpdateCalled_thenReturn() {
+        userDao.save(user);
         user.setPassword(null);
         user.setRole(null);
         user.setPhoneNumber(null);
         user.setName(null);
         userDao.update(user);
+        Assert.assertNotNull(userDao.findById(user.getId()).get().getPassword());
+        Assert.assertNotNull(userDao.findById(user.getId()).get().getRole());
+        Assert.assertNotNull(userDao.findById(user.getId()).get().getPhoneNumber());
+        Assert.assertNotNull(userDao.findById(user.getId()).get().getName());
     }
 
     @Test

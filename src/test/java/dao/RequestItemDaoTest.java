@@ -5,7 +5,6 @@ import dao.impl.RequestItemDaoImpl;
 import database.DBManager;
 import entities.Dish;
 import entities.RequestItem;
-import exceptions.DataIntegrityViolationException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,6 +12,7 @@ import org.junit.Test;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -88,17 +88,12 @@ public class RequestItemDaoTest {
         Assert.assertTrue(requestItemDao.findAll().contains(requestItem));
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void givenRequestItemObjectHasNegativeQuantity_whenSaveCalled_thenThrowDataIntegrityViolationException() {
-        requestItem.setQuantity(-10);
-        requestItemDao.save(requestItem);
-    }
-
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void givenRequestItemObjectHasWrongFields_whenSaveCalled_thenThrowDataIntegrityViolationException() {
         requestItem.setDish(null);
         requestItem.setRequestId(-99);
         requestItemDao.save(requestItem);
+        Assert.assertFalse(requestItemDao.findById(requestItem.getId()).isPresent());
     }
 
     @Test
@@ -129,11 +124,12 @@ public class RequestItemDaoTest {
         Assert.assertEquals(requestItem, updated);
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void givenRequestItemHasNegativeQuantity_whenUpdateCalled_thenThrowDataIntegrityViolationException() {
         requestItemDao.save(requestItem);
         requestItem.setQuantity(-10);
         requestItemDao.update(requestItem);
+        Assert.assertTrue(requestItemDao.findById(requestItem.getId()).get().getQuantity() >= 0);
     }
 
     @Test

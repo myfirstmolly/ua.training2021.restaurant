@@ -6,7 +6,6 @@ import dao.UserDao;
 import database.DBManager;
 import entities.Request;
 import entities.Status;
-import exceptions.DataIntegrityViolationException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -63,12 +62,10 @@ public final class RequestDaoImpl extends AbstractDao<Request> implements Reques
     }
 
     private Param [] getParams(Request request) {
-        if (request.getCustomer() == null || request.getCustomer().getId() <= 0 ||
-                request.getStatus() == null)
-            throw new DataIntegrityViolationException();
-
-        Param customerId = new Param(request.getCustomer().getId(), "customer_id");
-        Param statusId = new Param(request.getStatus().toInt(), "status_id");
+        Param customerId = new Param(request.getCustomer() != null ? request.getCustomer().getId() : null,
+                "customer_id");
+        Param statusId = new Param(request.getStatus() != null ? request.getStatus().toInt() : null,
+                "status_id");
         Param deliveryAddress = new Param(request.getDeliveryAddress(), "delivery_address");
         return new Param[] {customerId, statusId, deliveryAddress};
     }

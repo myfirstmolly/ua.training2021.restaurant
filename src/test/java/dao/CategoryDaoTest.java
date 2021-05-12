@@ -3,7 +3,6 @@ package dao;
 import dao.impl.CategoryDaoImpl;
 import database.DBManager;
 import entities.Category;
-import exceptions.DataIntegrityViolationException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -67,23 +66,26 @@ public class CategoryDaoTest {
         categoryDao.save(category);
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void givenCategoryObjectHasNullNames_whenSaveCalled_thenThrowDataIntegrityViolationException() {
+    @Test
+    public void givenCategoryObjectHasNullNames_whenSaveCalled_thenReturn() {
         category.setNameUkr(null);
         category.setNameEng(null);
         categoryDao.save(category);
+        Assert.assertFalse(categoryDao.findById(category.getId()).isPresent());
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void givenCategoryObjectHasNullEngName_whenSaveCalled_thenThrowDataIntegrityViolationException() {
+    @Test
+    public void givenCategoryObjectHasNullEngName_whenSaveCalled_thenReturn() {
         category.setNameEng(null);
         categoryDao.save(category);
+        Assert.assertFalse(categoryDao.findById(category.getId()).isPresent());
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void givenCategoryObjectHasNullUkrName_whenSaveCalled_thenThrowDataIntegrityViolationException() {
+    @Test
+    public void givenCategoryObjectHasNullUkrName_whenSaveCalled_thenReturn() {
         category.setNameUkr(null);
         categoryDao.save(category);
+        Assert.assertFalse(categoryDao.findById(category.getId()).isPresent());
     }
 
     @Test
@@ -116,11 +118,12 @@ public class CategoryDaoTest {
         Assert.assertEquals(category, updated);
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void givenCategoryHasNullEngName_whenUpdateCalled_thenThrowDataIntegrityViolationException() {
+    @Test
+    public void givenCategoryHasNullEngName_whenUpdateCalled_thenReturn() {
         categoryDao.save(category);
         category.setNameEng(null);
         categoryDao.update(category);
+        Assert.assertNotNull(categoryDao.findById(category.getId()).get().getNameEng());
     }
 
     @Test

@@ -3,7 +3,6 @@ package dao.impl;
 import dao.CategoryDao;
 import database.DBManager;
 import entities.Category;
-import exceptions.DataIntegrityViolationException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,9 +26,6 @@ public final class CategoryDaoImpl extends AbstractDao<Category> implements Cate
     }
 
     private Param [] getParams(Category category) {
-        if (category.getNameEng() == null || category.getNameUkr() == null)
-            throw new DataIntegrityViolationException();
-
         Param nameEng = new Param(category.getNameEng(), "name_eng");
         Param nameUkr = new Param(category.getNameUkr(), "name_ukr");
         return new Param[] {nameEng, nameUkr};

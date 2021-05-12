@@ -4,7 +4,6 @@ import dao.DishDao;
 import dao.RequestItemDao;
 import database.DBManager;
 import entities.RequestItem;
-import exceptions.DataIntegrityViolationException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,12 +24,9 @@ public final class RequestItemDaoImpl extends AbstractDao<RequestItem> implement
     @Override
     public void save(RequestItem requestItem) {
         if (requestItem == null) return;
-
-        if (requestItem.getQuantity() <= 0 || requestItem.getDish() == null)
-            throw new DataIntegrityViolationException();
-
         Param requestId = new Param(requestItem.getRequestId(), "request_id");
-        Param dishId = new Param(requestItem.getDish().getId(), "dish_id");
+        Param dishId = new Param(requestItem.getDish() != null ? requestItem.getDish().getId() : null,
+                "dish_id");
         Param quantity = new Param(requestItem.getQuantity(), "quantity");
         super.save(requestItem, requestId, dishId, quantity);
     }
@@ -38,10 +34,6 @@ public final class RequestItemDaoImpl extends AbstractDao<RequestItem> implement
     @Override
     public void update(RequestItem requestItem) {
         if (requestItem == null) return;
-
-        if (requestItem.getQuantity() <= 0)
-            throw new DataIntegrityViolationException();
-
         Param quantity = new Param(requestItem.getQuantity(), "quantity");
         super.update(requestItem.getId(), quantity);
     }
