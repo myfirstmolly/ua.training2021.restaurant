@@ -88,7 +88,7 @@ public class RequestItemDaoTest {
     }
 
     @Test
-    public void givenRequestItemObjectHasWrongFields_whenSaveCalled_thenThrowDataIntegrityViolationException() {
+    public void givenRequestItemObjectHasWrongFields_whenSaveCalled_thenReturn() {
         requestItem.setDish(null);
         requestItem.setRequestId(-99);
         requestItemDao.save(requestItem);
@@ -124,7 +124,7 @@ public class RequestItemDaoTest {
     }
 
     @Test
-    public void givenRequestItemHasNegativeQuantity_whenUpdateCalled_thenThrowDataIntegrityViolationException() {
+    public void givenRequestItemHasNegativeQuantity_whenUpdateCalled_thenReturn() {
         requestItemDao.save(requestItem);
         requestItem.setQuantity(-10);
         requestItemDao.update(requestItem);

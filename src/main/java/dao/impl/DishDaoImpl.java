@@ -8,69 +8,73 @@ import util.Page;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 public final class DishDaoImpl extends AbstractDao<Dish> implements DishDao {
 
+    private static final String TABLE_NAME = "dish";
+
     public DishDaoImpl(DBManager dbManager) {
-        super(dbManager, "dish", new Mapper(dbManager));
+        super(dbManager, TABLE_NAME, new Mapper(dbManager));
     }
 
     @Override
     public Page<Dish> findAllByCategoryId(int id, int limit, int index) {
-        Param category = new Param(id, "category_id");
-        return super.findAllByParameter(limit, index, category);
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        s.select().where("category_id").limit().offset();
+        return super.getPage(limit, index, s.build(), " where category_id=?", id);
     }
 
     @Override
     public Page<Dish> findAll(int limit, int index) {
-        return super.findAllByParameter(limit, index);
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        s.select().limit().offset();
+        return super.getPage(limit, index, s.build(), "");
     }
 
     @Override
     public Page<Dish> findAllSortedByName(String locale, int limit, int index) {
-        return super.findAllByParameter(limit, index, "name_" + locale);
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        s.select().orderBy("name_" + locale).limit().offset();
+        return super.getPage(limit, index, s.build(), "");
     }
 
     @Override
     public Page<Dish> findAllSortedByCategory(String locale, int limit, int index) {
-        if (limit < 0 || index < 1)
-            throw new IllegalArgumentException();
-
-        int offset = limit * (index - 1);
         String statement = String.format("select d.* from dish d inner join category c on d.category_id=c.id " +
                 "order by %s limit ? offset ?", "c.name_" + locale);
-        List<Dish> page = super.findAllByParameter(statement, limit, offset);
-        int total = super.getTotal();
-        return new Page<>(index, total, page);
+        return super.getPage(limit, index, statement, "");
     }
 
     @Override
     public Page<Dish> findAllSortedByPrice(int limit, int index) {
-        return super.findAllByParameter(limit, index, "price");
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        s.select().orderBy("price").limit().offset();
+        return super.getPage(limit, index, s.build(), "");
     }
 
     @Override
     public void save(Dish dish) {
-        if (dish == null) return;
-        super.save(dish, getParams(dish));
+        if (dish == null || dish.getCategory() == null) return;
+        StatementBuilder b = new StatementBuilder(TABLE_NAME);
+        b.insert(getColumnNames());
+        super.save(dish, b.build(), dish.getNameEng(), dish.getNameUkr(), dish.getPrice(),
+                dish.getDescriptionEng(), dish.getDescriptionUkr(), dish.getImagePath(),
+                dish.getCategory().getId());
     }
 
     @Override
     public void update(Dish dish) {
-        if (dish == null) return;
-        super.update(dish.getId(), getParams(dish));
+        if (dish == null || dish.getCategory() == null) return;
+        StatementBuilder b = new StatementBuilder(TABLE_NAME);
+        b.update(getColumnNames()).where("id");
+        super.update(dish.getId(), b.build(), dish.getNameEng(), dish.getNameUkr(), dish.getPrice(),
+                dish.getDescriptionEng(), dish.getDescriptionUkr(), dish.getImagePath(),
+                dish.getCategory().getId());
     }
 
-    private Param [] getParams(Dish dish) {
-        Param nameEng = new Param(dish.getNameEng(), "name_eng");
-        Param nameUkr = new Param(dish.getNameUkr(), "name_ukr");
-        Param price = new Param(dish.getPrice(), "price");
-        Param descriptionEng = new Param(dish.getDescriptionEng(), "description_eng");
-        Param descriptionUkr = new Param(dish.getDescriptionUkr(), "description_ukr");
-        Param imagePath = new Param(dish.getImagePath(), "image_path");
-        Param categoryId = new Param(dish.getCategory().getId(), "category_id");
-        return new Param[] {nameEng, nameUkr, price, descriptionEng, descriptionUkr, imagePath, categoryId};
+    private String [] getColumnNames() {
+        return new String[] {"name_eng", "name_ukr", "price", "description_eng",
+                "description_ukr", "image_path", "category_id"};
     }
 
     private static class Mapper implements AbstractDao.Mapper<Dish> {

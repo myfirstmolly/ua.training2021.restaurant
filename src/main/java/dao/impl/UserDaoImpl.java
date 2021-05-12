@@ -14,8 +14,10 @@ import java.util.Optional;
  */
 public final class UserDaoImpl extends AbstractDao<User> implements UserDao {
 
+    private static final String TABLE_NAME = "user";
+
     public UserDaoImpl(DBManager dbManager) {
-        super(dbManager, "user", new Mapper());
+        super(dbManager, TABLE_NAME, new Mapper());
     }
 
     /**
@@ -26,30 +28,33 @@ public final class UserDaoImpl extends AbstractDao<User> implements UserDao {
      */
     @Override
     public Optional<User> findByUsername(String username) {
-        return super.findOneByParameter(new Param(username, "username"));
+        StatementBuilder b = new StatementBuilder(TABLE_NAME);
+        b.select().where("username");
+        return super.getOptional(b.build(), username);
     }
 
     @Override
     public void save(User user) {
         if (user == null) return;
-        super.save(user, getParams(user));
+        StatementBuilder b = new StatementBuilder(TABLE_NAME);
+        b.insert(getParams());
+        super.save(user, b.build(), user.getUsername(), user.getPassword(), user.getName(),
+                user.getPhoneNumber(), user.getEmail(),
+                user.getRole() == null ? null : user.getRole().toInt());
     }
 
     @Override
     public void update(User user) {
         if (user == null) return;
-        super.update(user.getId(), getParams(user));
+        StatementBuilder b = new StatementBuilder(TABLE_NAME);
+        b.update(getParams()).where("id");
+        super.update(user.getId(), b.build(), user.getUsername(), user.getPassword(), user.getName(),
+                user.getPhoneNumber(), user.getEmail(),
+                user.getRole() == null ? null : user.getRole().toInt());
     }
 
-    private Param [] getParams(User user) {
-        Param username = new Param(user.getUsername(), "username");
-        Param password = new Param(user.getPassword(), "password");
-        Param name = new Param(user.getName(), "name");
-        Param phoneNumber = new Param(user.getPhoneNumber(), "phone_number");
-        Param email = new Param(user.getEmail(), "email");
-        Param roleId = new Param(user.getRole() != null ? user.getRole().toInt() : null,
-                "role_id");
-        return new Param[] {username, password, name, phoneNumber, email, roleId};
+    private String [] getParams() {
+        return new String[] {"username", "password", "name", "phone_number", "email", "role_id"};
     }
 
     private static class Mapper implements AbstractDao.Mapper<User> {

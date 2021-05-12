@@ -75,10 +75,10 @@ public class DishDaoTest {
     }
 
     @Test
-    public void given11DishesLimit6Index2_whenFindAllCalled_thenReturnListOf5Elements() {
+    public void given9DishesLimit6Index2_whenFindAllCalled_thenReturnListOf3Elements() {
         List<Dish> dishes = dishDao.findAll(6, 2).getContent();
         Assert.assertNotNull(dishes);
-        Assert.assertEquals(5, dishes.size());
+        Assert.assertEquals(3, dishes.size());
     }
 
     @Test
@@ -119,7 +119,6 @@ public class DishDaoTest {
     public void givenLimitIs5_whenFindSortedByNameEn_thenReturnListSortedByCategories() {
         List<Dish> dishes = dishDao.findAllSortedByName("eng", 5, 1).getContent();
         Assert.assertNotNull(dishes);
-        System.out.println(dishes);
         Assert.assertEquals(5, dishes.size());
 
         List<Dish> actual = dishDao.findAll();

@@ -14,63 +14,59 @@ import java.util.List;
 
 public final class RequestDaoImpl extends AbstractDao<Request> implements RequestDao {
 
+    private static final String TABLE_NAME = "request";
+
     public RequestDaoImpl(DBManager dbManager) {
-        super(dbManager, "request", new Mapper(dbManager));
+        super(dbManager, TABLE_NAME, new Mapper(dbManager));
     }
 
     @Override
     public Page<Request> findAll(int limit, int index) {
-        return super.findAllByParameter(limit, index, "updated_at desc");
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        s.select().limit().offset();
+        return super.getPage(limit, index, s.build(), "");
     }
 
     @Override
     public Page<Request> findAllByUserId(int id, int limit, int index) {
-        return super.findAllByParameter(limit, index, "updated_at desc",
-                new Param(id, "customer_id"));
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        s.select().where("customer_id").orderBy("updated_at desc").limit().offset();
+        return super.getPage(limit, index, s.build(), " where customer_id=? ", id);
     }
 
     @Override
     public Page<Request> findAllByStatusId(int id, int limit, int index) {
-        return super.findAllByParameter(limit, index, "updated_at desc",
-                new Param(id, "status_id"));
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        s.select().where("status_id").orderBy("updated_at desc").limit().offset();
+        return super.getPage(limit, index, s.build(), " where status_id=? ", id);
     }
 
     @Override
     public List<Request> findAllByUserAndStatus(int userId, int statusId) {
-        return super.findAllByParameter(
-                new Param(userId, "customer_id"),
-                new Param(statusId, "status_id")
-        );
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        s.select().where("customer_id", "status_id");
+        return super.getList(s.build(), userId, statusId);
     }
 
     @Override
     public void save(Request request) {
         if (request == null) return;
-        super.save(request, getParams(request));
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        s.insert("customer_id", "status_id", "delivery_address");
+        Object customer = request.getCustomer() == null ? null : request.getCustomer().getId();
+        Object status = request.getStatus() == null ? null : request.getStatus().toInt();
+        super.save(request, s.build(), customer, status, request.getDeliveryAddress());
     }
 
     @Override
     public void update(Request request) {
         if (request == null) return;
-        Param approvedBy;
-
-        if (request.getApprovedBy() != null)
-            approvedBy = new Param(request.getApprovedBy().getId(), "approved_by");
-        else approvedBy = new Param(null, "approved_by");
-
-        Param [] params = new Param[getParams(request).length + 1];
-        System.arraycopy(getParams(request), 0, params, 0, getParams(request).length);
-        params[getParams(request).length] = approvedBy;
-        super.update(request.getId(), params);
-    }
-
-    private Param [] getParams(Request request) {
-        Param customerId = new Param(request.getCustomer() != null ? request.getCustomer().getId() : null,
-                "customer_id");
-        Param statusId = new Param(request.getStatus() != null ? request.getStatus().toInt() : null,
-                "status_id");
-        Param deliveryAddress = new Param(request.getDeliveryAddress(), "delivery_address");
-        return new Param[] {customerId, statusId, deliveryAddress};
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        s.update("customer_id", "status_id", "delivery_address", "approved_by").where("id");
+        Object customer = request.getCustomer() == null ? null : request.getCustomer().getId();
+        Object status = request.getStatus() == null ? null : request.getStatus().toInt();
+        Object approvedBy = request.getApprovedBy() == null ? null : request.getApprovedBy().getId();
+        super.update(request.getId(), s.build(), customer, status, request.getDeliveryAddress(), approvedBy);
     }
 
     private static class Mapper implements AbstractDao.Mapper<Request> {

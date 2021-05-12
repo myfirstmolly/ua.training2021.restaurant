@@ -183,7 +183,7 @@ public class RequestDaoTest {
     }
 
     @Test
-    public void givenRequestObjectHasNullFields_whenSaveCalled_thenThrowDataIntegrityViolationException() {
+    public void givenRequestObjectHasNullFields_whenSaveCalled_thenReturn() {
         request.setCustomer(null);
         request.setDeliveryAddress(null);
         request.setStatus(null);

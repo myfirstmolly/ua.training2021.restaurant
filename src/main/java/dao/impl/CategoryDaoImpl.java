@@ -9,26 +9,26 @@ import java.sql.SQLException;
 
 public final class CategoryDaoImpl extends AbstractDao<Category> implements CategoryDao {
 
+    private static final String TABLE_NAME = "category";
+
     public CategoryDaoImpl(DBManager dbManager) {
-        super(dbManager, "category", new Mapper());
+        super(dbManager, TABLE_NAME, new Mapper());
     }
 
     @Override
     public void save(Category category) {
         if (category == null) return;
-        super.save(category, getParams(category));
+        StatementBuilder b = new StatementBuilder(TABLE_NAME);
+        b.insert("name_eng", "name_ukr");
+        super.save(category, b.build(), category.getNameEng(), category.getNameUkr());
     }
 
     @Override
     public void update(Category category) {
         if (category == null) return;
-        super.update(category.getId(), getParams(category));
-    }
-
-    private Param [] getParams(Category category) {
-        Param nameEng = new Param(category.getNameEng(), "name_eng");
-        Param nameUkr = new Param(category.getNameUkr(), "name_ukr");
-        return new Param[] {nameEng, nameUkr};
+        StatementBuilder b = new StatementBuilder(TABLE_NAME);
+        b.update("name_eng", "name_ukr").where("id");
+        super.update(category.getId(), b.build(), category.getNameEng(), category.getNameUkr());
     }
 
     private static class Mapper implements AbstractDao.Mapper<Category> {
