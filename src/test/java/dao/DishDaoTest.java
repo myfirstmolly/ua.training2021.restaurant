@@ -13,6 +13,7 @@ import org.junit.Test;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
@@ -44,9 +45,10 @@ public class DishDaoTest {
                 "test", "test", "test",
                 category);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 8; i++) {
             temp.setNameEng(name + i);
             temp.setNameUkr(name + i);
+            temp.setCategory(categoryDao.findById(i + 1).get());
             dishDao.save(temp);
             dishes.add(dishDao.findById(temp.getId()).get());
         }
@@ -111,6 +113,35 @@ public class DishDaoTest {
         List<Dish> dishes = dishDao.findAllByCategoryId(template.getCategory().getId(), 5, 1).getContent();
         Assert.assertNotNull(dishes);
         Assert.assertTrue(dishes.size() <= 5);
+    }
+
+    @Test
+    public void givenLimitIs5_whenFindSortedByNameEn_thenReturnListSortedByCategories() {
+        List<Dish> dishes = dishDao.findAllSortedByName("eng", 5, 1).getContent();
+        Assert.assertNotNull(dishes);
+        System.out.println(dishes);
+        Assert.assertEquals(5, dishes.size());
+
+        List<Dish> actual = dishDao.findAll();
+        actual.sort(Comparator.comparing(Dish::getNameEng));
+
+        for (int i = 0; i < dishes.size(); i++) {
+            Assert.assertEquals(actual.get(i), dishes.get(i));
+        }
+    }
+
+    @Test
+    public void givenLimitIs5_whenFindSortedByCategoryEn_thenReturnListSortedByCategories() {
+        List<Dish> dishes = dishDao.findAllSortedByCategory("eng", 5, 1).getContent();
+        Assert.assertNotNull(dishes);
+        Assert.assertEquals(5, dishes.size());
+
+        List<Dish> actual = dishDao.findAll();
+        actual.sort(Comparator.comparing(d -> d.getCategory().getNameEng()));
+
+        for (int i = 0; i < dishes.size(); i++) {
+            Assert.assertEquals(actual.get(i), dishes.get(i));
+        }
     }
 
     @Test

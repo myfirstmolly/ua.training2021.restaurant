@@ -6,10 +6,8 @@ import database.DBManager;
 import entities.Dish;
 import util.Page;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public final class DishDaoImpl extends AbstractDao<Dish> implements DishDao {
@@ -40,9 +38,9 @@ public final class DishDaoImpl extends AbstractDao<Dish> implements DishDao {
             throw new IllegalArgumentException();
 
         int offset = limit * (index - 1);
-        String statement = "select d.* from dish d inner join category c on d.category_id=c.id " +
-                "order by c.? limit ? offset ?";
-        List<Dish> page = super.findAllByParameter(statement, "name_" + locale, limit, offset);
+        String statement = String.format("select d.* from dish d inner join category c on d.category_id=c.id " +
+                "order by %s limit ? offset ?", "c.name_" + locale);
+        List<Dish> page = super.findAllByParameter(statement, limit, offset);
         int total = super.getTotal();
         return new Page<>(index, total, page);
     }
