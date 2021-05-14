@@ -52,12 +52,15 @@ public final class Request implements Entity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Request request = (Request) o;
-        return id == request.id;
+        return id == request.id &&
+                totalPrice == request.totalPrice &&
+                customer.equals(request.customer) &&
+                status == request.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, customer, status, totalPrice);
     }
 
     @Override

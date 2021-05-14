@@ -58,12 +58,18 @@ public final class Dish implements Entity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Dish dish = (Dish) o;
-        return id == dish.id;
+        return id == dish.id &&
+                price == dish.price &&
+                nameEng.equals(dish.nameEng) &&
+                nameUkr.equals(dish.nameUkr) &&
+                descriptionEng.equals(dish.descriptionEng) &&
+                descriptionUkr.equals(dish.descriptionUkr) &&
+                category.equals(dish.category);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, nameEng, nameUkr, price, descriptionEng, descriptionUkr, category);
     }
 
     @Override

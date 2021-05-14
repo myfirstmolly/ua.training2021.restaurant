@@ -130,6 +130,20 @@ public class DishDaoTest {
     }
 
     @Test
+    public void givenLimitIs5_whenFindSortedByPrice_thenReturnListSortedByCategories() {
+        List<Dish> dishes = dishDao.findAllSortedByPrice( 5, 1).getContent();
+        Assert.assertNotNull(dishes);
+        Assert.assertEquals(5, dishes.size());
+
+        List<Dish> actual = dishDao.findAll();
+        actual.sort(Comparator.comparing(Dish::getPrice));
+
+        for (int i = 0; i < dishes.size(); i++) {
+            Assert.assertEquals(actual.get(i), dishes.get(i));
+        }
+    }
+
+    @Test
     public void givenLimitIs5_whenFindSortedByCategoryEn_thenReturnListSortedByCategories() {
         List<Dish> dishes = dishDao.findAllSortedByCategory("eng", 5, 1).getContent();
         Assert.assertNotNull(dishes);
@@ -174,7 +188,7 @@ public class DishDaoTest {
     public void givenDishObjectHasNullDescription_whenSaveCalled_thenSaveDishToDb() {
         dish.setDescriptionEng(null);
         dishDao.save(dish);
-        Assert.assertTrue(dishDao.findAll().contains(dish));
+        Assert.assertNull(dishDao.findById(dish.getId()).get().getDescriptionEng());
     }
 
     @Test

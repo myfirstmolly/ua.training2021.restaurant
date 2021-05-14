@@ -40,14 +40,17 @@ public final class RequestItem implements Entity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RequestItem requestItem = (RequestItem) o;
-        return requestId == requestItem.requestId &&
-                dish.equals(requestItem.dish);
+        RequestItem that = (RequestItem) o;
+        return id == that.id &&
+                requestId == that.requestId &&
+                quantity == that.quantity &&
+                price == that.price &&
+                dish.equals(that.dish);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(requestId, dish);
+        return Objects.hash(id, requestId, dish, quantity, price);
     }
 
     @Override

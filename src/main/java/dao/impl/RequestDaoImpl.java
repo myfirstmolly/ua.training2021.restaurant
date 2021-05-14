@@ -6,79 +6,19 @@ import dao.UserDao;
 import database.DBManager;
 import entities.Request;
 import entities.Status;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import util.Page;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
-public final class RequestDaoImpl extends AbstractDao<Request> implements RequestDao {
+public final class RequestDaoImpl extends DaoUtils<Request> implements RequestDao {
 
     private static final String TABLE_NAME = "request";
+    private static final Logger logger = LogManager.getLogger(RequestDaoImpl.class);
 
     public RequestDaoImpl(DBManager dbManager) {
-        super(dbManager, TABLE_NAME, new Mapper(dbManager));
-    }
-
-    @Override
-    public Page<Request> findAll(int limit, int index) {
-        StatementBuilder s = new StatementBuilder(TABLE_NAME);
-        s.select().limit().offset();
-        return super.getPage(limit, index, s.build());
-    }
-
-    @Override
-    public Page<Request> findAllByUserId(int id, int limit, int index) {
-        StatementBuilder s = new StatementBuilder(TABLE_NAME);
-        s.select().where("customer_id").orderBy("updated_at desc").limit().offset();
-        return super.getPage(limit, index, s.build(), id);
-    }
-
-    @Override
-    public Page<Request> findAllByStatusId(int id, int limit, int index) {
-        StatementBuilder s = new StatementBuilder(TABLE_NAME);
-        s.select().where("status_id").orderBy("updated_at desc").limit().offset();
-        return super.getPage(limit, index, s.build(), id);
-    }
-
-    @Override
-    public List<Request> findAllByUserAndStatus(int userId, int statusId) {
-        StatementBuilder s = new StatementBuilder(TABLE_NAME);
-        s.select().where("customer_id", "status_id");
-        return super.getList(s.build(), userId, statusId);
-    }
-
-    @Override
-    public void save(Request request) {
-        if (request == null) return;
-        StatementBuilder s = new StatementBuilder(TABLE_NAME);
-        s.insert("customer_id", "status_id", "delivery_address");
-        Object customer = request.getCustomer() == null ? null : request.getCustomer().getId();
-        Object status = request.getStatus() == null ? null : request.getStatus().toInt();
-        super.save(request, s.build(), customer, status, request.getDeliveryAddress());
-    }
-
-    @Override
-    public void update(Request request) {
-        if (request == null) return;
-        StatementBuilder s = new StatementBuilder(TABLE_NAME);
-        s.update("customer_id", "status_id", "delivery_address", "approved_by").where("id");
-        Integer customer = request.getCustomer() == null ? null : request.getCustomer().getId();
-        Integer status = request.getStatus() == null ? null : request.getStatus().toInt();
-        Integer approvedBy = request.getApprovedBy() == null ? null : request.getApprovedBy().getId();
-        super.update(request.getId(), s.build(), customer, status, request.getDeliveryAddress(), approvedBy);
-    }
-
-    private static class Mapper implements AbstractDao.Mapper<Request> {
-
-        private final DBManager dbManager;
-
-        public Mapper(DBManager dbManager) {
-            this.dbManager = dbManager;
-        }
-
-        @Override
-        public Request map(ResultSet rs) throws SQLException {
+        super(dbManager, TABLE_NAME, rs -> {
             Request request = new Request();
             request.setId(rs.getInt("id"));
             UserDao userDao = new UserDaoImpl(dbManager);
@@ -92,6 +32,68 @@ public final class RequestDaoImpl extends AbstractDao<Request> implements Reques
             RequestItemDao requestItemDao = new RequestItemDaoImpl(dbManager);
             request.setRequestItems(requestItemDao.findAllByRequestId(request.getId()));
             return request;
+        });
+    }
+
+    @Override
+    public Page<Request> findAll(int limit, int index) {
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        String sql = s.select().limit().offset().build();
+        logger.trace("delegated '" + sql + "' to DaoUtils");
+        return super.getPage(limit, index, sql);
+    }
+
+    @Override
+    public Page<Request> findAllByUserId(int id, int limit, int index) {
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        String sql = s.select().where("customer_id").orderBy("updated_at desc").limit().offset().build();
+        logger.trace("delegated '" + sql + "' to DaoUtils");
+        return super.getPage(limit, index, sql, id);
+    }
+
+    @Override
+    public Page<Request> findAllByStatusId(int id, int limit, int index) {
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        String sql = s.select().where("status_id").orderBy("updated_at desc").limit().offset().build();
+        logger.trace("delegated '" + sql + "' to DaoUtils");
+        return super.getPage(limit, index, sql, id);
+    }
+
+    @Override
+    public List<Request> findAllByUserAndStatus(int userId, int statusId) {
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        String sql = s.select().where("customer_id", "status_id").build();
+        logger.trace("delegated '" + sql + "' to DaoUtils");
+        return super.getList(sql, userId, statusId);
+    }
+
+    @Override
+    public void save(Request request) {
+        if (request == null) {
+            logger.warn("cannot save null object");
+            return;
         }
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        String sql = s.insert("customer_id", "status_id", "delivery_address").build();
+        Integer customer = request.getCustomer() == null ? null : request.getCustomer().getId();
+        Integer status = request.getStatus() == null ? null : request.getStatus().toInt();
+        logger.trace("delegated '" + sql + "' to DaoUtils");
+        super.save(request, sql, customer, status, request.getDeliveryAddress());
+    }
+
+    @Override
+    public void update(Request request) {
+        if (request == null) {
+            logger.warn("cannot update null object");
+            return;
+        }
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        String sql = s.update("customer_id", "status_id", "delivery_address", "approved_by").where("id")
+                .build();
+        logger.trace("delegated '" + sql + "' to DaoUtils");
+        Integer customer = request.getCustomer() == null ? null : request.getCustomer().getId();
+        Integer status = request.getStatus() == null ? null : request.getStatus().toInt();
+        Integer approvedBy = request.getApprovedBy() == null ? null : request.getApprovedBy().getId();
+        super.update(sql, customer, status, request.getDeliveryAddress(), approvedBy, request.getId());
     }
 }

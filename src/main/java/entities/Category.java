@@ -32,12 +32,14 @@ public final class Category implements Entity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Category category = (Category) o;
-        return id == category.id;
+        return id == category.id &&
+                Objects.equals(nameEng, category.nameEng) &&
+                Objects.equals(nameUkr, category.nameUkr);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, nameEng, nameUkr);
     }
 
     @Override

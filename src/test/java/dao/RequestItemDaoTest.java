@@ -64,6 +64,7 @@ public class RequestItemDaoTest {
         requestItemDao.save(requestItem);
         List<RequestItem> requestItems = requestItemDao.findAllByRequestId(1);
         Assert.assertNotNull(requestItems);
+        requestItem.setPrice(requestItem.getDish().getPrice());
         Assert.assertTrue(requestItems.contains(requestItem));
     }
 
@@ -84,6 +85,7 @@ public class RequestItemDaoTest {
     @Test
     public void whenSaveCalled_thenSaveRequestItemToDb() {
         requestItemDao.save(requestItem);
+        requestItem.setPrice(requestItem.getDish().getPrice());
         Assert.assertTrue(requestItemDao.findAll().contains(requestItem));
     }
 
@@ -100,6 +102,7 @@ public class RequestItemDaoTest {
         int id = -10;
         requestItem.setId(id);
         requestItemDao.save(requestItem);
+        requestItem.setPrice(requestItem.getDish().getPrice());
         Assert.assertNotEquals(id, requestItem.getId());
         Assert.assertTrue(requestItem.getId() > 0);
         Assert.assertTrue(requestItemDao.findAll().contains(requestItem));
@@ -117,6 +120,7 @@ public class RequestItemDaoTest {
         requestItem.setQuantity(10);
         requestItemDao.update(requestItem);
         RequestItem updated = requestItemDao.findById(requestItem.getId()).get();
+        requestItem.setPrice(requestItem.getDish().getPrice());
         Assert.assertNotNull(updated);
         Assert.assertEquals(10, updated.getQuantity());
         Assert.assertEquals(requestItem.getId(), updated.getId());

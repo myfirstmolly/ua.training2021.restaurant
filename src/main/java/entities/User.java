@@ -54,12 +54,16 @@ public final class User implements Entity {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
         return id == user.id &&
-                username.equals(user.username);
+                username.equals(user.username) &&
+                password.equals(user.password) &&
+                name.equals(user.name) &&
+                phoneNumber.equals(user.phoneNumber) &&
+                role == user.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username);
+        return Objects.hash(id, username, password, name, phoneNumber, role);
     }
 
     @Override
