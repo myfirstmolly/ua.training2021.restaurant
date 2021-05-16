@@ -32,7 +32,7 @@ public final class RequestItemDaoImpl extends DaoUtils<RequestItem> implements R
     public List<RequestItem> findAllByRequestId(int id) {
         if (id <= 0) return List.of();
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
-        String sql = s.select().where("request_id").build();
+        String sql = s.setSelect().setWhere("request_id").build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
         return super.getList(sql, id);
     }
@@ -44,7 +44,7 @@ public final class RequestItemDaoImpl extends DaoUtils<RequestItem> implements R
             return;
         }
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
-        String sql = s.insert("request_id", "dish_id", "quantity").build();
+        String sql = s.setInsert("request_id", "dish_id", "quantity").build();
         Integer dishId = requestItem.getDish() != null ? requestItem.getDish().getId() : null;
         logger.trace("delegated '" + sql + "' to DaoUtils");
         super.save(requestItem, sql, requestItem.getRequestId(), dishId, requestItem.getQuantity());
@@ -57,7 +57,7 @@ public final class RequestItemDaoImpl extends DaoUtils<RequestItem> implements R
             return;
         }
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
-        String sql = s.update("quantity").where("id").build();
+        String sql = s.setUpdate("quantity").setWhere("id").build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
         super.update(sql, requestItem.getQuantity(), requestItem.getId());
     }

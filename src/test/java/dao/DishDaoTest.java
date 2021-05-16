@@ -36,18 +36,17 @@ public class DishDaoTest {
         dishDao = new DishDaoImpl(dbManager);
         CategoryDao categoryDao = new CategoryDaoImpl(dbManager);
         Category category = categoryDao.findById(1).get();
-        dish = new Dish("test", "test", 8000,
-                "test", "test", "test",
+        dish = new Dish("test", 8000,
+                "test", "test",
                 category);
-        String name = dish.getNameEng();
+        String name = dish.getName();
         dishes = new ArrayList<>();
-        Dish temp = new Dish(null, null, 8000,
-                "test", "test", "test",
+        Dish temp = new Dish(null, 8000,
+                "test", "test",
                 category);
 
         for (int i = 0; i < 8; i++) {
-            temp.setNameEng(name + i);
-            temp.setNameUkr(name + i);
+            temp.setName(name + i);
             temp.setCategory(categoryDao.findById(i + 1).get());
             dishDao.save(temp);
             dishes.add(dishDao.findById(temp.getId()).get());
@@ -107,8 +106,8 @@ public class DishDaoTest {
 
     @Test
     public void givenLimitIs5_whenFindByCategoryIdCalled_thenReturnListOf5OrLessDishes() {
-        Dish template = new Dish("test", "test", 8000,
-                "test", "test", "test",
+        Dish template = new Dish("test", 8000,
+                "test", "test",
                 dish.getCategory());
         List<Dish> dishes = dishDao.findAllByCategoryId(template.getCategory().getId(), 5, 1).getContent();
         Assert.assertNotNull(dishes);
@@ -117,12 +116,12 @@ public class DishDaoTest {
 
     @Test
     public void givenLimitIs5_whenFindSortedByNameEn_thenReturnListSortedByCategories() {
-        List<Dish> dishes = dishDao.findAllSortedByName("eng", 5, 1).getContent();
+        List<Dish> dishes = dishDao.findAllSortedByName(5, 1).getContent();
         Assert.assertNotNull(dishes);
         Assert.assertEquals(5, dishes.size());
 
         List<Dish> actual = dishDao.findAll();
-        actual.sort(Comparator.comparing(Dish::getNameEng));
+        actual.sort(Comparator.comparing(Dish::getName));
 
         for (int i = 0; i < dishes.size(); i++) {
             Assert.assertEquals(actual.get(i), dishes.get(i));
@@ -131,7 +130,7 @@ public class DishDaoTest {
 
     @Test
     public void givenLimitIs5_whenFindSortedByPrice_thenReturnListSortedByCategories() {
-        List<Dish> dishes = dishDao.findAllSortedByPrice( 5, 1).getContent();
+        List<Dish> dishes = dishDao.findAllSortedByPrice(5, 1).getContent();
         Assert.assertNotNull(dishes);
         Assert.assertEquals(5, dishes.size());
 
@@ -145,12 +144,12 @@ public class DishDaoTest {
 
     @Test
     public void givenLimitIs5_whenFindSortedByCategoryEn_thenReturnListSortedByCategories() {
-        List<Dish> dishes = dishDao.findAllSortedByCategory("eng", 5, 1).getContent();
+        List<Dish> dishes = dishDao.findAllSortedByCategory(5, 1).getContent();
         Assert.assertNotNull(dishes);
         Assert.assertEquals(5, dishes.size());
 
         List<Dish> actual = dishDao.findAll();
-        actual.sort(Comparator.comparing(d -> d.getCategory().getNameEng()));
+        actual.sort(Comparator.comparing(d -> d.getCategory().getName()));
 
         for (int i = 0; i < dishes.size(); i++) {
             Assert.assertEquals(actual.get(i), dishes.get(i));
@@ -178,17 +177,16 @@ public class DishDaoTest {
 
     @Test
     public void givenDishObjectHasNullNames_whenSaveCalled_thenReturn() {
-        dish.setNameUkr(null);
-        dish.setNameEng(null);
+        dish.setName(null);
         dishDao.save(dish);
         Assert.assertFalse(dishDao.findById(dish.getId()).isPresent());
     }
 
     @Test
     public void givenDishObjectHasNullDescription_whenSaveCalled_thenSaveDishToDb() {
-        dish.setDescriptionEng(null);
+        dish.setDescription(null);
         dishDao.save(dish);
-        Assert.assertNull(dishDao.findById(dish.getId()).get().getDescriptionEng());
+        Assert.assertNull(dishDao.findById(dish.getId()).get().getDescription());
     }
 
     @Test
@@ -210,13 +208,11 @@ public class DishDaoTest {
     @Test
     public void whenUpdateCalled_thenUpdateDish() {
         dishDao.save(dish);
-        dish.setNameUkr("new name");
-        dish.setNameEng("new name");
+        dish.setName("new name");
         dishDao.update(dish);
         Dish updated = dishDao.findById(dish.getId()).get();
         Assert.assertNotNull(updated);
-        Assert.assertEquals("new name", updated.getNameEng());
-        Assert.assertEquals("new name", updated.getNameUkr());
+        Assert.assertEquals("new name", updated.getName());
         Assert.assertEquals(dish.getId(), updated.getId());
         Assert.assertEquals(dish, updated);
     }
@@ -224,9 +220,9 @@ public class DishDaoTest {
     @Test
     public void givenDishHasNullEngName_whenUpdateCalled_thenReturn() {
         dishDao.save(dish);
-        dish.setNameEng(null);
+        dish.setName(null);
         dishDao.update(dish);
-        Assert.assertNotNull(dishDao.findById(dish.getId()).get().getNameEng());
+        Assert.assertNotNull(dishDao.findById(dish.getId()).get().getName());
     }
 
     @Test

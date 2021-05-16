@@ -4,9 +4,9 @@ import java.util.List;
 
 public class Page<T> {
 
-    int pageIndex;
-    int totalPages;
-    List<T> content;
+    private final int pageIndex;
+    private final int totalPages;
+    private final List<T> content;
 
     public Page(int pageIndex, int totalPages, List<T> content) {
         this.pageIndex = pageIndex;

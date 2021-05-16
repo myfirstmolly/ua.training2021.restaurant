@@ -23,13 +23,8 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public Page<Dish> findAllSortedByNameEng(int page) {
-        return dishDao.findAllSortedByName("en", LIMIT, page);
-    }
-
-    @Override
-    public Page<Dish> findAllSortedByNameUkr(int page) {
-        return dishDao.findAllSortedByName("ukr", LIMIT, page);
+    public Page<Dish> findAllSortedByName(int page) {
+        return dishDao.findAllSortedByName(LIMIT, page);
     }
 
     @Override
@@ -38,13 +33,8 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public Page<Dish> findAllSortedByCategoryEng(int page) {
-        return dishDao.findAllSortedByCategory("en", LIMIT, page);
-    }
-
-    @Override
-    public Page<Dish> findAllSortedByCategoryUkr(int page) {
-        return dishDao.findAllSortedByCategory("ukr", LIMIT, page);
+    public Page<Dish> findAllSortedByCategory(int page) {
+        return dishDao.findAllSortedByCategory(LIMIT, page);
     }
 
     @Override

@@ -6,15 +6,11 @@ public final class Dish implements Entity {
 
     private int id;
 
-    private String nameEng;
-
-    private String nameUkr;
+    private String name;
 
     private int price;
 
-    private String descriptionEng;
-
-    private String descriptionUkr;
+    private String description;
 
     private String imagePath;
 
@@ -23,18 +19,14 @@ public final class Dish implements Entity {
     public Dish() {
     }
 
-    public Dish(String nameEng,
-                String nameUkr,
+    public Dish(String name,
                 int price,
-                String descriptionEng,
-                String descriptionUkr,
+                String description,
                 String imagePath,
                 Category category) {
-        this.nameEng = nameEng;
-        this.nameUkr = nameUkr;
+        this.name = name;
         this.price = price;
-        this.descriptionEng = descriptionEng;
-        this.descriptionUkr = descriptionUkr;
+        this.description = description;
         this.imagePath = imagePath;
         this.category = category;
     }
@@ -43,11 +35,9 @@ public final class Dish implements Entity {
     public String toString() {
         return "Dish{" +
                 "id=" + id +
-                ", nameEng='" + nameEng + '\'' +
-                ", nameUkr='" + nameUkr + '\'' +
+                ", name='" + name + '\'' +
                 ", price=" + price +
-                ", descriptionEng='" + descriptionEng + '\'' +
-                ", descriptionUkr='" + descriptionUkr + '\'' +
+                ", description='" + description + '\'' +
                 ", imagePath='" + imagePath + '\'' +
                 ", category=" + category +
                 '}';
@@ -60,16 +50,14 @@ public final class Dish implements Entity {
         Dish dish = (Dish) o;
         return id == dish.id &&
                 price == dish.price &&
-                nameEng.equals(dish.nameEng) &&
-                nameUkr.equals(dish.nameUkr) &&
-                descriptionEng.equals(dish.descriptionEng) &&
-                descriptionUkr.equals(dish.descriptionUkr) &&
+                name.equals(dish.name) &&
+                description.equals(dish.description) &&
                 category.equals(dish.category);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, nameEng, nameUkr, price, descriptionEng, descriptionUkr, category);
+        return Objects.hash(id, name, price, description, category);
     }
 
     @Override
@@ -82,20 +70,12 @@ public final class Dish implements Entity {
         this.id = id;
     }
 
-    public String getNameEng() {
-        return nameEng;
+    public String getName() {
+        return name;
     }
 
-    public void setNameEng(String nameEng) {
-        this.nameEng = nameEng;
-    }
-
-    public String getNameUkr() {
-        return nameUkr;
-    }
-
-    public void setNameUkr(String nameUkr) {
-        this.nameUkr = nameUkr;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getPrice() {
@@ -106,20 +86,12 @@ public final class Dish implements Entity {
         this.price = price;
     }
 
-    public String getDescriptionEng() {
-        return descriptionEng;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescriptionEng(String descriptionEng) {
-        this.descriptionEng = descriptionEng;
-    }
-
-    public String getDescriptionUkr() {
-        return descriptionUkr;
-    }
-
-    public void setDescriptionUkr(String descriptionUkr) {
-        this.descriptionUkr = descriptionUkr;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getImagePath() {

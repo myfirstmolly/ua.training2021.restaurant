@@ -29,7 +29,7 @@ public class CategoryDaoTest {
         DBManager dbManager = mock(DBManager.class);
         when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         categoryDao = new CategoryDaoImpl(dbManager);
-        category = new Category("test", "test");
+        category = new Category("test");
     }
 
     @Test
@@ -68,22 +68,14 @@ public class CategoryDaoTest {
 
     @Test
     public void givenCategoryObjectHasNullNames_whenSaveCalled_thenReturn() {
-        category.setNameUkr(null);
-        category.setNameEng(null);
+        category.setName(null);
         categoryDao.save(category);
         Assert.assertFalse(categoryDao.findById(category.getId()).isPresent());
     }
 
     @Test
     public void givenCategoryObjectHasNullEngName_whenSaveCalled_thenReturn() {
-        category.setNameEng(null);
-        categoryDao.save(category);
-        Assert.assertFalse(categoryDao.findById(category.getId()).isPresent());
-    }
-
-    @Test
-    public void givenCategoryObjectHasNullUkrName_whenSaveCalled_thenReturn() {
-        category.setNameUkr(null);
+        category.setName(null);
         categoryDao.save(category);
         Assert.assertFalse(categoryDao.findById(category.getId()).isPresent());
     }
@@ -107,13 +99,11 @@ public class CategoryDaoTest {
     @Test
     public void whenUpdateCalled_thenUpdateCategory() {
         categoryDao.save(category);
-        category.setNameUkr("new name");
-        category.setNameEng("new name");
+        category.setName("new name");
         categoryDao.update(category);
         Category updated = categoryDao.findById(category.getId()).get();
         Assert.assertNotNull(updated);
-        Assert.assertEquals("new name", updated.getNameEng());
-        Assert.assertEquals("new name", updated.getNameUkr());
+        Assert.assertEquals("new name", updated.getName());
         Assert.assertEquals(category.getId(), updated.getId());
         Assert.assertEquals(category, updated);
     }
@@ -121,9 +111,9 @@ public class CategoryDaoTest {
     @Test
     public void givenCategoryHasNullEngName_whenUpdateCalled_thenReturn() {
         categoryDao.save(category);
-        category.setNameEng(null);
+        category.setName(null);
         categoryDao.update(category);
-        Assert.assertNotNull(categoryDao.findById(category.getId()).get().getNameEng());
+        Assert.assertNotNull(categoryDao.findById(category.getId()).get().getName());
     }
 
     @Test

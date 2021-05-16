@@ -6,24 +6,20 @@ public final class Category implements Entity {
 
     private int id;
 
-    private String nameEng;
-
-    private String nameUkr;
+    private String name;
 
     public Category() {
     }
 
-    public Category(String nameEng, String nameUkr) {
-        this.nameEng = nameEng;
-        this.nameUkr = nameUkr;
+    public Category(String name) {
+        this.name = name;
     }
 
     @Override
     public String toString() {
         return "Category{" +
                 "id=" + id +
-                ", nameEng=" + nameEng +
-                ", nameUkr=" + nameUkr +
+                ", nameEng=" + name +
                 '}';
     }
 
@@ -33,13 +29,12 @@ public final class Category implements Entity {
         if (o == null || getClass() != o.getClass()) return false;
         Category category = (Category) o;
         return id == category.id &&
-                Objects.equals(nameEng, category.nameEng) &&
-                Objects.equals(nameUkr, category.nameUkr);
+                Objects.equals(name, category.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, nameEng, nameUkr);
+        return Objects.hash(id, name);
     }
 
     @Override
@@ -52,20 +47,12 @@ public final class Category implements Entity {
         this.id = id;
     }
 
-    public String getNameEng() {
-        return nameEng;
+    public String getName() {
+        return name;
     }
 
-    public void setNameEng(String nameEng) {
-        this.nameEng = nameEng;
-    }
-
-    public String getNameUkr() {
-        return nameUkr;
-    }
-
-    public void setNameUkr(String nameUkr) {
-        this.nameUkr = nameUkr;
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

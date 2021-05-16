@@ -7,15 +7,11 @@ public interface DishService {
 
     Page<Dish> findAll(int page);
 
-    Page<Dish> findAllSortedByNameEng(int page);
-
-    Page<Dish> findAllSortedByNameUkr(int page);
+    Page<Dish> findAllSortedByName(int page);
 
     Page<Dish> findAllSortedByPrice(int page);
 
-    Page<Dish> findAllSortedByCategoryEng(int page);
-
-    Page<Dish> findAllSortedByCategoryUkr(int page);
+    Page<Dish> findAllSortedByCategory(int page);
 
     Page<Dish> findAllByCategoryId(int id, int page);
 

@@ -3,7 +3,6 @@ package dao.impl;
 import dao.Mapper;
 import database.DBManager;
 import entities.Entity;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import util.Page;
@@ -37,7 +36,7 @@ public class DaoUtils<T extends Entity> {
      */
     public List<T> findAll() {
         StatementBuilder b = new StatementBuilder(tableName);
-        String sql = b.select().build();
+        String sql = b.setSelect().build();
         logger.debug("sql: " + sql);
         return getList(sql);
     }
@@ -50,7 +49,7 @@ public class DaoUtils<T extends Entity> {
         if (id <= 0) return Optional.empty();
 
         StatementBuilder b = new StatementBuilder(tableName);
-        String sql = b.select().where("id").build();
+        String sql = b.setSelect().setWhere("id").build();
         logger.debug("sql: " + sql);
         return getOptional(sql, id);
     }
@@ -62,7 +61,7 @@ public class DaoUtils<T extends Entity> {
         if (id <= 0) return;
 
         StatementBuilder b = new StatementBuilder(tableName);
-        String statement = b.delete().where("id").build();
+        String statement = b.setDelete().setWhere("id").build();
         logger.debug("sql: " + statement);
         try (PreparedStatement ps = dbManager.getConnection()
                 .prepareStatement(statement)) {

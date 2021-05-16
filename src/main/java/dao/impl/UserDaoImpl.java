@@ -31,16 +31,10 @@ public final class UserDaoImpl extends DaoUtils<User> implements UserDao {
         });
     }
 
-    /**
-     * returns user with given username
-     *
-     * @param username user's username
-     * @return optional user object
-     */
     @Override
     public Optional<User> findByUsername(String username) {
         StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.select().where("username").build();
+        String sql = b.setSelect().setWhere("username").build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
         return super.getOptional(sql, username);
     }
@@ -52,7 +46,7 @@ public final class UserDaoImpl extends DaoUtils<User> implements UserDao {
             return;
         }
         StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.insert(getParams()).build();
+        String sql = b.setInsert(getParams()).build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
         super.save(user, sql, user.getUsername(), user.getPassword(), user.getName(),
                 user.getPhoneNumber(), user.getEmail(),
@@ -66,7 +60,7 @@ public final class UserDaoImpl extends DaoUtils<User> implements UserDao {
             return;
         }
         StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.update(getParams()).where("id").build();
+        String sql = b.setUpdate(getParams()).setWhere("id").build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
         super.update(sql, user.getUsername(), user.getPassword(), user.getName(),
                 user.getPhoneNumber(), user.getEmail(),

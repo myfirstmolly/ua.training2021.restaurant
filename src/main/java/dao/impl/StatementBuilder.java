@@ -19,7 +19,7 @@ public class StatementBuilder {
      * @throws IllegalStateException if insert statement is being inserted not in
      *                               the beginning of sql statement
      */
-    public StatementBuilder select() {
+    public StatementBuilder setSelect() {
         if (sb.length() != 0)
             throw new IllegalStateException("select statement should be in the beginning " +
                     "of sql statement");
@@ -36,7 +36,7 @@ public class StatementBuilder {
      * @throws IllegalStateException if insert statement is being inserted not in
      *                               the beginning of sql statement
      */
-    public StatementBuilder insert(String... columnNames) {
+    public StatementBuilder setInsert(String... columnNames) {
         if (sb.length() != 0)
             throw new IllegalStateException("insert statement should be in the beginning " +
                     "of sql statement");
@@ -66,7 +66,7 @@ public class StatementBuilder {
      * @throws IllegalStateException if insert statement is being inserted not in
      *                               the beginning of sql statement
      */
-    public StatementBuilder update(String... columnNames) {
+    public StatementBuilder setUpdate(String... columnNames) {
         if (sb.length() != 0)
             throw new IllegalStateException("update statement should be in the beginning " +
                     "of sql statement");
@@ -84,7 +84,7 @@ public class StatementBuilder {
      * @throws IllegalStateException if insert statement is being inserted not in
      *                               the beginning of sql statement
      */
-    public StatementBuilder delete() {
+    public StatementBuilder setDelete() {
         if (sb.length() != 0)
             throw new IllegalStateException("delete statement should be in the beginning " +
                     "of sql statement");
@@ -100,7 +100,7 @@ public class StatementBuilder {
      * @param columnNames - names of columns by which results should be ordered
      * @return StatementBuilder object
      */
-    public StatementBuilder orderBy(String... columnNames) {
+    public StatementBuilder setOrderBy(String... columnNames) {
         sb.append(String.format("order by %s ", buildString(columnNames)));
         return this;
     }
@@ -110,7 +110,7 @@ public class StatementBuilder {
      *
      * @return StatementBuilder object
      */
-    public StatementBuilder limit() {
+    public StatementBuilder setLimit() {
         sb.append("limit ? ");
         return this;
     }
@@ -120,7 +120,7 @@ public class StatementBuilder {
      *
      * @return StatementBuilder object
      */
-    public StatementBuilder offset() {
+    public StatementBuilder setOffset() {
         sb.append("offset ? ");
         return this;
     }
@@ -131,7 +131,7 @@ public class StatementBuilder {
      * @param columnNames - names of columns by which results are filtered
      * @return StatementBuilder object
      */
-    public StatementBuilder where(String... columnNames) {
+    public StatementBuilder setWhere(String... columnNames) {
         sb.append(String.format("where %s ", buildString(" and ", columnNames)));
         return this;
     }

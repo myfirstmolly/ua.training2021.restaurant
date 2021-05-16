@@ -15,8 +15,7 @@ public final class CategoryDaoImpl extends DaoUtils<Category> implements Categor
         super(dbManager, TABLE_NAME, rs -> {
             Category category = new Category();
             category.setId(rs.getInt("id"));
-            category.setNameEng(rs.getString("name_eng"));
-            category.setNameUkr(rs.getString("name_ukr"));
+            category.setName(rs.getString("name"));
             return category;
         });
     }
@@ -28,9 +27,9 @@ public final class CategoryDaoImpl extends DaoUtils<Category> implements Categor
             return;
         }
         StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.insert("name_eng", "name_ukr").build();
+        String sql = b.setInsert("name").build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
-        super.save(category, sql, category.getNameEng(), category.getNameUkr());
+        super.save(category, sql, category.getName());
     }
 
     @Override
@@ -40,8 +39,8 @@ public final class CategoryDaoImpl extends DaoUtils<Category> implements Categor
             return;
         }
         StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.update("name_eng", "name_ukr").where("id").build();
+        String sql = b.setUpdate("name").setWhere("id").build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
-        super.update(sql, category.getNameEng(), category.getNameUkr(), category.getId());
+        super.update(sql, category.getName(), category.getId());
     }
 }

@@ -17,11 +17,9 @@ public final class DishDaoImpl extends DaoUtils<Dish> implements DishDao {
         super(dbManager, TABLE_NAME, rs -> {
             Dish dish = new Dish();
             dish.setId(rs.getInt("id"));
-            dish.setNameEng(rs.getString("name_eng"));
-            dish.setNameUkr(rs.getString("name_ukr"));
+            dish.setName(rs.getString("name"));
             dish.setPrice(rs.getInt("price"));
-            dish.setDescriptionEng(rs.getString("description_eng"));
-            dish.setDescriptionUkr(rs.getString("description_ukr"));
+            dish.setDescription(rs.getString("description"));
             dish.setImagePath(rs.getString("image_path"));
             CategoryDao categoryDao = new CategoryDaoImpl(dbManager);
             dish.setCategory(categoryDao.findById(rs.getInt("category_id")).get());
@@ -32,7 +30,7 @@ public final class DishDaoImpl extends DaoUtils<Dish> implements DishDao {
     @Override
     public Page<Dish> findAllByCategoryId(int id, int limit, int index) {
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
-        String sql = s.select().where("category_id").limit().offset().build();
+        String sql = s.setSelect().setWhere("category_id").setLimit().setOffset().build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
         return super.getPage(limit, index, sql, id);
     }
@@ -40,23 +38,23 @@ public final class DishDaoImpl extends DaoUtils<Dish> implements DishDao {
     @Override
     public Page<Dish> findAll(int limit, int index) {
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
-        String sql = s.select().limit().offset().build();
+        String sql = s.setSelect().setLimit().setOffset().build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
         return super.getPage(limit, index, sql);
     }
 
     @Override
-    public Page<Dish> findAllSortedByName(String locale, int limit, int index) {
+    public Page<Dish> findAllSortedByName(int limit, int index) {
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
-        String sql = s.select().orderBy("name_" + locale).limit().offset().build();
+        String sql = s.setSelect().setOrderBy("name").setLimit().setOffset().build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
         return super.getPage(limit, index, sql);
     }
 
     @Override
-    public Page<Dish> findAllSortedByCategory(String locale, int limit, int index) {
-        String statement = String.format("select d.* from dish d inner join category c on d.category_id=c.id " +
-                "order by %s limit ? offset ?", "c.name_" + locale);
+    public Page<Dish> findAllSortedByCategory(int limit, int index) {
+        String statement = "select d.* from dish d inner join category c on d.category_id=c.id " +
+                "order by c.name limit ? offset ?";
         logger.trace("delegated " + statement + " to DaoUtils");
         return super.getPage(limit, index, statement);
     }
@@ -64,7 +62,7 @@ public final class DishDaoImpl extends DaoUtils<Dish> implements DishDao {
     @Override
     public Page<Dish> findAllSortedByPrice(int limit, int index) {
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
-        String sql = s.select().orderBy("price").limit().offset().build();
+        String sql = s.setSelect().setOrderBy("price").setLimit().setOffset().build();
         logger.trace("delegated " + sql + " to DaoUtils");
         return super.getPage(limit, index, sql);
     }
@@ -76,10 +74,10 @@ public final class DishDaoImpl extends DaoUtils<Dish> implements DishDao {
             return;
         }
         StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.insert(getColumnNames()).build();
+        String sql = b.setInsert(getColumnNames()).build();
         logger.trace("delegated " + sql + " to DaoUtils");
-        super.save(dish, sql, dish.getNameEng(), dish.getNameUkr(), dish.getPrice(),
-                dish.getDescriptionEng(), dish.getDescriptionUkr(), dish.getImagePath(),
+        super.save(dish, sql, dish.getName(), dish.getPrice(),
+                dish.getDescription(), dish.getImagePath(),
                 dish.getCategory().getId());
     }
 
@@ -90,16 +88,15 @@ public final class DishDaoImpl extends DaoUtils<Dish> implements DishDao {
             return;
         }
         StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.update(getColumnNames()).where("id").build();
+        String sql = b.setUpdate(getColumnNames()).setWhere("id").build();
         logger.trace("delegated " + sql + " to DaoUtils");
-        super.update(sql, dish.getNameEng(), dish.getNameUkr(), dish.getPrice(),
-                dish.getDescriptionEng(), dish.getDescriptionUkr(), dish.getImagePath(),
+        super.update(sql, dish.getName(), dish.getPrice(),
+                dish.getDescription(), dish.getImagePath(),
                 dish.getCategory().getId(), dish.getId());
     }
 
     private String[] getColumnNames() {
-        return new String[]{"name_eng", "name_ukr", "price", "description_eng",
-                "description_ukr", "image_path", "category_id"};
+        return new String[]{"name", "price", "description", "image_path", "category_id"};
     }
 
 }
