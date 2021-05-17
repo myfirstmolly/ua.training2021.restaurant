@@ -19,7 +19,7 @@ public final class Category implements Entity {
     public String toString() {
         return "Category{" +
                 "id=" + id +
-                ", nameEng=" + name +
+                ", name=" + name +
                 '}';
     }
 

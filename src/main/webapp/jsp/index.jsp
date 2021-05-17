@@ -5,7 +5,6 @@
 
 <head>
     <title>Restaurant - the best in the world</title>
-    <meta charset="UTF-8">
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -21,13 +20,17 @@
                 <li><a href="api?command=cart">Cart</a></li>
             </c:if>
             <c:if test="${isAdmin}">
-                <li><a href="api?command=orders">Orders</a></li>
                 <li><a href="api?command=addDish">Add dish</a></li>
+                <li><a href="api?command=orders">Orders</a></li>
             </c:if>
         </ul>
     </nav>
-    <a href="/restaurant"><button>Login</button></a>
-    <a href="api?command=logout" hidden><button>Logout</button></a>
+    <a href="${pageContext.request.contextPath}/jsp/login.jsp">
+        <button>Login</button>
+    </a>
+    <a href="api?command=logout" hidden>
+        <button>Logout</button>
+    </a>
 </header>
 <div class="content">
     <div class="main_banner">
@@ -41,8 +44,8 @@
                 <button class="dropbtn">Order by</button>
                 <div class="dropdown-content">
                     <a href="api?command=orderBy?orderBy=price">Price</a>
-                    <a href="api?command=orderBy?orderBy=price">Category</a>
-                    <a href="api?command=orderBy?orderBy=price">Name</a>
+                    <a href="api?command=orderBy?orderBy=category">Category</a>
+                    <a href="api?command=orderBy?orderBy=name">Name</a>
                 </div>
             </div>
             <div class="dropdown">
@@ -67,7 +70,7 @@
                     </a>
                     <p>${dish.description}</p>
                     <h4>${dish.price/100} uah</h4>
-            </div>
+                </div>
             </c:forEach>
         </div>
         <c:if test="${dishes.totalPages > 1}">
@@ -75,10 +78,10 @@
                 <a href="#">&laquo;</a>
                 <c:forEach var="i" begin="1" end="${dishes.totalPages}">
                     <c:when test="${dishes.pageIndex == i}">
-                        <a class="active" href="api?command=dish?page=${i}"><c:out value = "${i}"/></a>
+                        <a class="active" href="api?command=dish?page=${i}"><c:out value="${i}"/></a>
                     </c:when>
                     <c:otherwise>
-                        <a href="api?command=dish?page=${i}"><c:out value = "${i}"/></a>
+                        <a href="api?command=dish?page=${i}"><c:out value="${i}"/></a>
                     </c:otherwise>
                 </c:forEach>
                 <a href="#">&raquo;</a>
