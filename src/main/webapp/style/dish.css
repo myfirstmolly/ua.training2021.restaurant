@@ -1,0 +1,49 @@
+.content {
+    margin-top: 20vh;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.content .dish {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.content .dish_description {
+    width: 50vh;
+    margin-left: 10vh;
+    color: white;
+}
+
+h3 {
+    color: rgb(252, 113, 33);
+    font-size: 32pt;
+    margin-bottom: 3vh;
+}
+
+.dish_description button {
+    margin-top: 3vh;
+}
+
+h4 {
+    margin-top: 16px;
+    font-size: 24px;
+}
+
+.content .menu_img {
+    display: inline-block;
+    position: relative;
+    width: 50vh;
+    height: 50vh;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.dish img {
+    width: 100%;
+    height: 100%;
+}

@@ -1,0 +1,107 @@
+.content {
+    margin-top: 20vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20vh;
+}
+
+h1 {
+    color: rgb(252, 113, 33);
+    font-size: 54px;
+    margin-bottom: 30px;
+}
+
+.dish {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.form {
+    display: flex;
+    color: white;
+    flex-direction: column;
+}
+
+.text,
+textarea {
+    background-color: rgba(20, 20, 20, 0.8);
+    font-size: 14px;
+    margin-bottom: 5px;
+    width: 60vh;
+    color: white;
+    text-align: left;
+    padding: 20px;
+    border: none;
+    border-radius: 10px;
+}
+
+.price {
+    background-color: rgba(20, 20, 20, 0.8);
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: white;
+    text-align: left;
+    width: 100px;
+    height: 50px;
+    padding: 20px;
+    margin-left: 20px;
+    border: none;
+    border-radius: 10px;
+}
+
+b {
+    color: white;
+}
+
+select {
+    margin-top: 9px;
+    margin-left: 20px;
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    width: 100px;
+}
+
+.file {
+    opacity: 0;
+    width: 0.1px;
+    height: 0.1px;
+    position: absolute;
+}
+
+.file-input label {
+    display: block;
+    position: relative;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 200px;
+    font-size: 14px;
+    height: 50px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    transition: all 0.3s ease 0s;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.file-input label:hover {
+    background-color: rgb(255, 46, 64);
+}
+
+.text {
+    height: 50px;
+}
+
+textarea {
+    border-radius: 10px;
+    word-wrap: break-word;
+    word-break: break-all;
+    height: 300px;
+    padding: 20px 20px;
+}

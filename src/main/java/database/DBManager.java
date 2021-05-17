@@ -1,5 +1,8 @@
 package database;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -10,6 +13,7 @@ import java.sql.SQLException;
 public class DBManager {
 
     private static DBManager dbManager;
+    private static final Logger logger = LogManager.getLogger(DBManager.class);
 
     private DBManager() {
     }
@@ -27,7 +31,8 @@ public class DBManager {
             DataSource ds = (DataSource) context.lookup("jdbc/restaurant");
             return ds.getConnection();
         } catch (NamingException ex) {
-            throw new IllegalStateException(ex);
+            logger.error("unable to get connection from the pool");
+            throw new RuntimeException(ex);
         }
     }
 

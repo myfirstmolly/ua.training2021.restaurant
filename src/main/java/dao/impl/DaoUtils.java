@@ -7,10 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import util.Page;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -37,7 +34,6 @@ public class DaoUtils<T extends Entity> {
     public List<T> findAll() {
         StatementBuilder b = new StatementBuilder(tableName);
         String sql = b.setSelect().build();
-        logger.debug("sql: " + sql);
         return getList(sql);
     }
 
@@ -50,7 +46,6 @@ public class DaoUtils<T extends Entity> {
 
         StatementBuilder b = new StatementBuilder(tableName);
         String sql = b.setSelect().setWhere("id").build();
-        logger.debug("sql: " + sql);
         return getOptional(sql, id);
     }
 
@@ -63,8 +58,8 @@ public class DaoUtils<T extends Entity> {
         StatementBuilder b = new StatementBuilder(tableName);
         String statement = b.setDelete().setWhere("id").build();
         logger.debug("sql: " + statement);
-        try (PreparedStatement ps = dbManager.getConnection()
-                .prepareStatement(statement)) {
+        try (Connection con = dbManager.getConnection();
+                PreparedStatement ps = con.prepareStatement(statement)) {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -94,7 +89,6 @@ public class DaoUtils<T extends Entity> {
      * @return Page object which contains list of retrieved objects
      */
     public Page<T> getPage(int limit, int index, String sql, Object... values) {
-        logger.debug("sql: " + sql);
         if (limit < 0 || index < 1)
             throw new IllegalArgumentException();
 
@@ -126,7 +120,7 @@ public class DaoUtils<T extends Entity> {
                     return Optional.of(mapper.map(rs));
             }
         } catch (SQLException ex) {
-            logger.error(String.format("cannot object from table %s", tableName), ex);
+            logger.error(String.format("cannot get object from table %s", tableName), ex);
         }
 
         return Optional.empty();
@@ -141,8 +135,8 @@ public class DaoUtils<T extends Entity> {
         logger.debug("sql: " + statement);
         List<T> entries = new ArrayList<>();
 
-        try (PreparedStatement ps = dbManager.getConnection()
-                .prepareStatement(statement)) {
+        try (Connection con = dbManager.getConnection();
+                PreparedStatement ps = con.prepareStatement(statement)) {
             for (int i = 1; i <= values.length; i++)
                 ps.setObject(i, values[i - 1]);
 
@@ -151,7 +145,7 @@ public class DaoUtils<T extends Entity> {
                     entries.add(mapper.map(rs));
             }
         } catch (SQLException ex) {
-            logger.error(String.format("cannot objects from table %s", tableName), ex);
+            logger.error(String.format("cannot obtain objects from table %s", tableName), ex);
         }
 
         return entries;
@@ -168,8 +162,8 @@ public class DaoUtils<T extends Entity> {
         if (values.length == 0) return;
 
         logger.debug("sql: " + saveStmt);
-        try (PreparedStatement ps = dbManager.getConnection()
-                .prepareStatement(saveStmt, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection con = dbManager.getConnection();
+                PreparedStatement ps = con.prepareStatement(saveStmt, Statement.RETURN_GENERATED_KEYS)) {
             for (int i = 1; i <= values.length; i++) {
                 ps.setObject(i, values[i - 1]);
             }
@@ -193,8 +187,8 @@ public class DaoUtils<T extends Entity> {
         if (values.length == 0) return;
 
         logger.debug("sql: " + updateStmt);
-        try (PreparedStatement ps = dbManager.getConnection()
-                .prepareStatement(updateStmt)) {
+        try (Connection con = dbManager.getConnection();
+                PreparedStatement ps = con.prepareStatement(updateStmt)) {
             for (int i = 1; i <= values.length; i++) {
                 ps.setObject(i, values[i - 1]);
             }
@@ -223,8 +217,8 @@ public class DaoUtils<T extends Entity> {
 
         String count = sb.toString();
         logger.debug("sql: " + count);
-        try (PreparedStatement ps = dbManager.getConnection()
-                .prepareStatement(count)) {
+        try (Connection con = dbManager.getConnection();
+                PreparedStatement ps = con.prepareStatement(count)) {
             for (int i = 1; i <= values.length; i++) {
                 ps.setObject(i, values[i - 1]);
             }
@@ -235,7 +229,7 @@ public class DaoUtils<T extends Entity> {
         } catch (SQLException ex) {
             String msg = String.format("cannot retrieve number of objects in table %s", tableName);
             logger.error(msg, ex);
-            throw new RuntimeException("msg");
+            throw new RuntimeException(msg);
         }
 
         String msg = String.format("unable to execute statement '%s'", count);

@@ -1,0 +1,51 @@
+.button {
+    padding: 9px 25px;
+    background-color: rgb(252, 113, 33);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+    color: white;
+    height: 6vh;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 2vh;
+}
+
+.button:hover {
+    background-color: rgb(255, 46, 64);
+}
+
+h2 {
+    text-align: center;
+    color: white;
+    padding-bottom: 4vh;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.input_field {
+    background-color: rgba(20, 20, 20, 0.8);
+    height: 50px;
+    font-size: 14px;
+    width: 300px;
+    color: white;
+    text-align: center;
+    border: none;
+    border-radius: 50px;
+}
+
+input {
+    margin-bottom: 5px;
+}
