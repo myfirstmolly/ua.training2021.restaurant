@@ -27,7 +27,7 @@
 </header>
 <div class="content">
     <h1>Add new dish</h1>
-    <form class="dish" action="api" method="POST">
+    <form class="dish" action="api" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="command" value="addDish">
         <input class="text" type="text" name="name" placeholder="Dish name...">
         <textarea name="description" rows="20" placeholder="Dish description"></textarea>

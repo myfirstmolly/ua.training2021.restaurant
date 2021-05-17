@@ -1,11 +1,17 @@
 package command;
 
+import database.DBManager;
+import entities.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import service.UserService;
+import service.impl.UserServiceImpl;
+import util.WebPages;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class LoginCommand implements Command {
@@ -14,6 +20,19 @@ public class LoginCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        return null;
+        UserService userService = new UserServiceImpl(DBManager.getInstance());
+        String login = request.getParameter("login");
+        String password = request.getParameter("password");
+
+        if (userService.hasValidCredentials(login, password)) {
+            User user = userService.findByUsername(login);
+            HttpSession session = request.getSession();
+            session.setAttribute("user", user);
+            logger.info(String.format("user %s logged in as %s", user.getUsername(), user.getRole()));
+            return WebPages.MENU_COMMAND;
+        } else {
+            request.setAttribute("message", "Please, enter correct credentials");
+            return WebPages.LOGIN_PAGE;
+        }
     }
 }

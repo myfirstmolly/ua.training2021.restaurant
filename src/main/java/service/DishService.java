@@ -3,19 +3,17 @@ package service;
 import entities.Dish;
 import util.Page;
 
+import java.util.Optional;
+
 public interface DishService {
 
     Page<Dish> findAll(int page);
 
-    Page<Dish> findAllSortedByName(int page);
-
-    Page<Dish> findAllSortedByPrice(int page);
-
-    Page<Dish> findAllSortedByCategory(int page);
+    Page<Dish> findAllOrderBy(int page, String orderBy);
 
     Page<Dish> findAllByCategoryId(int id, int page);
 
-    Dish findById(int id);
+    Optional<Dish> findById(int id);
 
     void add(Dish dish);
 

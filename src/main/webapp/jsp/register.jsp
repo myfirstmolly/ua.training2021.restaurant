@@ -14,14 +14,14 @@
 <header>
     <nav>
         <ul class="nav_links">
-            <li><a href="api?command=menu#menu">Menu</a></li>
+            <li><a href="${pageContext.request.contextPath}/api?command=menu#menu">Menu</a></li>
         </ul>
     </nav>
     <a href="${pageContext.request.contextPath}/jsp/login.jsp"><button>Login</button></a>
 </header>
 <div class="content">
     <h2>Please, enter<br>your credentials...</h2>
-    <form method="POST" action="api?command=register">
+    <form method="POST" action="${pageContext.request.contextPath}/api?command=register">
         <input type="text" name="name" class="input_field" placeholder="John Doe">
         <input type="email" name="email" class="input_field" placeholder="johnDoe@gmail.com">
         <input type="tel" name="phone" class="input_field" placeholder="+38(067)123-45-67">

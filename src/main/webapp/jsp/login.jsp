@@ -13,7 +13,7 @@
 <header>
     <nav>
         <ul class="nav_links">
-            <li><a href="api?command=menu">Menu</a></li>
+            <li><a href="${pageContext.request.contextPath}/api?command=menu">Menu</a></li>
         </ul>
     </nav>
     <a href="${pageContext.request.contextPath}/jsp/register.jsp">
@@ -22,10 +22,11 @@
 </header>
 <div class="content">
     <h2>Please, enter<br>your credentials...</h2>
-    <form method="POST" action="api">
+    <form method="POST" action="${pageContext.request.contextPath}/api">
         <input type="hidden" name="command" value="login">
         <input type="text" name="login" class="input_field" placeholder="login">
         <input type="password" name="password" class="input_field" placeholder="password">
+        <p class="warning">${message}</p>
         <input class="button" type="submit" value="Login">
     </form>
 </div>

@@ -38,7 +38,7 @@ public final class DishDaoImpl extends DaoUtils<Dish> implements DishDao {
     @Override
     public Page<Dish> findAll(int limit, int index) {
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
-        String sql = s.setSelect().setLimit().setOffset().build();
+        String sql = s.setSelect().setOrderBy("id desc").setLimit().setOffset().build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
         return super.getPage(limit, index, sql);
     }

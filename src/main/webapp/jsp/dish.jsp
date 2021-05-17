@@ -15,21 +15,27 @@
     <nav>
         <ul class="nav_links">
             <li><a href="api?command=menu#menu">Menu</a></li>
-            <c:if test="${isUser}">
+            <c:if test="${role.name == 'CUSTOMER'}">
                 <li><a href="api?command=cart">Cart</a></li>
             </c:if>
-            <c:if test="${isAdmin}">
+            <c:if test="${role.name == 'MANAGER'}">
                 <li><a href="api?command=addDish">Add dish</a></li>
                 <li><a href="api?command=orders">Orders</a></li>
             </c:if>
         </ul>
     </nav>
-    <a href="${pageContext.request.contextPath}/jsp/login.jsp">
-        <button>Login</button>
-    </a>
-    <a href="api?command=logout" hidden>
-        <button>Logout</button>
-    </a>
+    <c:choose>
+        <c:when test="${role == null}">
+            <a href="/restaurant">
+                <button>Login</button>
+            </a>
+        </c:when>
+        <c:otherwise>
+            <a href="api?command=logout">
+                <button>Logout</button>
+            </a>
+        </c:otherwise>
+    </c:choose>
 </header>
 <div class="content">
     <div class="dish">
@@ -42,16 +48,20 @@
                 <p>${dish.description}</p>
             </div>
             <h4>${dish.price/100}</h4>
-            <form method="POST" action="api">
-                <input type="hidden" name="command" value="addToCart">
-                <input type="hidden" value="${dish.id}">
-                <button type="submit">Add to cart</button>
-            </form>
-            <form method="POST" action="api" hidden>
-                <input type="hidden" name="command" value="deleteDish">
-                <input type="hidden" value="${dish.id}">
-                <button>Delete</button>
-            </form>
+            <c:if test="${role.name == 'CUSTOMER'}">
+                <form method="POST" action="api">
+                    <input type="hidden" name="command" value="addToCart">
+                    <input type="hidden" name="dish" value="${dish.id}">
+                    <button type="submit">Add to cart</button>
+                </form>
+            </c:if>
+            <c:if test="${role.name == 'MANAGER'}">
+                <form method="POST" action="api" hidden>
+                    <input type="hidden" name="command" value="deleteDish">
+                    <input type="hidden" value="${dish.id}">
+                    <button>Delete</button>
+                </form>
+            </c:if>
         </div>
     </div>
 </div>

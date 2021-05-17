@@ -59,7 +59,7 @@ public class DaoUtils<T extends Entity> {
         String statement = b.setDelete().setWhere("id").build();
         logger.debug("sql: " + statement);
         try (Connection con = dbManager.getConnection();
-                PreparedStatement ps = con.prepareStatement(statement)) {
+             PreparedStatement ps = con.prepareStatement(statement)) {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException ex) {
@@ -110,8 +110,8 @@ public class DaoUtils<T extends Entity> {
      */
     public Optional<T> getOptional(String statement, Object... values) {
         logger.debug("sql: " + statement);
-        try (PreparedStatement ps = dbManager.getConnection()
-                .prepareStatement(statement)) {
+        try (Connection con = dbManager.getConnection();
+             PreparedStatement ps = con.prepareStatement(statement)) {
             for (int i = 1; i <= values.length; i++)
                 ps.setObject(i, values[i - 1]);
 
@@ -136,7 +136,7 @@ public class DaoUtils<T extends Entity> {
         List<T> entries = new ArrayList<>();
 
         try (Connection con = dbManager.getConnection();
-                PreparedStatement ps = con.prepareStatement(statement)) {
+             PreparedStatement ps = con.prepareStatement(statement)) {
             for (int i = 1; i <= values.length; i++)
                 ps.setObject(i, values[i - 1]);
 
@@ -163,7 +163,7 @@ public class DaoUtils<T extends Entity> {
 
         logger.debug("sql: " + saveStmt);
         try (Connection con = dbManager.getConnection();
-                PreparedStatement ps = con.prepareStatement(saveStmt, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement ps = con.prepareStatement(saveStmt, Statement.RETURN_GENERATED_KEYS)) {
             for (int i = 1; i <= values.length; i++) {
                 ps.setObject(i, values[i - 1]);
             }
@@ -188,7 +188,7 @@ public class DaoUtils<T extends Entity> {
 
         logger.debug("sql: " + updateStmt);
         try (Connection con = dbManager.getConnection();
-                PreparedStatement ps = con.prepareStatement(updateStmt)) {
+             PreparedStatement ps = con.prepareStatement(updateStmt)) {
             for (int i = 1; i <= values.length; i++) {
                 ps.setObject(i, values[i - 1]);
             }
@@ -218,7 +218,7 @@ public class DaoUtils<T extends Entity> {
         String count = sb.toString();
         logger.debug("sql: " + count);
         try (Connection con = dbManager.getConnection();
-                PreparedStatement ps = con.prepareStatement(count)) {
+             PreparedStatement ps = con.prepareStatement(count)) {
             for (int i = 1; i <= values.length; i++) {
                 ps.setObject(i, values[i - 1]);
             }

@@ -6,11 +6,11 @@ import dao.impl.RequestDaoImpl;
 import dao.impl.RequestItemDaoImpl;
 import database.DBManager;
 import entities.*;
-import exceptions.ObjectNotFoundException;
 import service.RequestService;
 import util.Page;
 
 import java.util.List;
+import java.util.Optional;
 
 public class RequestServiceImpl implements RequestService {
 
@@ -24,8 +24,8 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public Page<Request> findAllByCustomerId(int id, int page) {
-        return requestDao.findAllByUserId(id, LIMIT, LIMIT * (page - 1));
+    public Page<Request> findAllByUserId(int id, int page) {
+        return requestDao.findAllByUserId(id, LIMIT, page);
     }
 
     @Override
@@ -34,8 +34,13 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public Request findById(int id) {
-        return requestDao.findById(id).orElseThrow(ObjectNotFoundException::new);
+    public List<Request> findAllByUserAndStatus(User user, Status status) {
+        return requestDao.findAllByUserAndStatus(user.getId(), Status.OPENED.toInt());
+    }
+
+    @Override
+    public Optional<Request> findById(int id) {
+        return requestDao.findById(id);
     }
 
     @Override
@@ -61,30 +66,11 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public void setRequestPending(int requestId) {
-        Request request = findById(requestId);
-        request.setStatus(Status.PENDING);
-        requestDao.update(request);
-    }
-
-    @Override
-    public void setRequestCooking(int requestId) {
-        Request request = findById(requestId);
-        request.setStatus(Status.COOKING);
-        requestDao.update(request);
-    }
-
-    @Override
-    public void setRequestDelivering(int requestId) {
-        Request request = findById(requestId);
-        request.setStatus(Status.DELIVERING);
-        requestDao.update(request);
-    }
-
-    @Override
-    public void setRequestDone(int requestId) {
-        Request request = findById(requestId);
-        request.setStatus(Status.DONE);
+    public void setRequestStatus(int requestId, Status status) {
+        if (!findById(requestId).isPresent())
+            return;
+        Request request = findById(requestId).get();
+        request.setStatus(status);
         requestDao.update(request);
     }
 

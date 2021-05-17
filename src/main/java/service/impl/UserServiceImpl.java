@@ -7,6 +7,8 @@ import entities.User;
 import exceptions.ObjectNotFoundException;
 import service.UserService;
 
+import java.util.Optional;
+
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
@@ -21,8 +23,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findById(int id) {
-        return userDao.findById(id).orElseThrow(ObjectNotFoundException::new);
+    public Optional<User> findById(int id) {
+        return userDao.findById(id);
     }
 
     @Override

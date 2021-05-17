@@ -16,21 +16,27 @@
     <nav>
         <ul class="nav_links">
             <li><a href="api?command=menu#menu">Menu</a></li>
-            <c:if test="${isUser}">
+            <c:if test="${role.name == 'CUSTOMER'}">
                 <li><a href="api?command=cart">Cart</a></li>
             </c:if>
-            <c:if test="${isAdmin}">
+            <c:if test="${role.name == 'MANAGER'}">
                 <li><a href="api?command=addDish">Add dish</a></li>
                 <li><a href="api?command=orders">Orders</a></li>
             </c:if>
         </ul>
     </nav>
-    <a href="${pageContext.request.contextPath}/jsp/login.jsp">
-        <button>Login</button>
-    </a>
-    <a href="api?command=logout" hidden>
-        <button>Logout</button>
-    </a>
+    <c:choose>
+        <c:when test="${role == null}">
+            <a href="/restaurant">
+                <button>Login</button>
+            </a>
+        </c:when>
+        <c:otherwise>
+            <a href="api?command=logout">
+                <button>Logout</button>
+            </a>
+        </c:otherwise>
+    </c:choose>
 </header>
 <div class="content">
     <div class="main_banner">
@@ -43,16 +49,16 @@
             <div class="dropdown">
                 <button class="dropbtn">Order by</button>
                 <div class="dropdown-content">
-                    <a href="api?command=orderBy?orderBy=price">Price</a>
-                    <a href="api?command=orderBy?orderBy=category">Category</a>
-                    <a href="api?command=orderBy?orderBy=name">Name</a>
+                    <a href="api?command=menu?orderBy=price">Price</a>
+                    <a href="api?command=menu?orderBy=category">Category</a>
+                    <a href="api?command=menu?orderBy=name">Name</a>
                 </div>
             </div>
             <div class="dropdown">
                 <button class="dropbtn">Category</button>
                 <div class="dropdown-content">
                     <c:forEach var="category" items="${categories}">
-                        <a href="api?command=selectCategory&category=${category.id}">${category.name}</a>
+                        <a href="api?command=menu&category=${category.id}">${category.name}</a>
                     </c:forEach>
                 </div>
             </div>
@@ -77,12 +83,14 @@
             <div class="pagination">
                 <a href="#">&laquo;</a>
                 <c:forEach var="i" begin="1" end="${dishes.totalPages}">
-                    <c:when test="${dishes.pageIndex == i}">
-                        <a class="active" href="api?command=dish?page=${i}"><c:out value="${i}"/></a>
-                    </c:when>
-                    <c:otherwise>
-                        <a href="api?command=dish?page=${i}"><c:out value="${i}"/></a>
-                    </c:otherwise>
+                    <c:choose>
+                        <c:when test="${dishes.pageIndex == i}">
+                            <a class="active" href="api?command=menu?page=${i}"><c:out value="${i}"/></a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="api?command=menu?page=${i}"><c:out value="${i}"/></a>
+                        </c:otherwise>
+                    </c:choose>
                 </c:forEach>
                 <a href="#">&raquo;</a>
             </div>

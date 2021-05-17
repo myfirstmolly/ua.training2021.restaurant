@@ -28,12 +28,7 @@ public final class RequestItem implements Entity {
 
     @Override
     public String toString() {
-        return "BillItem{" +
-                "request=" + requestId +
-                ", dish=" + dish +
-                ", quantity=" + quantity +
-                ", price=" + price +
-                '}';
+        return dish.getName() + " x" + quantity;
     }
 
     @Override

@@ -31,7 +31,7 @@
                 <button class="dropbtn">Select order status:</button>
                 <div class="dropdown-content">
                     <c:forEach var="status" items="${statusList}">
-                        <a href="api?command=filterOrders?order?status=${status}">
+                        <a href="api?command=orders?status=${status}">
                             <c:out value="${status}"/>
                         </a>
                     </c:forEach>
@@ -64,10 +64,10 @@
             <a href="#">&laquo;</a>
             <c:forEach var="i" begin="1" end="${orders.totalPages}">
                 <c:when test="${orders.pageIndex == i}">
-                    <a class="active" href="api?command=dish?page=${i}"><c:out value="${i}"/></a>
+                    <a class="active" href="api?command=orders?page=${i}"><c:out value="${i}"/></a>
                 </c:when>
                 <c:otherwise>
-                    <a href="api?command=dish?page=${i}"><c:out value="${i}"/></a>
+                    <a href="api?command=orders?page=${i}"><c:out value="${i}"/></a>
                 </c:otherwise>
             </c:forEach>
             <a href="#">&raquo;</a>

@@ -4,10 +4,10 @@ import dao.CategoryDao;
 import dao.impl.CategoryDaoImpl;
 import database.DBManager;
 import entities.Category;
-import exceptions.ObjectNotFoundException;
 import service.CategoryService;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CategoryServiceImpl implements CategoryService {
 
@@ -23,8 +23,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category findById(int id) {
-        return categoryDao.findById(id).orElseThrow(ObjectNotFoundException::new);
+    public Optional<Category> findById(int id) {
+        return categoryDao.findById(id);
     }
 
     @Override
