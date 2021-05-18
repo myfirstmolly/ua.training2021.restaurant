@@ -30,24 +30,26 @@
                 <input type="hidden" name="id" value="${requestItem.id}">
                 <div class="menu_img">
                     <button type="submit" class="delete_icon">X</button>
-                    <img src="${pageContext.request.contextPath}/images/${requestItem.dish.imagePath}">
+                    <img src="${requestItem.dish.imagePath}">
                 </div>
             </form>
             <div class="details">
-                <h2>${requestItem.dish.name}</h2>
+                <a href="api?command=dish&id=${requestItem.dish.id}">
+                    <h2>${requestItem.dish.name}</h2>
+                </a>
                 <b>Quantity: </b>
                 <span class="counter">
-                    <a href="api?command=updateQty?update=decrease?id=${requestItem.id}">
+                    <a href="api?command=updateQty&update=decrease?id=${requestItem.id}">
                         <b class="change_button" id="minus"> - </b>
                     </a>
                     <b id="counter"> ${requestItem.quantity} </b>
-                    <a href="api?command=updateQty?update=increase?id=${requestItem.id}">
+                    <a href="api?command=updateQty&update=increase?id=${requestItem.id}">
                         <b class="change_button" id="plus"> + </b>
                     </a>
                 </span>
             </div>
             <div class="price">
-                <h3 class="item_price">${requestItem.price}</h3>
+                <h3 class="item_price">${requestItem.price/100}</h3>
                 <h3 class="currency">uah</h3>
             </div>
         </div>

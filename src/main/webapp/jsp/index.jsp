@@ -20,7 +20,7 @@
                 <li><a href="api?command=cart">Cart</a></li>
             </c:if>
             <c:if test="${role.name == 'MANAGER'}">
-                <li><a href="api?command=addDish">Add dish</a></li>
+                <li><a href="api?command=addDishGetPage">Add dish</a></li>
                 <li><a href="api?command=orders">Orders</a></li>
             </c:if>
         </ul>
@@ -49,16 +49,16 @@
             <div class="dropdown">
                 <button class="dropbtn">Order by</button>
                 <div class="dropdown-content">
-                    <a href="api?command=menu?orderBy=price">Price</a>
-                    <a href="api?command=menu?orderBy=category">Category</a>
-                    <a href="api?command=menu?orderBy=name">Name</a>
+                    <a href="api?command=menu&orderBy=price#menu">Price</a>
+                    <a href="api?command=menu&orderBy=category#menu">Category</a>
+                    <a href="api?command=menu&orderBy=name#menu">Name</a>
                 </div>
             </div>
             <div class="dropdown">
                 <button class="dropbtn">Category</button>
                 <div class="dropdown-content">
                     <c:forEach var="category" items="${categories}">
-                        <a href="api?command=menu&category=${category.id}">${category.name}</a>
+                        <a href="api?command=menu&category=${category.id}#menu">${category.name}</a>
                     </c:forEach>
                 </div>
             </div>
@@ -67,11 +67,11 @@
             <c:forEach var="dish" items="${dishes.content}">
                 <div class="menu_item">
                     <div class="menu_img">
-                        <a href="api?command=dish?id=${dish.id}">
-                            <img src="${pageContext.request.contextPath}/images/${dish.imagePath}">
+                        <a href="api?command=dish&id=${dish.id}">
+                            <img src="${dish.imagePath}">
                         </a>
                     </div>
-                    <a href="api?command=dish?id=${dish.id}">
+                    <a href="api?command=dish&id=${dish.id}">
                         <h3>${dish.name}</h3>
                     </a>
                     <p>${dish.description}</p>
@@ -85,10 +85,10 @@
                 <c:forEach var="i" begin="1" end="${dishes.totalPages}">
                     <c:choose>
                         <c:when test="${dishes.pageIndex == i}">
-                            <a class="active" href="api?command=menu?page=${i}"><c:out value="${i}"/></a>
+                            <a class="active" href="api?command=menu&page=${i}"><c:out value="${i}"/></a>
                         </c:when>
                         <c:otherwise>
-                            <a href="api?command=menu?page=${i}"><c:out value="${i}"/></a>
+                            <a href="api?command=menu&page=${i}"><c:out value="${i}"/></a>
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>

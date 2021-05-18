@@ -4,20 +4,24 @@ import database.DBManager;
 import entities.Request;
 import entities.Status;
 import entities.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import service.RequestService;
 import service.impl.RequestServiceImpl;
 import util.WebPages;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.List;
 
 public class CartCommand implements Command {
+
+    private static final Logger logger = LogManager.getLogger(CartCommand.class);
+
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public String execute(HttpServletRequest request, HttpServletResponse response) {
+        logger.trace("executing cart command");
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         RequestService requestService = new RequestServiceImpl(DBManager.getInstance());

@@ -52,6 +52,14 @@ public final class RequestDaoImpl extends DaoUtils<Request> implements RequestDa
     }
 
     @Override
+    public Page<Request> findAllWhereStatusNotEqual(Status status, int limit, int index) {
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        String sql = s.setSelect().setWhere("status_id!").setLimit().setOrderBy("id desc").setOffset().build();
+        logger.trace("delegated '" + sql + "' to DaoUtils");
+        return super.getPage(limit, index, sql, status.toInt());
+    }
+
+    @Override
     public Page<Request> findAllByStatusId(int id, int limit, int index) {
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
         String sql = s.setSelect().setWhere("status_id").setOrderBy("id desc").setLimit().setOffset().build();

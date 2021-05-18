@@ -3,21 +3,25 @@ package command;
 import database.DBManager;
 import entities.Dish;
 import entities.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import service.DishService;
 import service.RequestService;
 import service.impl.DishServiceImpl;
 import service.impl.RequestServiceImpl;
 import util.WebPages;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 
 public class AddDishToCartCommand implements Command {
+
+    private static final Logger logger = LogManager.getLogger(AddDishToCartCommand.class);
+
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public String execute(HttpServletRequest request, HttpServletResponse response) {
+        logger.trace("executing add dish to cart command");
         int dishId = Integer.parseInt(request.getParameter("dish"));
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");

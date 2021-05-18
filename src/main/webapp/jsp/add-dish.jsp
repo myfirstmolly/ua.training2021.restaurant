@@ -17,7 +17,7 @@
     <nav>
         <ul class="nav_links">
             <li><a href="api?command=menu#menu">Menu</a></li>
-            <li><a href="api?command=addDish">Add dish</a></li>
+            <li><a href="api?command=addDishGetPage">Add dish</a></li>
             <li><a href="api?command=orders">Orders</a></li>
         </ul>
     </nav>
@@ -27,11 +27,13 @@
 </header>
 <div class="content">
     <h1>Add new dish</h1>
-    <form class="dish" action="api" method="POST" enctype="multipart/form-data">
+    <form class="dish" action="api" method="POST">
         <input type="hidden" name="command" value="addDish">
         <input class="text" type="text" name="name" placeholder="Dish name...">
         <textarea name="description" rows="20" placeholder="Dish description"></textarea>
-        <b>Price<input class="price" type="text" name="price" placeholder="80.00"></b>
+        <b>Price
+            <input class="price" type="text" name="price" placeholder="80.00">
+        </b>
         <b>Category
             <select name="category">
                 <c:forEach var="category" items="${categories}">
@@ -39,10 +41,7 @@
                 </c:forEach>
             </select>
         </b>
-        <div class="file-input">
-            <input type="file" id="file" name="image" accept="image/png, image/jpeg" class="file">
-            <label for="file">Select file</label>
-        </div>
+        <input class="text" type="text" name="imagePath" placeholder="google.com/image-link/">
         <button type="submit">Save</button>
     </form>
 </div>

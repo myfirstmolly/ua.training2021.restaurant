@@ -3,22 +3,24 @@ package command;
 import database.DBManager;
 import entities.Category;
 import entities.Dish;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import service.CategoryService;
 import service.DishService;
 import service.impl.CategoryServiceImpl;
 import service.impl.DishServiceImpl;
 import util.WebPages;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
-import java.io.IOException;
-import java.util.UUID;
 
 public class AddDishCommand implements Command {
+
+    private static final Logger logger = LogManager.getLogger(AddDishCommand.class);
+
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public String execute(HttpServletRequest request, HttpServletResponse response) {
+        logger.trace("executing add dish command");
         CategoryService categoryService = new CategoryServiceImpl(DBManager.getInstance());
         DishService dishService = new DishServiceImpl(DBManager.getInstance());
         String name = request.getParameter("name");
@@ -27,14 +29,11 @@ public class AddDishCommand implements Command {
         String priceInt = priceDouble.replace(".", "");
         int price = Integer.parseInt(priceInt);
         int categoryId = Integer.parseInt(request.getParameter("category"));
-        Part filePart = request.getPart("image");
-        String fileName = filePart.getSubmittedFileName() + UUID.randomUUID();
-        for (Part part : request.getParts()) {
-            part.write("/webapp/images/" + fileName);
-        }
         Category category = categoryService.findById(categoryId).get();
-        Dish dish = new Dish(name, price, description, fileName, category);
+        String imagePath = request.getParameter("imagePath");
+        Dish dish = new Dish(name, price, description, imagePath, category);
         dishService.add(dish);
         return WebPages.DISH_COMMAND + dish.getId();
     }
+
 }

@@ -19,7 +19,7 @@
                 <li><a href="api?command=cart">Cart</a></li>
             </c:if>
             <c:if test="${role.name == 'MANAGER'}">
-                <li><a href="api?command=addDish">Add dish</a></li>
+                <li><a href="api?command=addDishGetPage">Add dish</a></li>
                 <li><a href="api?command=orders">Orders</a></li>
             </c:if>
         </ul>
@@ -40,7 +40,7 @@
 <div class="content">
     <div class="dish">
         <div class="menu_img">
-            <img src="${pageContext.request.contextPath}/images/${dish.imagePath}">
+            <img src="${dish.imagePath}">
         </div>
         <div class="dish_description">
             <h3>${dish.name}</h3>
@@ -58,7 +58,7 @@
             <c:if test="${role.name == 'MANAGER'}">
                 <form method="POST" action="api" hidden>
                     <input type="hidden" name="command" value="deleteDish">
-                    <input type="hidden" value="${dish.id}">
+                    <input type="hidden" name="dish" value="${dish.id}">
                     <button>Delete</button>
                 </form>
             </c:if>

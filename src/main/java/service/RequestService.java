@@ -13,6 +13,8 @@ public interface RequestService {
 
     Page<Request> findAllByUserId(int id, int page);
 
+    Page<Request> findAll(int page);
+
     Page<Request> findAllByStatus(int id, int page);
 
     List<Request> findAllByUserAndStatus(User user, Status status);
@@ -22,6 +24,8 @@ public interface RequestService {
     void addRequestItem(User user, Dish dish, int quantity);
 
     void setRequestStatus(int requestId, Status status);
+
+    void deleteRequestItem(int id);
 
     void deleteById(int id);
 

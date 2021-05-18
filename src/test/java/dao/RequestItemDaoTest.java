@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
@@ -23,6 +24,7 @@ public class RequestItemDaoTest {
             "jdbc:mysql://localhost:3306/restaurant_test?serverTimezone=UTC";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "password";
+    Connection[] connectionPool = new Connection[10];
     private RequestItemDao requestItemDao;
     private RequestItem requestItem;
 
@@ -30,7 +32,10 @@ public class RequestItemDaoTest {
     public void before() throws SQLException {
         DBManager dbManager = mock(DBManager.class);
         requestItemDao = new RequestItemDaoImpl(dbManager);
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
+        for (int i = 0; i < connectionPool.length; i++) {
+            connectionPool[i] = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+        }
+        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD), connectionPool);
         DishDao dishDao = new DishDaoImpl(dbManager);
         Dish dish = dishDao.findById(1).get();
         requestItem = new RequestItem(1, dish, 2);
@@ -184,8 +189,11 @@ public class RequestItemDaoTest {
     }
 
     @After
-    public void clearDatabase() {
+    public void clearDatabase() throws SQLException {
         requestItemDao.delete(requestItem);
+        for (Connection c : connectionPool) {
+            c.close();
+        }
     }
 
 }

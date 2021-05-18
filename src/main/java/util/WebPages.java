@@ -4,7 +4,7 @@ public class WebPages {
 
     public static final String MENU_COMMAND = "/api?command=menu";
     public static final String CART_COMMAND = "/api?command=cart";
-    public static final String DISH_COMMAND = "/api?command=dish?id=";
+    public static final String DISH_COMMAND = "/api?command=dish&id=";
 
     public static final String MENU_PAGE = "/jsp/index.jsp";
     public static final String LOGIN_PAGE = "/jsp/login.jsp";

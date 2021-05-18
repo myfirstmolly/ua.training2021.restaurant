@@ -25,11 +25,16 @@ h1 {
     flex-direction: column;
 }
 
+select {
+    width: 30px;
+}
+
 .text,
 textarea {
     background-color: rgba(20, 20, 20, 0.8);
     font-size: 14px;
     margin-bottom: 5px;
+    margin-top: 5px;
     width: 60vh;
     color: white;
     text-align: left;

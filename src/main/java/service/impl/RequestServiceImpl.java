@@ -29,6 +29,11 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    public Page<Request> findAll(int page) {
+        return requestDao.findAllWhereStatusNotEqual(Status.OPENED, LIMIT, page);
+    }
+
+    @Override
     public Page<Request> findAllByStatus(int id, int page) {
         return requestDao.findAllByStatusId(id, LIMIT, page);
     }
@@ -46,23 +51,22 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public void addRequestItem(User user, Dish dish, int quantity) {
         List<Request> requests = requestDao.findAllByUserAndStatus(user.getId(), Status.OPENED.toInt());
-        Request request;
-        if (requests.size() == 0) {
-            request = new Request(user, Status.OPENED);
+        if (requests.isEmpty()) {
+            Request request = new Request(user, Status.OPENED);
+            requestDao.save(request);
             requestItemDao.save(new RequestItem(request.getId(), dish, quantity));
             return;
-        } else {
-            request = requests.get(0);
         }
 
+        Request request = requests.get(0);
         RequestItem requestItem = getDishRequestItem(dish, request.getRequestItems());
         if (requestItem == null) {
             requestItem = new RequestItem(request.getId(), dish, quantity);
+            requestItemDao.save(requestItem);
         } else {
             requestItem.setQuantity(requestItem.getQuantity() + 1);
+            requestItemDao.update(requestItem);
         }
-
-        requestItemDao.save(requestItem);
     }
 
     @Override
@@ -72,6 +76,11 @@ public class RequestServiceImpl implements RequestService {
         Request request = findById(requestId).get();
         request.setStatus(status);
         requestDao.update(request);
+    }
+
+    @Override
+    public void deleteRequestItem(int id) {
+        requestItemDao.deleteById(id);
     }
 
     @Override

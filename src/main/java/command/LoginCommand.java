@@ -8,18 +8,17 @@ import service.UserService;
 import service.impl.UserServiceImpl;
 import util.WebPages;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 
 public class LoginCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(LoginCommand.class);
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public String execute(HttpServletRequest request, HttpServletResponse response) {
+        logger.trace("executing login command");
         UserService userService = new UserServiceImpl(DBManager.getInstance());
         String login = request.getParameter("login");
         String password = request.getParameter("password");

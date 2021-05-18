@@ -1,14 +1,20 @@
 package command;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Commands {
 
+    private static final Logger logger = LogManager.getLogger(Commands.class);
+
     private static final Map<String, Command> commandMap = new HashMap<>();
 
     static {
         commandMap.put("addDish", new AddDishCommand());
+        commandMap.put("addDishGetPage", new AddDishGetPageCommand());
         commandMap.put("addToCart", new AddDishToCartCommand());
         commandMap.put("checkout", new CheckoutCommand());
         commandMap.put("cart", new CartCommand());
@@ -24,6 +30,7 @@ public class Commands {
     }
 
     public static Command getCommand(String name) {
+        logger.info("received command " + name);
         if (!commandMap.containsKey(name)) {
             return null;
         }

@@ -2,6 +2,7 @@
 <html>
 <head>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
     <title>Restaurant - the best in the world</title>
     <meta charset="UTF-8">
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -15,7 +16,7 @@
     <nav>
         <ul class="nav_links">
             <li><a href="api?command=menu#menu">Menu</a></li>
-            <li><a href="api?command=addDish">Add dish</a></li>
+            <li><a href="api?command=addDishGetPage">Add dish</a></li>
             <li><a href="api?command=orders">Orders</a></li>
         </ul>
     </nav>
@@ -26,52 +27,59 @@
 <div class="content">
     <a name="menu"></a>
     <div class="menu">
-        <div class="options">
-            <div class="dropdown">
-                <button class="dropbtn">Select order status:</button>
-                <div class="dropdown-content">
-                    <c:forEach var="status" items="${statusList}">
-                        <a href="api?command=orders?status=${status}">
-                            <c:out value="${status}"/>
-                        </a>
-                    </c:forEach>
+        <c:choose>
+            <c:when test="${fn: length(orders.content) > 0}">
+                <div class="options">
+                    <div class="dropdown">
+                        <button class="dropbtn">Select order status:</button>
+                        <div class="dropdown-content">
+                            <c:forEach var="status" items="${statusList}">
+                                <a href="api?command=orders?status=${status}">
+                                    <c:out value="${status}"/>
+                                </a>
+                            </c:forEach>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <table class="orders">
-            <tr>
-                <th>Order No</th>
-                <th>Username</th>
-                <th>Phone number</th>
-                <th>Order</th>
-                <th>Status</th>
-                <th>Total price</th>
-            </tr>
-            <c:forEach var="order" items="${orders.content}">
-                <tr>
-                    <td>
-                        <a href="api?command=updateStatus?id=${order.id}">${order.id}</a>
-                    </td>
-                    <td>${order.user.username}</td>
-                    <td>${order.user.phoneNumber}</td>
-                    <td>${order.orderItems}</td>
-                    <td>${order.status}Cooking</td>
-                    <td>${order.totalPrice/100} uah</td>
-                </tr>
-            </c:forEach>
-        </table>
-        <div class="pagination">
-            <a href="#">&laquo;</a>
-            <c:forEach var="i" begin="1" end="${orders.totalPages}">
-                <c:when test="${orders.pageIndex == i}">
-                    <a class="active" href="api?command=orders?page=${i}"><c:out value="${i}"/></a>
-                </c:when>
-                <c:otherwise>
-                    <a href="api?command=orders?page=${i}"><c:out value="${i}"/></a>
-                </c:otherwise>
-            </c:forEach>
-            <a href="#">&raquo;</a>
-        </div>
+                <table class="orders">
+                    <tr>
+                        <th>Order No</th>
+                        <th>Username</th>
+                        <th>Phone number</th>
+                        <th>Order</th>
+                        <th>Status</th>
+                        <th>Total price</th>
+                    </tr>
+                    <c:forEach var="order" items="${orders.content}">
+                        <tr>
+                            <td>
+                                <a href="api?command=updateStatus?id=${order.id}">${order.id}</a>
+                            </td>
+                            <td>${order.user.username}</td>
+                            <td>${order.user.phoneNumber}</td>
+                            <td>${order.orderItems}</td>
+                            <td>${order.status}Cooking</td>
+                            <td>${order.totalPrice/100} uah</td>
+                        </tr>
+                    </c:forEach>
+                </table>
+                <div class="pagination">
+                    <a href="#">&laquo;</a>
+                    <c:forEach var="i" begin="1" end="${orders.totalPages}">
+                        <c:choose>
+                            <c:when test="${orders.pageIndex == i}">
+                                <a class="active" href="api?command=orders?page=${i}"><c:out value="${i}"/></a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="api?command=orders?page=${i}"><c:out value="${i}"/></a>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+                    <a href="#">&raquo;</a>
+                </div>
+            </c:when>
+            <c:otherwise><h2 style="color: white">There are no orders...</h2></c:otherwise>
+        </c:choose>
     </div>
 </div>
 </body>
