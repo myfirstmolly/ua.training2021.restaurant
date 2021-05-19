@@ -14,7 +14,7 @@
 <header>
     <nav>
         <ul class="nav_links">
-            <li><a href="${pageContext.request.contextPath}/api?command=menu#menu">Menu</a></li>
+            <li><a href="${pageContext.request.contextPath}/api?command=menu&dropCookies=true#menu">Menu</a></li>
         </ul>
     </nav>
     <a href="${pageContext.request.contextPath}/jsp/login.jsp"><button>Login</button></a>

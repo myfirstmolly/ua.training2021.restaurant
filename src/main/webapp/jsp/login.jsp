@@ -13,7 +13,7 @@
 <header>
     <nav>
         <ul class="nav_links">
-            <li><a href="${pageContext.request.contextPath}/api?command=menu">Menu</a></li>
+            <li><a href="${pageContext.request.contextPath}/api?command=menu&dropCookies=true">Menu</a></li>
         </ul>
     </nav>
     <a href="${pageContext.request.contextPath}/jsp/register.jsp">

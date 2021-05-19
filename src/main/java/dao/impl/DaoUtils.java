@@ -92,14 +92,40 @@ public class DaoUtils<T extends Entity> {
         if (limit < 0 || index < 1)
             throw new IllegalArgumentException();
 
+        logger.info("sql: " + sql);
+        String countTotal = getCountStatement(sql);
+        logger.info("sql: " + countTotal);
+
         int offset = limit * (index - 1);
-        Object[] valuesCopy = new Object[values.length + 2];
-        System.arraycopy(values, 0, valuesCopy, 0, values.length);
-        valuesCopy[values.length] = limit;
-        valuesCopy[values.length + 1] = offset;
-        List<T> entries = getList(sql, valuesCopy);
-        int totalValues = getTotalNumberOfRows(sql, values);
-        int totalPages = totalValues / limit + 1;
+        List<T> entries = new ArrayList<>();
+        int totalValues = 0;
+
+        try (Connection con = dbManager.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             PreparedStatement count = con.prepareStatement(countTotal)) {
+            for (int i = 1; i <= values.length; i++) {
+                ps.setObject(i, values[i - 1]);
+                count.setObject(i, values[i - 1]);
+            }
+            ps.setObject(values.length + 1, limit);
+            ps.setObject(values.length + 2, offset);
+
+            try (ResultSet rs = ps.executeQuery();
+                 ResultSet countRs = count.executeQuery()) {
+                while (rs.next())
+                    entries.add(mapper.map(rs));
+                if (countRs.next())
+                    totalValues = countRs.getInt("count");
+            }
+        } catch (SQLException ex) {
+            logger.error(String.format("cannot retrieve objects from table %s", tableName), ex);
+        }
+
+        int totalPages = totalValues / limit;
+
+        if (totalValues % limit != 0)
+            totalPages ++;
+        logger.debug(totalValues);
         return new Page<>(index, totalPages, entries);
     }
 
@@ -199,42 +225,14 @@ public class DaoUtils<T extends Entity> {
         }
     }
 
-    /**
-     * helper method. it is used by method which returns pages to get total number
-     * of rows selected without limit and offset.
-     *
-     * @param sql    original statement. there is no need to remove 'limit ... offset ...' part of
-     *               this statement by hand, because it is done by this method as well
-     * @param values parameters of statement (not including limit and offset)
-     * @return total number of rows
-     */
-    private int getTotalNumberOfRows(String sql, Object... values) {
+    private String getCountStatement(String sql) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("select count(id) as count from %s ", tableName));
 
         if (sql.contains("where"))
             sb.append(sql, sql.indexOf("where"), sql.indexOf("limit"));
 
-        String count = sb.toString();
-        logger.info("sql: " + count);
-        try (Connection con = dbManager.getConnection();
-             PreparedStatement ps = con.prepareStatement(count)) {
-            for (int i = 1; i <= values.length; i++) {
-                ps.setObject(i, values[i - 1]);
-            }
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next())
-                    return rs.getInt("count");
-            }
-        } catch (SQLException ex) {
-            String msg = String.format("cannot retrieve number of objects in table %s", tableName);
-            logger.error(msg, ex);
-            throw new RuntimeException(msg);
-        }
-
-        String msg = String.format("unable to execute statement '%s'", count);
-        logger.error(msg);
-        throw new RuntimeException(msg);
+        return sb.toString();
     }
 
 }

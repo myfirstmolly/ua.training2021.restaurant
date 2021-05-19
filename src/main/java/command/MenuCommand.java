@@ -13,6 +13,7 @@ import service.impl.DishServiceImpl;
 import util.Page;
 import util.WebPages;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class MenuCommand implements Command {
 
-    private static final Logger logger = LogManager.getLogger(LoginCommand.class);
+    private static final Logger logger = LogManager.getLogger(MenuCommand.class);
     private final DishService dishService = new DishServiceImpl(DBManager.getInstance());
     private final CategoryService categoryService = new CategoryServiceImpl(DBManager.getInstance());
 
@@ -29,7 +30,7 @@ public class MenuCommand implements Command {
         logger.debug("-----executing menu command-----");
         List<Category> categories = categoryService.findAll();
         request.setAttribute("categories", categories);
-        Page<Dish> dishes = getPage(request);
+        Page<Dish> dishes = getPage(request, response);
         request.setAttribute("dishes", dishes);
         setRoleAttributes(request);
         logger.debug("-----successfully executed menu command-----");
@@ -43,7 +44,7 @@ public class MenuCommand implements Command {
         request.setAttribute("role", user.getRole());
     }
 
-    private Page<Dish> getPage(HttpServletRequest request) {
+    private Page<Dish> getPage(HttpServletRequest request, HttpServletResponse response) {
         int pageIndex = 1;
         String pageParam = request.getParameter("page");
         String orderBy = request.getParameter("orderBy");
@@ -52,29 +53,62 @@ public class MenuCommand implements Command {
             pageIndex = Integer.parseInt(pageParam);
         int categoryId;
 
+        Cookie [] cookies = request.getCookies();
+
+        if (request.getParameter("dropCookies") != null &&
+                request.getParameter("dropCookies").equals("true")) {
+            dropCookie(cookies, "orderBy", response);
+            dropCookie(cookies, "category", response);
+            return dishService.findAll(pageIndex);
+        }
+
         if (category != null) {
             categoryId = Integer.parseInt(category);
-            request.getSession().setAttribute("category", categoryId);
-            request.getSession().removeAttribute("orderBy");
+            response.addCookie(new Cookie("category", String.valueOf(categoryId)));
+            logger.debug("created cookie with category id for user");
+            dropCookie(cookies, "orderBy", response);
             return dishService.findAllByCategoryId(categoryId, pageIndex);
         }
 
         if (orderBy != null) {
-            request.getSession().setAttribute("orderBy", orderBy);
-            request.getSession().removeAttribute("category");
+            response.addCookie(new Cookie("orderBy", orderBy));
+            logger.debug("created cookie with orderBy value for user");
+            dropCookie(cookies, "category", response);
             return dishService.findAllOrderBy(pageIndex, orderBy);
         }
 
-        if (request.getSession().getAttribute("category") != null) {
-            categoryId = (Integer) request.getSession().getAttribute("category");
+        if (getCookie("category", cookies) != null) {
+            categoryId = Integer.parseInt(getCookie("category", cookies).getValue());
+            logger.debug("retrieved cookie with category id for user");
             return dishService.findAllByCategoryId(categoryId, pageIndex);
         }
 
-        if (request.getSession().getAttribute("orderBy") != null) {
-            orderBy = (String) request.getSession().getAttribute("orderBy");
+        if (getCookie("orderBy", cookies) != null) {
+            orderBy = getCookie("orderBy", cookies).getValue();
+            logger.debug("retrieved cookie with orderBy value for user");
             return dishService.findAllOrderBy(pageIndex, orderBy);
         }
 
         return dishService.findAll(pageIndex);
     }
+
+    private void dropCookie(Cookie[] cookies, String name, HttpServletResponse response) {
+        for (Cookie c : cookies) {
+            if (c.getName().equals(name)) {
+                c.setMaxAge(0);
+                response.addCookie(c);
+            }
+        }
+    }
+
+    private Cookie getCookie(String name, Cookie [] cookies) {
+        if (cookies == null || cookies.length == 0)
+            return null;
+        for (Cookie c : cookies) {
+            if (c.getName().equals(name))
+                return c;
+        }
+        return null;
+    }
+
 }
