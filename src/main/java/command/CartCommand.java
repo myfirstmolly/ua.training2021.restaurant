@@ -21,7 +21,7 @@ public class CartCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
-        logger.trace("executing cart command");
+        logger.debug("-----executing cart command-----");
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         RequestService requestService = new RequestServiceImpl(DBManager.getInstance());
@@ -29,6 +29,7 @@ public class CartCommand implements Command {
         if (requests.isEmpty())
             request.setAttribute("request", null);
         else request.setAttribute("request", requests.get(0));
+        logger.debug("-----successfully executed cart command-----");
         return WebPages.CART_PAGE;
     }
 }

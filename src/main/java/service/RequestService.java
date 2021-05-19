@@ -1,9 +1,6 @@
 package service;
 
-import entities.Dish;
-import entities.Request;
-import entities.Status;
-import entities.User;
+import entities.*;
 import util.Page;
 
 import java.util.List;
@@ -21,7 +18,11 @@ public interface RequestService {
 
     Optional<Request> findById(int id);
 
+    Optional<RequestItem> findRequestItemById(int id);
+
     void addRequestItem(User user, Dish dish, int quantity);
+
+    void updateRequestItem(RequestItem requestItem);
 
     void setRequestStatus(int requestId, Status status);
 

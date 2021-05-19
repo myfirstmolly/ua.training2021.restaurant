@@ -68,29 +68,26 @@ public class CategoryDaoTest {
     }
 
     @Test
-    public void givenCategoryObjectHasNullNames_whenSaveCalled_thenReturn() throws SQLException {
+    public void givenCategoryObjectHasNullNames_whenSaveCalled_thenReturn() {
         category.setName(null);
         categoryDao.save(category);
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         Assert.assertFalse(categoryDao.findById(category.getId()).isPresent());
     }
 
     @Test
-    public void givenCategoryObjectHasNullName_whenSaveCalled_thenReturn() throws SQLException {
+    public void givenCategoryObjectHasNullName_whenSaveCalled_thenReturn() {
         category.setName(null);
         categoryDao.save(category);
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         Assert.assertFalse(categoryDao.findById(category.getId()).isPresent());
     }
 
     @Test
-    public void givenCategoryObjectHasNegativeId_whenSaveCalled_thenSaveCategoryToDbAndUpdateId() throws SQLException {
+    public void givenCategoryObjectHasNegativeId_whenSaveCalled_thenSaveCategoryToDbAndUpdateId() {
         int id = -10;
         category.setId(id);
         categoryDao.save(category);
         Assert.assertNotEquals(id, category.getId());
         Assert.assertTrue(category.getId() > 0);
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         Assert.assertTrue(categoryDao.findAll().contains(category));
     }
 
@@ -101,12 +98,10 @@ public class CategoryDaoTest {
     }
 
     @Test
-    public void whenUpdateCalled_thenUpdateCategory() throws SQLException {
+    public void whenUpdateCalled_thenUpdateCategory() {
         categoryDao.save(category);
         category.setName("new name");
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         categoryDao.update(category);
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         Category updated = categoryDao.findById(category.getId()).get();
         Assert.assertNotNull(updated);
         Assert.assertEquals("new name", updated.getName());
@@ -115,25 +110,20 @@ public class CategoryDaoTest {
     }
 
     @Test
-    public void givenCategoryHasNullName_whenUpdateCalled_thenReturn() throws SQLException {
+    public void givenCategoryHasNullName_whenUpdateCalled_thenReturn() {
         categoryDao.save(category);
         category.setName(null);
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         categoryDao.update(category);
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         Assert.assertNotNull(categoryDao.findById(category.getId()).get().getName());
     }
 
     @Test
-    public void givenCategoryHasNotExistingId_whenUpdateCalled_thenReturn() throws SQLException {
+    public void givenCategoryHasNotExistingId_whenUpdateCalled_thenReturn() {
         category.setId(1000);
         categoryDao.update(category);
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         Assert.assertFalse(categoryDao.findById(category.getId()).isPresent());
         category.setId(-10);
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         categoryDao.update(category);
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         Assert.assertFalse(categoryDao.findAll().contains(category));
     }
 
@@ -144,46 +134,34 @@ public class CategoryDaoTest {
     }
 
     @Test
-    public void whenDeleteCategoryByIdCalled_thenDeleteCategory() throws SQLException {
+    public void whenDeleteCategoryByIdCalled_thenDeleteCategory() {
         categoryDao.save(category);
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         int size = categoryDao.findAll().size();
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         categoryDao.deleteById(category.getId());
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         Assert.assertFalse(categoryDao.findAll().contains(category));
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         Assert.assertEquals(size - 1, categoryDao.findAll().size());
     }
 
     @Test
-    public void givenCategoryHasNotExistingId_whenDeleteUserByIdCalled_thenReturn() throws SQLException {
+    public void givenCategoryHasNotExistingId_whenDeleteUserByIdCalled_thenReturn() {
         int size = categoryDao.findAll().size();
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         categoryDao.deleteById(100);
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         Assert.assertEquals(size, categoryDao.findAll().size());
     }
 
     @Test
-    public void whenDeleteCategoryCalled_thenDeleteCategory() throws SQLException {
+    public void whenDeleteCategoryCalled_thenDeleteCategory() {
         categoryDao.save(category);
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         int size = categoryDao.findAll().size();
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         categoryDao.delete(category);
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         Assert.assertFalse(categoryDao.findAll().contains(category));
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         Assert.assertEquals(size - 1, categoryDao.findAll().size());
     }
 
     @Test
-    public void givenCategoryObjectIsNull_whenDeleteCalled_thenReturn() throws SQLException {
+    public void givenCategoryObjectIsNull_whenDeleteCalled_thenReturn() {
         int size = categoryDao.findAll().size();
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         categoryDao.delete(null);
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         Assert.assertEquals(size, categoryDao.findAll().size());
     }
 

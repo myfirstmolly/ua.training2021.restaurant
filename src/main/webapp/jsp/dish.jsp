@@ -56,7 +56,7 @@
                 </form>
             </c:if>
             <c:if test="${role.name == 'MANAGER'}">
-                <form method="POST" action="api" hidden>
+                <form method="POST" action="api">
                     <input type="hidden" name="command" value="deleteDish">
                     <input type="hidden" name="dish" value="${dish.id}">
                     <button>Delete</button>

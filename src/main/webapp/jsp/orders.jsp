@@ -46,19 +46,19 @@
                         <th>Order No</th>
                         <th>Username</th>
                         <th>Phone number</th>
-                        <th>Order</th>
+                        <th>Delivery address</th>
                         <th>Status</th>
                         <th>Total price</th>
                     </tr>
                     <c:forEach var="order" items="${orders.content}">
                         <tr>
                             <td>
-                                <a href="api?command=updateStatus?id=${order.id}">${order.id}</a>
+                                <a href="api?command=order&id=${order.id}">${order.id}</a>
                             </td>
-                            <td>${order.user.username}</td>
-                            <td>${order.user.phoneNumber}</td>
-                            <td>${order.orderItems}</td>
-                            <td>${order.status}Cooking</td>
+                            <td>${order.customer.username}</td>
+                            <td>${order.customer.phoneNumber}</td>
+                            <td>${order.deliveryAddress}</td>
+                            <td>${order.status}</td>
                             <td>${order.totalPrice/100} uah</td>
                         </tr>
                     </c:forEach>

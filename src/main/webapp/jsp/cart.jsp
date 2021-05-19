@@ -39,11 +39,11 @@
                 </a>
                 <b>Quantity: </b>
                 <span class="counter">
-                    <a href="api?command=updateQty&update=decrease?id=${requestItem.id}">
+                    <a href="api?command=updateQty&action=decrease&id=${requestItem.id}">
                         <b class="change_button" id="minus"> - </b>
                     </a>
                     <b id="counter"> ${requestItem.quantity} </b>
-                    <a href="api?command=updateQty&update=increase?id=${requestItem.id}">
+                    <a href="api?command=updateQty&action=increase&id=${requestItem.id}">
                         <b class="change_button" id="plus"> + </b>
                     </a>
                 </span>

@@ -12,7 +12,8 @@ public class CheckoutCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
-        logger.trace("executing checkout command");
+        logger.debug("-----executing checkout command-----");
+        logger.debug("-----successfully executed checkout command-----");
         return null;
     }
 }

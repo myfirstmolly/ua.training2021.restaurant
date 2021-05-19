@@ -16,11 +16,12 @@ public class DeleteDishCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
-        logger.trace("executing delete dish command");
+        logger.debug("-----executing delete dish command-----");
         String dishStr = request.getParameter("dish");
         int id = Integer.parseInt(dishStr);
         DishDao dishDao = new DishDaoImpl(DBManager.getInstance());
         dishDao.deleteById(id);
+        logger.debug("-----successfully executed delete dish command-----");
         return WebPages.DEFAULT_PAGE;
     }
 }

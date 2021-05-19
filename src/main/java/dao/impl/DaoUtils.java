@@ -57,7 +57,7 @@ public class DaoUtils<T extends Entity> {
 
         StatementBuilder b = new StatementBuilder(tableName);
         String statement = b.setDelete().setWhere("id").build();
-        logger.debug("sql: " + statement);
+        logger.info("sql: " + statement);
         try (Connection con = dbManager.getConnection();
              PreparedStatement ps = con.prepareStatement(statement)) {
             ps.setInt(1, id);
@@ -109,7 +109,7 @@ public class DaoUtils<T extends Entity> {
      * @return nullable object from table
      */
     public Optional<T> getOptional(String statement, Object... values) {
-        logger.debug("sql: " + statement);
+        logger.info("sql: " + statement);
         try (Connection con = dbManager.getConnection();
              PreparedStatement ps = con.prepareStatement(statement)) {
             for (int i = 1; i <= values.length; i++)
@@ -132,7 +132,7 @@ public class DaoUtils<T extends Entity> {
      * @return list of objects in table
      */
     public List<T> getList(String statement, Object... values) {
-        logger.debug("sql: " + statement);
+        logger.info("sql: " + statement);
         List<T> entries = new ArrayList<>();
 
         try (Connection con = dbManager.getConnection();
@@ -161,7 +161,7 @@ public class DaoUtils<T extends Entity> {
     public void save(T t, String saveStmt, Object... values) {
         if (values.length == 0) return;
 
-        logger.debug("sql: " + saveStmt);
+        logger.info("sql: " + saveStmt);
         try (Connection con = dbManager.getConnection();
              PreparedStatement ps = con.prepareStatement(saveStmt, Statement.RETURN_GENERATED_KEYS)) {
             for (int i = 1; i <= values.length; i++) {
@@ -186,7 +186,7 @@ public class DaoUtils<T extends Entity> {
     public void update(String updateStmt, Object... values) {
         if (values.length == 0) return;
 
-        logger.debug("sql: " + updateStmt);
+        logger.info("sql: " + updateStmt);
         try (Connection con = dbManager.getConnection();
              PreparedStatement ps = con.prepareStatement(updateStmt)) {
             for (int i = 1; i <= values.length; i++) {
@@ -216,7 +216,7 @@ public class DaoUtils<T extends Entity> {
             sb.append(sql, sql.indexOf("where"), sql.indexOf("limit"));
 
         String count = sb.toString();
-        logger.debug("sql: " + count);
+        logger.info("sql: " + count);
         try (Connection con = dbManager.getConnection();
              PreparedStatement ps = con.prepareStatement(count)) {
             for (int i = 1; i <= values.length; i++) {

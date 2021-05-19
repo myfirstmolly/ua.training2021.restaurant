@@ -16,10 +16,11 @@ public class DeleteRequestItemCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
-        logger.trace("executing delete request command");
+        logger.debug("-----executing delete request command-----");
         int id = Integer.parseInt(request.getParameter("id"));
         RequestService requestService = new RequestServiceImpl(DBManager.getInstance());
         requestService.deleteRequestItem(id);
+        logger.debug("-----successfully executed delete request command-----");
         return WebPages.CART_COMMAND;
     }
 }

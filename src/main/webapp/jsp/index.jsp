@@ -81,18 +81,18 @@
         </div>
         <c:if test="${dishes.totalPages > 1}">
             <div class="pagination">
-                <a href="#">&laquo;</a>
+                <a href="api?command=menu&page=${dishes.pageIndex - 1}#menu">&laquo;</a>
                 <c:forEach var="i" begin="1" end="${dishes.totalPages}">
                     <c:choose>
                         <c:when test="${dishes.pageIndex == i}">
-                            <a class="active" href="api?command=menu&page=${i}"><c:out value="${i}"/></a>
+                            <a class="active" href="api?command=menu&page=${i}#menu"><c:out value="${i}"/></a>
                         </c:when>
                         <c:otherwise>
-                            <a href="api?command=menu&page=${i}"><c:out value="${i}"/></a>
+                            <a href="api?command=menu&page=${i}#menu"><c:out value="${i}"/></a>
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
-                <a href="#">&raquo;</a>
+                <a href="api?command=menu&page=${dishes.pageIndex + 1}#menu">&raquo;</a>
             </div>
         </c:if>
     </div>

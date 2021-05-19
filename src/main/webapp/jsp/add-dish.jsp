@@ -30,6 +30,7 @@
     <form class="dish" action="api" method="POST">
         <input type="hidden" name="command" value="addDish">
         <input class="text" type="text" name="name" placeholder="Dish name...">
+        <input class="text" type="text" name="imagePath" placeholder="google.com/image-link/">
         <textarea name="description" rows="20" placeholder="Dish description"></textarea>
         <b>Price
             <input class="price" type="text" name="price" placeholder="80.00">
@@ -41,7 +42,6 @@
                 </c:forEach>
             </select>
         </b>
-        <input class="text" type="text" name="imagePath" placeholder="google.com/image-link/">
         <button type="submit">Save</button>
     </form>
 </div>

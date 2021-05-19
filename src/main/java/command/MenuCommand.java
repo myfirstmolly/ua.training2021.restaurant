@@ -26,12 +26,13 @@ public class MenuCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
-        logger.trace("executing menu command");
+        logger.debug("-----executing menu command-----");
         List<Category> categories = categoryService.findAll();
         request.setAttribute("categories", categories);
         Page<Dish> dishes = getPage(request);
         request.setAttribute("dishes", dishes);
         setRoleAttributes(request);
+        logger.debug("-----successfully executed menu command-----");
         return WebPages.MENU_PAGE;
     }
 
@@ -51,13 +52,29 @@ public class MenuCommand implements Command {
             pageIndex = Integer.parseInt(pageParam);
         int categoryId;
 
-        if (orderBy == null) {
-            if (category == null) {
-                return dishService.findAll(pageIndex);
-            }
+        if (category != null) {
             categoryId = Integer.parseInt(category);
+            request.getSession().setAttribute("category", categoryId);
+            request.getSession().removeAttribute("orderBy");
             return dishService.findAllByCategoryId(categoryId, pageIndex);
         }
-        return dishService.findAllOrderBy(pageIndex, orderBy);
+
+        if (orderBy != null) {
+            request.getSession().setAttribute("orderBy", orderBy);
+            request.getSession().removeAttribute("category");
+            return dishService.findAllOrderBy(pageIndex, orderBy);
+        }
+
+        if (request.getSession().getAttribute("category") != null) {
+            categoryId = (Integer) request.getSession().getAttribute("category");
+            return dishService.findAllByCategoryId(categoryId, pageIndex);
+        }
+
+        if (request.getSession().getAttribute("orderBy") != null) {
+            orderBy = (String) request.getSession().getAttribute("orderBy");
+            return dishService.findAllOrderBy(pageIndex, orderBy);
+        }
+
+        return dishService.findAll(pageIndex);
     }
 }

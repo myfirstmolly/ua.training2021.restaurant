@@ -12,7 +12,7 @@ import java.util.Optional;
 public class DishServiceImpl implements DishService {
 
     private final DishDao dishDao;
-    private final int LIMIT = 18;
+    private final int LIMIT = 12;
 
     public DishServiceImpl(DBManager dbManager) {
         dishDao = new DishDaoImpl(dbManager);

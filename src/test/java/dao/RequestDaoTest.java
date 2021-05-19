@@ -25,7 +25,7 @@ public class RequestDaoTest {
             "jdbc:mysql://localhost:3306/restaurant_test?serverTimezone=UTC";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "password";
-    DBManager dbManager = mock(DBManager.class);
+    private final DBManager dbManager = mock(DBManager.class);
     private RequestDao requestDao;
     private Request request;
     private List<Request> requests;

@@ -20,7 +20,7 @@ public class AddDishCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
-        logger.trace("executing add dish command");
+        logger.debug("-----executing add dish command-----");
         CategoryService categoryService = new CategoryServiceImpl(DBManager.getInstance());
         DishService dishService = new DishServiceImpl(DBManager.getInstance());
         String name = request.getParameter("name");
@@ -33,6 +33,7 @@ public class AddDishCommand implements Command {
         String imagePath = request.getParameter("imagePath");
         Dish dish = new Dish(name, price, description, imagePath, category);
         dishService.add(dish);
+        logger.debug("-----successfully executed add dish command-----");
         return WebPages.DISH_COMMAND + dish.getId();
     }
 

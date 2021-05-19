@@ -21,7 +21,7 @@ public class AddDishToCartCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
-        logger.trace("executing add dish to cart command");
+        logger.debug("-----executing add dish to cart command-----");
         int dishId = Integer.parseInt(request.getParameter("dish"));
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
@@ -29,6 +29,7 @@ public class AddDishToCartCommand implements Command {
         DishService dishService = new DishServiceImpl(DBManager.getInstance());
         Dish dish = dishService.findById(dishId).get();
         requestService.addRequestItem(user, dish, 1);
-        return WebPages.CART_COMMAND;
+        logger.debug("-----successfully executed add dish to cart command-----");
+        return WebPages.DISH_COMMAND + dishId;
     }
 }

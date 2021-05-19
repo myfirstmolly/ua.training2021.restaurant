@@ -14,10 +14,13 @@ public class LogoutCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
-        logger.trace("executing logout command");
+        logger.debug("-----executing logout command-----");
         User user = (User) request.getSession().getAttribute("user");
-        logger.info(String.format("user %s logged out", user.getUsername()));
-        request.getSession().invalidate();
+        if (user != null) {
+            request.getSession().invalidate();
+            logger.info(String.format("user %s logged out", user.getUsername()));
+        }
+        logger.debug("-----successfully executed logout command-----");
         return WebPages.DEFAULT_PAGE;
     }
 }

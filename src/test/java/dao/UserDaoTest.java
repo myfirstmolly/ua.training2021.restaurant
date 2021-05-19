@@ -23,17 +23,13 @@ public class UserDaoTest {
             "jdbc:mysql://localhost:3306/restaurant_test?serverTimezone=UTC";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "password";
-    private final Connection[] connectionPool = new Connection[10];
     private UserDao userDao;
     private User user;
 
     @Before
     public void before() throws SQLException {
         DBManager dbManager = mock(DBManager.class);
-        for (int i = 0; i < connectionPool.length; i++) {
-            connectionPool[i] = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-        }
-        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD), connectionPool);
+        when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         userDao = new UserDaoImpl(dbManager);
         user = new User("test", "test", "test",
                 "test", "test", Role.CUSTOMER);
@@ -219,11 +215,8 @@ public class UserDaoTest {
     }
 
     @After
-    public void clearDatabase() throws SQLException {
+    public void clearDatabase() {
         userDao.delete(user);
-        for (Connection c : connectionPool) {
-            c.close();
-        }
     }
 
 }

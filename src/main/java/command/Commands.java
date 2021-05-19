@@ -14,7 +14,7 @@ public class Commands {
 
     static {
         commandMap.put("addDish", new AddDishCommand());
-        commandMap.put("addDishGetPage", new AddDishGetPageCommand());
+        commandMap.put("addDishGetPage", new AddDishPageCommand());
         commandMap.put("addToCart", new AddDishToCartCommand());
         commandMap.put("checkout", new CheckoutCommand());
         commandMap.put("cart", new CartCommand());
@@ -24,6 +24,7 @@ public class Commands {
         commandMap.put("login", new LoginCommand());
         commandMap.put("logout", new LogoutCommand());
         commandMap.put("menu", new MenuCommand());
+        commandMap.put("order", new RequestCommand());
         commandMap.put("orders", new RequestsCommand());
         commandMap.put("updateStatus", new UpdateOrderStatusCommand());
         commandMap.put("updateQty", new UpdateRequestItemQtyCommand());

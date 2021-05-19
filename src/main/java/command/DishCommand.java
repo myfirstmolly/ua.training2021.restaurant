@@ -18,7 +18,7 @@ public class DishCommand implements Command {
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
-        logger.trace("executing dish command");
+        logger.debug("-----executing dish command-----");
         int id = Integer.parseInt(request.getParameter("id"));
         DishService dishService = new DishServiceImpl(DBManager.getInstance());
         Dish dish = dishService.findById(id).get();
@@ -26,6 +26,7 @@ public class DishCommand implements Command {
         if (user != null)
             request.setAttribute("role", user.getRole());
         request.setAttribute("dish", dish);
+        logger.debug("-----successfully executed dish command-----");
         return WebPages.DISH_PAGE;
     }
 }

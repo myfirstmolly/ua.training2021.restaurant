@@ -6,14 +6,15 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class UpdateOrderStatusCommand implements Command {
+public class RequestCommand implements Command {
 
-    private static final Logger logger = LogManager.getLogger(UpdateOrderStatusCommand.class);
+    private static final Logger logger = LogManager.getLogger(RequestCommand.class);
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
-        logger.debug("-----executing update order status command-----");
-        logger.debug("-----successfully executed update order status command-----");
+        logger.debug("-----executing order command-----");
+        logger.debug("-----successfully executed order command-----");
         return null;
     }
+
 }

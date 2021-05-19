@@ -49,6 +49,11 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    public Optional<RequestItem> findRequestItemById(int id) {
+        return requestItemDao.findById(id);
+    }
+
+    @Override
     public void addRequestItem(User user, Dish dish, int quantity) {
         List<Request> requests = requestDao.findAllByUserAndStatus(user.getId(), Status.OPENED.toInt());
         if (requests.isEmpty()) {
@@ -67,6 +72,11 @@ public class RequestServiceImpl implements RequestService {
             requestItem.setQuantity(requestItem.getQuantity() + 1);
             requestItemDao.update(requestItem);
         }
+    }
+
+    @Override
+    public void updateRequestItem(RequestItem requestItem) {
+        requestItemDao.update(requestItem);
     }
 
     @Override

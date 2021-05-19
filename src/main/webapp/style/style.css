@@ -207,6 +207,7 @@ h1 {
     margin-top: 20px;
     margin-bottom: 10px;
     font-size: 18pt;
+    text-align: center;
     transition: all 0.3s ease 0s;
 }
 
