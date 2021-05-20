@@ -31,7 +31,7 @@ public class Commands {
         commandMap.put("register", new RegisterCommand());
         commandMap.put("order", new RequestCommand());
         commandMap.put("orders", new RequestsCommand());
-        commandMap.put("updateStatus", new UpdateOrderStatusCommand());
+        commandMap.put("updateStatus", new UpdateRequestStatusCommand());
         commandMap.put("updateQty", new UpdateRequestItemQtyCommand());
     }
 
@@ -42,9 +42,9 @@ public class Commands {
      * Command, which is MenuCommand
      */
     public static Command getCommand(String name) {
-        logger.info("received command " + name);
+        logger.debug("received command " + name);
         if (!commandMap.containsKey(name)) {
-            logger.info(String.format("received unknown command %s, switching to default", name));
+            logger.debug(String.format("received unknown command %s, switching to default", name));
             return commandMap.get("default");
         }
         return commandMap.get(name);

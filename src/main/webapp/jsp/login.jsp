@@ -10,7 +10,6 @@
 </head>
 
 <body>
-<%request.getSession().invalidate();%>
 <header>
     <nav>
         <ul class="nav_links">

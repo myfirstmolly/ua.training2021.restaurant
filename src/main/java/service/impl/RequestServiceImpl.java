@@ -88,10 +88,20 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public void setRequestStatus(int requestId, Status status) {
+    public void setRequestStatus(int requestId, Status status, User manager) {
         if (!findById(requestId).isPresent())
             return;
         Request request = findById(requestId).get();
+
+        // if manager tries to set request status which is previous to current, do nothing
+        if (status.toInt() <= request.getStatus().toInt())
+            return;
+
+        // setting request status 'COOKING' means that this request is approved by manager
+        if (status.equals(Status.COOKING)) {
+            request.setApprovedBy(manager);
+        }
+
         request.setStatus(status);
         requestDao.update(request);
     }

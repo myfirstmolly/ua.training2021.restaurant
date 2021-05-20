@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class UpdateRequestItemQtyCommand implements Command {
 
-    private static final Logger logger = LogManager.getLogger(UpdateOrderStatusCommand.class);
+    private static final Logger logger = LogManager.getLogger(UpdateRequestStatusCommand.class);
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {

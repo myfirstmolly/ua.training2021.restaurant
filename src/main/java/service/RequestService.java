@@ -90,11 +90,11 @@ public interface RequestService {
 
     /**
      * updates Request status
-     *
-     * @param requestId request unique identifier
+     *  @param requestId request unique identifier
      * @param status    new request status
+     * @param manager      manager who updates status
      */
-    void setRequestStatus(int requestId, Status status);
+    void setRequestStatus(int requestId, Status status, User manager);
 
     /**
      * deletes RequestItem
