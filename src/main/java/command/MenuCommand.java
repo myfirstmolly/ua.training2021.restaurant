@@ -61,7 +61,7 @@ public class MenuCommand implements Command {
     private Page<Dish> getDishPageWithCookies(HttpServletRequest request, HttpServletResponse response,
                                               int pageIndex, String orderBy, String category) {
         int categoryId;
-        Cookie [] cookies = request.getCookies();
+        Cookie[] cookies = request.getCookies();
 
         if (request.getParameter("dropCookies") != null &&
                 request.getParameter("dropCookies").equals("true")) {
@@ -82,7 +82,7 @@ public class MenuCommand implements Command {
             response.addCookie(new Cookie("orderBy", orderBy));
             logger.debug("created cookie with orderBy value for user");
             dropCookie(cookies, "category", response);
-            return dishService.findAllOrderBy(pageIndex, orderBy);
+            return dishService.findAllOrderBy(orderBy, pageIndex);
         }
 
         if (getCookie("category", cookies) != null) {
@@ -94,7 +94,7 @@ public class MenuCommand implements Command {
         if (getCookie("orderBy", cookies) != null) {
             orderBy = getCookie("orderBy", cookies).getValue();
             logger.debug("retrieved cookie with orderBy value for user");
-            return dishService.findAllOrderBy(pageIndex, orderBy);
+            return dishService.findAllOrderBy(orderBy, pageIndex);
         }
 
         return dishService.findAll(pageIndex);
@@ -109,7 +109,7 @@ public class MenuCommand implements Command {
         }
     }
 
-    private Cookie getCookie(String name, Cookie [] cookies) {
+    private Cookie getCookie(String name, Cookie[] cookies) {
         if (cookies == null || cookies.length == 0)
             return null;
         for (Cookie c : cookies) {

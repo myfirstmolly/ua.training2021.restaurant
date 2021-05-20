@@ -4,7 +4,6 @@ import dao.UserDao;
 import dao.impl.UserDaoImpl;
 import database.DBManager;
 import entities.User;
-import exceptions.ObjectNotFoundException;
 import service.UserService;
 
 import java.util.Optional;
@@ -19,7 +18,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByUsername(String username) {
-        return userDao.findByUsername(username).orElseThrow(ObjectNotFoundException::new);
+        return userDao.findByUsername(username).get();
     }
 
     @Override

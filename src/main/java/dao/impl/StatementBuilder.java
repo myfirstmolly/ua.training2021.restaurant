@@ -3,7 +3,7 @@ package dao.impl;
 /**
  * SQL statements builder class
  */
-public class StatementBuilder {
+public final class StatementBuilder {
 
     private final String tableName;
     private final StringBuilder sb;
@@ -63,7 +63,7 @@ public class StatementBuilder {
      * @param columnNames - names of columns to which values are inserted
      * @return StatementBuilder object which contains statement
      * 'update tableName set column_1=?, ..., column_n=?'
-     * @throws IllegalStateException if insert statement is being inserted not in
+     * @throws IllegalStateException if update statement is being inserted not in
      *                               the beginning of sql statement
      */
     public StatementBuilder setUpdate(String... columnNames) {
@@ -77,11 +77,9 @@ public class StatementBuilder {
     }
 
     /**
-     * adds statement 'delete from tableName' to existing one
-     *
      * @return StatementBuilder object which contains statement
      * 'delete from tableName'
-     * @throws IllegalStateException if insert statement is being inserted not in
+     * @throws IllegalStateException if delete statement is being inserted not in
      *                               the beginning of sql statement
      */
     public StatementBuilder setDelete() {
@@ -95,7 +93,7 @@ public class StatementBuilder {
 
 
     /**
-     * adds statement 'order by column_1, ..., column_n' to existing one
+     * adds statement 'order by column_1, ..., column_n' to the existing statement
      *
      * @param columnNames - names of columns by which results should be ordered
      * @return StatementBuilder object
@@ -106,7 +104,7 @@ public class StatementBuilder {
     }
 
     /**
-     * adds statement 'limit=?' to existing one
+     * adds statement 'limit=?' to the existing statement
      *
      * @return StatementBuilder object
      */
@@ -116,7 +114,7 @@ public class StatementBuilder {
     }
 
     /**
-     * adds statement 'offset=?' to existing one
+     * adds statement 'offset=?' to the existing statement
      *
      * @return StatementBuilder object
      */
@@ -126,7 +124,7 @@ public class StatementBuilder {
     }
 
     /**
-     * adds statement 'where column_1=? and ... and column_n=?' to existing one
+     * adds statement 'where column_1=? and ... and column_n=?' to the existing statement
      *
      * @param columnNames - names of columns by which results are filtered
      * @return StatementBuilder object
@@ -134,6 +132,26 @@ public class StatementBuilder {
     public StatementBuilder setWhere(String... columnNames) {
         sb.append(String.format("where %s ", buildString(" and ", columnNames)));
         return this;
+    }
+
+    /**
+     * returns SQL statement to count total number of rows in the table.
+     * NOTE: if SQL statement has limit and offset parameters, they will be deleted
+     * by this method
+     *
+     * @param sql       original SQL statement. if this statement has 'where' parameters,
+     *                  they will not be deleted.
+     * @param tableName name of table
+     * @return SQL count statement
+     */
+    public static String getCountStatement(String sql, String tableName) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("select count(id) as count from %s ", tableName));
+
+        if (sql.contains("where"))
+            sb.append(sql, sql.indexOf("where"), sql.indexOf("limit"));
+
+        return sb.toString();
     }
 
     /**

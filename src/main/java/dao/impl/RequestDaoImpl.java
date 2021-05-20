@@ -13,13 +13,14 @@ import util.Page;
 import java.util.List;
 import java.util.Optional;
 
-public final class RequestDaoImpl extends DaoUtils<Request> implements RequestDao {
+public final class RequestDaoImpl implements RequestDao {
 
     private static final String TABLE_NAME = "request";
     private static final Logger logger = LogManager.getLogger(RequestDaoImpl.class);
+    private final DaoUtils<Request> daoUtils;
 
     public RequestDaoImpl(DBManager dbManager) {
-        super(dbManager, TABLE_NAME, rs -> {
+        daoUtils = new DaoUtils<>(dbManager, TABLE_NAME, rs -> {
             Request request = new Request();
             request.setId(rs.getInt("id"));
             UserDao userDao = new UserDaoImpl(dbManager);
@@ -41,7 +42,7 @@ public final class RequestDaoImpl extends DaoUtils<Request> implements RequestDa
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
         String sql = s.setSelect().setLimit().setOrderBy("id desc").setOffset().build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
-        return super.getPage(limit, index, sql);
+        return daoUtils.getPage(limit, index, sql);
     }
 
     @Override
@@ -49,7 +50,7 @@ public final class RequestDaoImpl extends DaoUtils<Request> implements RequestDa
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
         String sql = s.setSelect().setWhere("customer_id").setOrderBy("id desc").setLimit().setOffset().build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
-        return super.getPage(limit, index, sql, id);
+        return daoUtils.getPage(limit, index, sql, id);
     }
 
     @Override
@@ -57,7 +58,7 @@ public final class RequestDaoImpl extends DaoUtils<Request> implements RequestDa
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
         String sql = s.setSelect().setWhere("status_id!").setOrderBy("id desc").setLimit().setOffset().build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
-        return super.getPage(limit, index, sql, status.toInt());
+        return daoUtils.getPage(limit, index, sql, status.toInt());
     }
 
     @Override
@@ -65,7 +66,7 @@ public final class RequestDaoImpl extends DaoUtils<Request> implements RequestDa
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
         String sql = s.setSelect().setWhere("status_id").setOrderBy("id desc").setLimit().setOffset().build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
-        return super.getPage(limit, index, sql, id);
+        return daoUtils.getPage(limit, index, sql, id);
     }
 
     @Override
@@ -73,7 +74,7 @@ public final class RequestDaoImpl extends DaoUtils<Request> implements RequestDa
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
         String sql = s.setSelect().setWhere("customer_id", "status_id").setLimit().setOffset().build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
-        return super.getPage(limit, index, sql, userId, statusId);
+        return daoUtils.getPage(limit, index, sql, userId, statusId);
     }
 
     @Override
@@ -81,7 +82,23 @@ public final class RequestDaoImpl extends DaoUtils<Request> implements RequestDa
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
         String sql = s.setSelect().setWhere("customer_id", "status_id").build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
-        return super.getOptional(sql, userId, statusId);
+        return daoUtils.getOptional(sql, userId, statusId);
+    }
+
+    @Override
+    public List<Request> findAll() {
+        StatementBuilder b = new StatementBuilder(TABLE_NAME);
+        String sql = b.setSelect().build();
+        logger.trace("delegated '" + sql + "' to DaoUtils");
+        return daoUtils.getList(sql);
+    }
+
+    @Override
+    public Optional<Request> findById(int id) {
+        StatementBuilder b = new StatementBuilder(TABLE_NAME);
+        String sql = b.setSelect().setWhere("id").build();
+        logger.trace("delegated '" + sql + "' to DaoUtils");
+        return daoUtils.getOptional(sql, id);
     }
 
     @Override
@@ -95,7 +112,7 @@ public final class RequestDaoImpl extends DaoUtils<Request> implements RequestDa
         Integer customer = request.getCustomer() == null ? null : request.getCustomer().getId();
         Integer status = request.getStatus() == null ? null : request.getStatus().toInt();
         logger.trace("delegated '" + sql + "' to DaoUtils");
-        super.save(request, sql, customer, status, request.getDeliveryAddress());
+        daoUtils.save(request, sql, customer, status, request.getDeliveryAddress());
     }
 
     @Override
@@ -111,6 +128,23 @@ public final class RequestDaoImpl extends DaoUtils<Request> implements RequestDa
         Integer customer = request.getCustomer() == null ? null : request.getCustomer().getId();
         Integer status = request.getStatus() == null ? null : request.getStatus().toInt();
         Integer approvedBy = request.getApprovedBy() == null ? null : request.getApprovedBy().getId();
-        super.update(sql, customer, status, request.getDeliveryAddress(), approvedBy, request.getId());
+        daoUtils.update(sql, customer, status, request.getDeliveryAddress(), approvedBy, request.getId());
+    }
+
+    @Override
+    public void deleteById(int id) {
+        StatementBuilder b = new StatementBuilder(TABLE_NAME);
+        String sql = b.setDelete().setWhere("id").build();
+        logger.trace("delegated '" + sql + "' to DaoUtils");
+        daoUtils.deleteById(id, sql);
+    }
+
+    @Override
+    public void delete(Request request) {
+        if (request == null) {
+            logger.warn("Cannot delete null object in from table " + TABLE_NAME);
+            return;
+        }
+        deleteById(request.getId());
     }
 }

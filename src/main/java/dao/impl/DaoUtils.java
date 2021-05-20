@@ -15,7 +15,7 @@ import java.util.*;
  *
  * @param <T>
  */
-public class DaoUtils<T extends Entity> {
+public final class DaoUtils<T extends Entity> {
 
     private static final Logger logger = LogManager.getLogger(DaoUtils.class);
     private final String tableName;
@@ -29,79 +29,22 @@ public class DaoUtils<T extends Entity> {
     }
 
     /**
-     * @return list of objects in table
-     */
-    public List<T> findAll() {
-        StatementBuilder b = new StatementBuilder(tableName);
-        String sql = b.setSelect().build();
-        return getList(sql);
-    }
-
-    /**
-     * @param id entity unique identifier
-     * @return nullable object with given id
-     */
-    public Optional<T> findById(int id) {
-        if (id <= 0) return Optional.empty();
-
-        StatementBuilder b = new StatementBuilder(tableName);
-        String sql = b.setSelect().setWhere("id").build();
-        return getOptional(sql, id);
-    }
-
-    /**
-     * @param id entity unique identifier
-     */
-    public void deleteById(int id) {
-        if (id <= 0) return;
-
-        StatementBuilder b = new StatementBuilder(tableName);
-        String statement = b.setDelete().setWhere("id").build();
-        logger.info("sql: " + statement);
-        Connection con = null;
-
-        try {
-            con = dbManager.getConnection();
-            con.setAutoCommit(false);
-            PreparedStatement ps = con.prepareStatement(statement);
-            ps.setInt(1, id);
-            ps.executeUpdate();
-        } catch (SQLException ex) {
-            logger.error(String.format("cannot delete row{id=%s} from table '%s'", id, tableName), ex);
-            rollbackTransaction(con);
-        } finally {
-            commitAndClose(con);
-        }
-    }
-
-    /**
-     * deletes object from table
-     * @param t object to delete
-     */
-    public void delete(T t) {
-        if (t == null) {
-            logger.warn("Cannot delete null object in from table " + tableName);
-            return;
-        }
-        deleteById(t.getId());
-    }
-
-    /**
-     * retrieves limited number of objects from table and returns them as
-     * Page object
+     * finds limited number of objects by executing sql statement passed as method parameter.
+     * returns them as Page object
      *
      * @param limit  maximum number of objects on page
      * @param index  page index. indexation starts from 1
      * @param sql    sql statement
      * @param values parameters of sql statement
      * @return Page object which contains list of retrieved objects
+     * @throws IllegalArgumentException if limit is less than 0 or index is less than 1
      */
     public Page<T> getPage(int limit, int index, String sql, Object... values) {
         if (limit < 0 || index < 1)
             throw new IllegalArgumentException();
 
         logger.info("sql: " + sql);
-        String countTotal = getCountStatement(sql);
+        String countTotal = StatementBuilder.getCountStatement(sql, tableName);
         logger.info("sql: " + countTotal);
 
         int offset = limit * (index - 1);
@@ -109,16 +52,18 @@ public class DaoUtils<T extends Entity> {
         int totalValues = 0;
 
         try (Connection con = dbManager.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
+             PreparedStatement original = con.prepareStatement(sql);
              PreparedStatement count = con.prepareStatement(countTotal)) {
+            // set values for original and count statements
             for (int i = 1; i <= values.length; i++) {
-                ps.setObject(i, values[i - 1]);
+                original.setObject(i, values[i - 1]); //
                 count.setObject(i, values[i - 1]);
             }
-            ps.setObject(values.length + 1, limit);
-            ps.setObject(values.length + 2, offset);
+            // set limit and offset parameters for original statement
+            original.setObject(values.length + 1, limit);
+            original.setObject(values.length + 2, offset);
 
-            try (ResultSet rs = ps.executeQuery();
+            try (ResultSet rs = original.executeQuery();
                  ResultSet countRs = count.executeQuery()) {
                 while (rs.next())
                     entries.add(mapper.map(rs));
@@ -138,7 +83,7 @@ public class DaoUtils<T extends Entity> {
     /**
      * @param statement sql statement
      * @param values    parameters of statement
-     * @return nullable object from table
+     * @return Optional object from table
      */
     public Optional<T> getOptional(String statement, Object... values) {
         logger.info("sql: " + statement);
@@ -161,7 +106,7 @@ public class DaoUtils<T extends Entity> {
     /**
      * @param statement sql statement
      * @param values    parameters of sql statement
-     * @return list of objects in table
+     * @return List of objects
      */
     public List<T> getList(String statement, Object... values) {
         logger.info("sql: " + statement);
@@ -211,9 +156,9 @@ public class DaoUtils<T extends Entity> {
             }
         } catch (SQLException ex) {
             logger.error("exception occurred during statement execution", ex);
-            rollbackTransaction(con);
+            dbManager.rollbackTransaction(con);
         } finally {
-            commitAndClose(con);
+            dbManager.commitAndClose(con);
         }
     }
 
@@ -237,41 +182,32 @@ public class DaoUtils<T extends Entity> {
 
         } catch (SQLException ex) {
             logger.error("exception occurred during statement execution", ex);
-            rollbackTransaction(con);
+            dbManager.rollbackTransaction(con);
         } finally {
-            commitAndClose(con);
+            dbManager.commitAndClose(con);
         }
     }
 
-    private String getCountStatement(String sql) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("select count(id) as count from %s ", tableName));
+    /**
+     * @param id entity unique identifier
+     */
+    public void deleteById(int id, String statement) {
+        if (id <= 0) return;
 
-        if (sql.contains("where"))
-            sb.append(sql, sql.indexOf("where"), sql.indexOf("limit"));
+        logger.info("sql: " + statement);
+        Connection con = null;
 
-        return sb.toString();
-    }
-
-    private void commitAndClose(Connection con) {
         try {
-            if (con != null) {
-                con.commit();
-                con.setAutoCommit(true);
-                con.close();
-            }
+            con = dbManager.getConnection();
+            con.setAutoCommit(false);
+            PreparedStatement ps = con.prepareStatement(statement);
+            ps.setInt(1, id);
+            ps.executeUpdate();
         } catch (SQLException ex) {
-            logger.error("unable to commit transaction and close connection, cause: ", ex);
-        }
-    }
-
-    private void rollbackTransaction(Connection con) {
-        try {
-            logger.error("trying to rollback transaction...");
-            if (con != null)
-                con.rollback();
-        } catch (SQLException e) {
-            logger.error("unable to rollback transaction, cause: ", e);
+            logger.error(String.format("cannot delete row{id=%s} from table '%s'", id, tableName), ex);
+            dbManager.rollbackTransaction(con);
+        } finally {
+            dbManager.commitAndClose(con);
         }
     }
 

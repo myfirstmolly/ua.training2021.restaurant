@@ -7,18 +7,20 @@ import entities.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
  * data access object for user entity
  */
-public final class UserDaoImpl extends DaoUtils<User> implements UserDao {
+public final class UserDaoImpl implements UserDao {
 
     private static final String TABLE_NAME = "user";
     private static final Logger logger = LogManager.getLogger(UserDaoImpl.class);
+    private final DaoUtils<User> daoUtils;
 
     public UserDaoImpl(DBManager dbManager) {
-        super(dbManager, TABLE_NAME, rs -> {
+        daoUtils = new DaoUtils<>(dbManager, TABLE_NAME, rs -> {
             User user = new User();
             user.setId(rs.getInt("id"));
             user.setUsername(rs.getString("username"));
@@ -36,7 +38,23 @@ public final class UserDaoImpl extends DaoUtils<User> implements UserDao {
         StatementBuilder b = new StatementBuilder(TABLE_NAME);
         String sql = b.setSelect().setWhere("username").build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
-        return super.getOptional(sql, username);
+        return daoUtils.getOptional(sql, username);
+    }
+
+    @Override
+    public List<User> findAll() {
+        StatementBuilder b = new StatementBuilder(TABLE_NAME);
+        String sql = b.setSelect().build();
+        logger.trace("delegated '" + sql + "' to DaoUtils");
+        return daoUtils.getList(sql);
+    }
+
+    @Override
+    public Optional<User> findById(int id) {
+        StatementBuilder b = new StatementBuilder(TABLE_NAME);
+        String sql = b.setSelect().setWhere("id").build();
+        logger.trace("delegated '" + sql + "' to DaoUtils");
+        return daoUtils.getOptional(sql, id);
     }
 
     @Override
@@ -48,7 +66,7 @@ public final class UserDaoImpl extends DaoUtils<User> implements UserDao {
         StatementBuilder b = new StatementBuilder(TABLE_NAME);
         String sql = b.setInsert(getParams()).build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
-        super.save(user, sql, user.getUsername(), user.getPassword(), user.getName(),
+        daoUtils.save(user, sql, user.getUsername(), user.getPassword(), user.getName(),
                 user.getPhoneNumber(), user.getEmail(),
                 user.getRole() == null ? null : user.getRole().toInt());
     }
@@ -62,10 +80,27 @@ public final class UserDaoImpl extends DaoUtils<User> implements UserDao {
         StatementBuilder b = new StatementBuilder(TABLE_NAME);
         String sql = b.setUpdate(getParams()).setWhere("id").build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
-        super.update(sql, user.getUsername(), user.getPassword(), user.getName(),
+        daoUtils.update(sql, user.getUsername(), user.getPassword(), user.getName(),
                 user.getPhoneNumber(), user.getEmail(),
                 user.getRole() == null ? null : user.getRole().toInt(),
                 user.getId());
+    }
+
+    @Override
+    public void deleteById(int id) {
+        StatementBuilder b = new StatementBuilder(TABLE_NAME);
+        String sql = b.setDelete().setWhere("id").build();
+        logger.trace("delegated '" + sql + "' to DaoUtils");
+        daoUtils.deleteById(id, sql);
+    }
+
+    @Override
+    public void delete(User user) {
+        if (user == null) {
+            logger.warn("Cannot delete null object in from table " + TABLE_NAME);
+            return;
+        }
+        deleteById(user.getId());
     }
 
     private String[] getParams() {

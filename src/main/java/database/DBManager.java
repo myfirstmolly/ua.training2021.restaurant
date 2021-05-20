@@ -10,6 +10,10 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * DB Manager, works with MySQl.
+ * Implements Singleton pattern.
+ */
 public class DBManager {
 
     private static DBManager dbManager;
@@ -24,6 +28,13 @@ public class DBManager {
         return dbManager;
     }
 
+    /**
+     * Returns DB connection from Connection Pool. To configure
+     * the Date Source and Connections Pool, update
+     * WEB_APP_ROOT/META-INF/context.xml file.
+     *
+     * @return DB connection
+     */
     public Connection getConnection() throws SQLException {
         try {
             Context initialContext = new InitialContext();
@@ -33,6 +44,39 @@ public class DBManager {
         } catch (NamingException ex) {
             logger.error("unable to get connection from the pool");
             throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * commits transaction and closes the connection.
+     * NOTE: this method sets autocommit property to true.
+     *
+     * @param con Connection to commit and close
+     */
+    public void commitAndClose(Connection con) {
+        try {
+            if (con != null) {
+                con.commit();
+                con.setAutoCommit(true);
+                con.close();
+            }
+        } catch (SQLException ex) {
+            logger.error("unable to commit transaction and close connection, cause: ", ex);
+        }
+    }
+
+    /**
+     * rolls back the transaction
+     *
+     * @param con Connection to rollback
+     */
+    public void rollbackTransaction(Connection con) {
+        try {
+            logger.error("trying to rollback transaction...");
+            if (con != null)
+                con.rollback();
+        } catch (SQLException e) {
+            logger.error("unable to rollback transaction, cause: ", e);
         }
     }
 

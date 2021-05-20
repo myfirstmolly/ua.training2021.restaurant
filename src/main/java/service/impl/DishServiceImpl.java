@@ -24,7 +24,7 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public Page<Dish> findAllOrderBy(int page, String orderBy) {
+    public Page<Dish> findAllOrderBy(String orderBy, int page) {
         if ("name".equals(orderBy))
             return dishDao.findAllSortedByName(LIMIT, page);
         if ("price".equals(orderBy))
@@ -45,7 +45,7 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public void add(Dish dish) {
+    public void save(Dish dish) {
         dishDao.save(dish);
     }
 

@@ -37,7 +37,7 @@ public class AddDishCommand implements Command {
         String imagePath = request.getParameter("imagePath");
 
         Dish dish = new Dish(name, price, description, imagePath, category);
-        dishService.add(dish);
+        dishService.save(dish);
         logger.debug("-----successfully executed add dish command-----");
         return WebPages.DISH_COMMAND + dish.getId();
     }

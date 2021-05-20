@@ -28,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void add(Category category) {
+    public void save(Category category) {
         categoryDao.save(category);
     }
 

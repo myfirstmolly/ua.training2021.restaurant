@@ -7,6 +7,14 @@ import java.util.Optional;
 
 public interface RequestService {
 
+    /**
+     * finds limited number of Requests (defined in implementation class)
+     * with given user id and returns them as Page object
+     *
+     * @param id
+     * @param page
+     * @return
+     */
     Page<Request> findAllByUserId(int id, int page);
 
     Page<Request> findAll(int page);
