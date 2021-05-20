@@ -8,6 +8,7 @@ public class WebPages {
 
     public static final String MENU_PAGE = "/jsp/index.jsp";
     public static final String LOGIN_PAGE = "/jsp/login.jsp";
+    public static final String REGISTER_PAGE = "/jsp/register.jsp";
     public static final String CART_PAGE = "/jsp/cart.jsp";
     public static final String DISH_PAGE = "/jsp/dish.jsp";
     public static final String ORDERS_PAGE = "/jsp/orders.jsp";

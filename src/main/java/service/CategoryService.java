@@ -18,7 +18,7 @@ public interface CategoryService {
     List<Category> findAll();
 
     /**
-     * returns category by its id
+     * finds category by its id
      *
      * @param id category unique identifier
      * @return Optional Category object

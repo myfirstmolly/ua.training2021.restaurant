@@ -60,19 +60,23 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public void addRequestItem(User user, Dish dish, int quantity) {
+        // since OPENED status represents dishes in user's cart, each user must have either zero or 1 request
+        // with this status
         Optional<Request> request = requestDao.findFirstByUserAndStatus(user.getId(), Status.OPENED.toInt());
-        if (!request.isPresent()) {
+        if (!request.isPresent()) { // <-- if user wants to add item to cart, but OPENED request doesn't exist yet, it will be created
             Request req = new Request(user, Status.OPENED);
             requestDao.save(req);
             requestItemDao.save(new RequestItem(req.getId(), dish, quantity));
             return;
         }
 
+        // if OPENED request already exists, we need to check if dish that is
+        // being added to cart is there already
         RequestItem requestItem = getDishRequestItem(dish, request.get().getRequestItems());
-        if (requestItem == null) {
+        if (requestItem == null) { // <-- if dish isn't in cart, then it will be added there with quantity equal to param quantity
             requestItem = new RequestItem(request.get().getId(), dish, quantity);
             requestItemDao.save(requestItem);
-        } else {
+        } else { // <-- if dish is in the cart already, then its quantity will be increased.
             requestItem.setQuantity(requestItem.getQuantity() + 1);
             requestItemDao.update(requestItem);
         }

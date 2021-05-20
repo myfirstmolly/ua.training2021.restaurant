@@ -28,6 +28,7 @@ public class Commands {
         commandMap.put("login", new LoginCommand());
         commandMap.put("logout", new LogoutCommand());
         commandMap.put("menu", new MenuCommand());
+        commandMap.put("register", new RegisterCommand());
         commandMap.put("order", new RequestCommand());
         commandMap.put("orders", new RequestsCommand());
         commandMap.put("updateStatus", new UpdateOrderStatusCommand());

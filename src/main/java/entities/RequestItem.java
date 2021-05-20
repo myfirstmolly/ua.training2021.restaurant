@@ -90,10 +90,6 @@ public final class RequestItem implements Entity {
         this.price = price;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }

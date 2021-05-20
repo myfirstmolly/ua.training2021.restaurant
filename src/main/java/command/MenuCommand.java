@@ -55,6 +55,8 @@ public class MenuCommand implements Command {
         String category = request.getParameter("category");
         if (pageParam != null)
             pageIndex = Integer.parseInt(pageParam);
+        if (pageIndex <= 1)
+            pageIndex = 1;
         return getDishPageWithCookies(request, response, pageIndex, orderBy, category);
     }
 
@@ -63,8 +65,7 @@ public class MenuCommand implements Command {
         int categoryId;
         Cookie[] cookies = request.getCookies();
 
-        if (request.getParameter("dropCookies") != null &&
-                request.getParameter("dropCookies").equals("true")) {
+        if (category != null && category.equals("all")) {
             dropCookie(cookies, "orderBy", response);
             dropCookie(cookies, "category", response);
             return dishService.findAll(pageIndex);

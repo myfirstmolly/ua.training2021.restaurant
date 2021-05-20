@@ -15,7 +15,7 @@
 <header>
     <nav>
         <ul class="nav_links">
-            <li><a href="api?command=menu&dropCookies=true#menu">Menu</a></li>
+            <li><a href="api?command=menu#menu">Menu</a></li>
             <c:if test="${role.name == 'CUSTOMER'}">
                 <li><a href="api?command=cart">Cart</a></li>
                 <li><a href="api?command=orders">My Orders</a></li>
@@ -24,6 +24,8 @@
                 <li><a href="api?command=addDishGetPage">Add dish</a></li>
                 <li><a href="api?command=orders">Orders</a></li>
             </c:if>
+            <li><a href="api?command=menu&lang=en#menu">English</a></li>
+            <li><a href="api?command=menu&lang=ukr#menu">Українська</a></li>
         </ul>
     </nav>
     <c:choose>
@@ -58,6 +60,7 @@
             <div class="dropdown">
                 <button class="dropbtn">Category</button>
                 <div class="dropdown-content">
+                    <a href="api?command=menu&category=all#menu">All</a>
                     <c:forEach var="category" items="${categories}">
                         <a href="api?command=menu&category=${category.id}#menu">${category.name}</a>
                     </c:forEach>
@@ -82,7 +85,6 @@
         </div>
         <c:if test="${dishes.totalPages > 1}">
             <div class="pagination">
-                <a href="api?command=menu&page=${dishes.pageIndex - 1}#menu">&laquo;</a>
                 <c:forEach var="i" begin="1" end="${dishes.totalPages}">
                     <c:choose>
                         <c:when test="${dishes.pageIndex == i}">
@@ -93,7 +95,6 @@
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
-                <a href="api?command=menu&page=${dishes.pageIndex + 1}#menu">&raquo;</a>
             </div>
         </c:if>
     </div>

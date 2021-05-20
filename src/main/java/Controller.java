@@ -14,23 +14,21 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(name = "Controller", urlPatterns = "/api")
-@MultipartConfig
 public class Controller extends HttpServlet {
 
     private static final Logger logger = LogManager.getLogger(Controller.class);
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        logger.trace("processing POST request");
         process(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        logger.trace("processing GET request");
         process(request, response);
     }
 
     private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String commandParameter = request.getParameter("command");
+        logger.debug("received command ---> " + commandParameter);
         Command command = Commands.getCommand(commandParameter);
         String page = command.execute(request, response);
         RequestDispatcher dispatcher = request.getRequestDispatcher(page);
