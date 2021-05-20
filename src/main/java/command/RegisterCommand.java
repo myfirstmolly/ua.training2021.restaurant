@@ -20,9 +20,19 @@ import java.util.regex.Pattern;
 public class RegisterCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(RegisterCommand.class);
+
+    // price regex to check whether name starts with capital letter, contains letters only
+    // and its length is between 4 and 32 symbols
     private static final String NAME_REGEX = "\\p{Lu}\\p{L}{3,31}";
+
+    // regex to check if email matches pattern something@something.smth
     private static final String EMAIL_REGEX = "[A-Za-z]+@[A-Za-z]+\\.[a-z]+";
+
+    // phone numbers can only be entered like (xxx)xxx-xx-xx
     private static final String PHONE_REGEX = "\\([0-9]{3}\\)[0-9]{3}-[0-9]{2}-[0-9]{2}";
+
+    // regex to check if username only contains latin letters and its length is
+    // between 4 and 16
     private static final String USERNAME_REGEX = "[A-Za-z]{4,16}";
 
     @Override

@@ -30,11 +30,14 @@
     <form class="dish" action="api" method="POST">
         <input type="hidden" name="command" value="addDish">
         <input class="text" type="text" name="name" placeholder="Dish name...">
+        <p class="warning">${nameMsg}</p>
         <input class="text" type="text" name="imagePath" placeholder="google.com/image-link/">
+        <p class="warning">${imageMsg}</p>
         <textarea name="description" rows="20" placeholder="Dish description"></textarea>
         <b>Price
             <input class="price" type="text" name="price" placeholder="80.00">
         </b>
+        <p class="warning">${priceMsg}</p>
         <b>Category
             <select name="category">
                 <c:forEach var="category" items="${categories}">

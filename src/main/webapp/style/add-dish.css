@@ -19,6 +19,13 @@ h1 {
     align-items: center;
 }
 
+.dish p {
+    color: rgb(255, 46, 64);
+    margin-bottom: 10px;
+    width: 300px;
+    text-align: center;
+}
+
 .form {
     display: flex;
     color: white;
