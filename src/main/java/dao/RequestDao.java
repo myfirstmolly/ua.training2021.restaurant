@@ -4,7 +4,6 @@ import entities.Request;
 import entities.Status;
 import util.Page;
 
-import java.util.List;
 import java.util.Optional;
 
 /**

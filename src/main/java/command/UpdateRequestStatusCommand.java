@@ -1,7 +1,6 @@
 package command;
 
 import database.DBManager;
-import entities.Request;
 import entities.Status;
 import entities.User;
 import org.apache.logging.log4j.LogManager;

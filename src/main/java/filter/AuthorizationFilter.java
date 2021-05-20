@@ -1,7 +1,6 @@
 package filter;
 
 import entities.Role;
-import entities.Status;
 import entities.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

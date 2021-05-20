@@ -6,15 +6,10 @@ import util.WebPages;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.annotation.WebInitParam;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @WebFilter(servletNames = "Controller", filterName = "PasswordEncryptionFilter")
 public class PasswordEncryptionFilter implements Filter {
