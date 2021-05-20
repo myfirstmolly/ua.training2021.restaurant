@@ -14,6 +14,10 @@ import util.WebPages;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * creates a new dish.
+ * available to manager only.
+ */
 public class AddDishCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(AddDishCommand.class);
@@ -31,6 +35,7 @@ public class AddDishCommand implements Command {
         int categoryId = Integer.parseInt(request.getParameter("category"));
         Category category = categoryService.findById(categoryId).get();
         String imagePath = request.getParameter("imagePath");
+
         Dish dish = new Dish(name, price, description, imagePath, category);
         dishService.add(dish);
         logger.debug("-----successfully executed add dish command-----");

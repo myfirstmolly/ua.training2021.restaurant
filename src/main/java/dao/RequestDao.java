@@ -5,6 +5,7 @@ import entities.Status;
 import util.Page;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RequestDao extends CrudDao<Request> {
 
@@ -16,6 +17,8 @@ public interface RequestDao extends CrudDao<Request> {
 
     Page<Request> findAllByStatusId(int id, int limit, int index);
 
-    List<Request> findAllByUserAndStatus(int userId, int statusId);
+    Page<Request> findAllByUserAndStatus(int userId, int statusId, int limit, int index);
+
+    Optional<Request> findFirstByUserAndStatus(int userId, int statusId);
 
 }

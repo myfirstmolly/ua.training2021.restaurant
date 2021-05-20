@@ -6,6 +6,10 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * updates order status.
+ * available to manager only.
+ */
 public class UpdateOrderStatusCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(UpdateOrderStatusCommand.class);

@@ -58,16 +58,24 @@ public class DaoUtils<T extends Entity> {
         StatementBuilder b = new StatementBuilder(tableName);
         String statement = b.setDelete().setWhere("id").build();
         logger.info("sql: " + statement);
-        try (Connection con = dbManager.getConnection();
-             PreparedStatement ps = con.prepareStatement(statement)) {
+        Connection con = null;
+
+        try {
+            con = dbManager.getConnection();
+            con.setAutoCommit(false);
+            PreparedStatement ps = con.prepareStatement(statement);
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException ex) {
             logger.error(String.format("cannot delete row{id=%s} from table '%s'", id, tableName), ex);
+            rollbackTransaction(con);
+        } finally {
+            commitAndClose(con);
         }
     }
 
     /**
+     * deletes object from table
      * @param t object to delete
      */
     public void delete(T t) {
@@ -122,10 +130,8 @@ public class DaoUtils<T extends Entity> {
         }
 
         int totalPages = totalValues / limit;
-
         if (totalValues % limit != 0)
-            totalPages ++;
-        logger.debug(totalValues);
+            totalPages++;
         return new Page<>(index, totalPages, entries);
     }
 
@@ -188,8 +194,11 @@ public class DaoUtils<T extends Entity> {
         if (values.length == 0) return;
 
         logger.info("sql: " + saveStmt);
-        try (Connection con = dbManager.getConnection();
-             PreparedStatement ps = con.prepareStatement(saveStmt, Statement.RETURN_GENERATED_KEYS)) {
+        Connection con = null;
+        try {
+            con = dbManager.getConnection();
+            PreparedStatement ps = con.prepareStatement(saveStmt, Statement.RETURN_GENERATED_KEYS);
+            con.setAutoCommit(false);
             for (int i = 1; i <= values.length; i++) {
                 ps.setObject(i, values[i - 1]);
             }
@@ -201,7 +210,10 @@ public class DaoUtils<T extends Entity> {
                 }
             }
         } catch (SQLException ex) {
-            logger.error(String.format("cannot insert object into table %s", tableName), ex);
+            logger.error("exception occurred during statement execution", ex);
+            rollbackTransaction(con);
+        } finally {
+            commitAndClose(con);
         }
     }
 
@@ -213,15 +225,21 @@ public class DaoUtils<T extends Entity> {
         if (values.length == 0) return;
 
         logger.info("sql: " + updateStmt);
-        try (Connection con = dbManager.getConnection();
-             PreparedStatement ps = con.prepareStatement(updateStmt)) {
+        Connection con = null;
+        try {
+            con = dbManager.getConnection();
+            con.setAutoCommit(false);
+            PreparedStatement ps = con.prepareStatement(updateStmt);
             for (int i = 1; i <= values.length; i++) {
                 ps.setObject(i, values[i - 1]);
             }
             ps.executeUpdate();
 
         } catch (SQLException ex) {
-            logger.error(String.format("cannot update object in table %s", tableName), ex);
+            logger.error("exception occurred during statement execution", ex);
+            rollbackTransaction(con);
+        } finally {
+            commitAndClose(con);
         }
     }
 
@@ -233,6 +251,28 @@ public class DaoUtils<T extends Entity> {
             sb.append(sql, sql.indexOf("where"), sql.indexOf("limit"));
 
         return sb.toString();
+    }
+
+    private void commitAndClose(Connection con) {
+        try {
+            if (con != null) {
+                con.commit();
+                con.setAutoCommit(true);
+                con.close();
+            }
+        } catch (SQLException ex) {
+            logger.error("unable to commit transaction and close connection, cause: ", ex);
+        }
+    }
+
+    private void rollbackTransaction(Connection con) {
+        try {
+            logger.error("trying to rollback transaction...");
+            if (con != null)
+                con.rollback();
+        } catch (SQLException e) {
+            logger.error("unable to rollback transaction, cause: ", e);
+        }
     }
 
 }

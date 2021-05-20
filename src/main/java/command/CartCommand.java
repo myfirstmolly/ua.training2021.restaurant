@@ -13,8 +13,12 @@ import util.WebPages;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.List;
+import java.util.Optional;
 
+/**
+ * returns user's cart page.
+ * available to customer only.
+ */
 public class CartCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(CartCommand.class);
@@ -25,10 +29,14 @@ public class CartCommand implements Command {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         RequestService requestService = new RequestServiceImpl(DBManager.getInstance());
-        List<Request> requests = requestService.findAllByUserAndStatus(user, Status.OPENED);
-        if (requests.isEmpty())
+        Optional<Request> req = requestService.findOneByUserAndStatus(user, Status.OPENED);
+
+        if (!req.isPresent()) {
             request.setAttribute("request", null);
-        else request.setAttribute("request", requests.get(0));
+        } else {
+            request.setAttribute("request", req.get());
+        }
+
         logger.debug("-----successfully executed cart command-----");
         return WebPages.CART_PAGE;
     }

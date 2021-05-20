@@ -32,10 +32,7 @@ public class Controller extends HttpServlet {
     private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String commandParameter = request.getParameter("command");
         Command command = Commands.getCommand(commandParameter);
-        String page = WebPages.DEFAULT_PAGE;
-        if (command != null) {
-            page = command.execute(request, response);
-        }
+        String page = command.execute(request, response);
         RequestDispatcher dispatcher = request.getRequestDispatcher(page);
         dispatcher.forward(request, response);
     }

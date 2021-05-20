@@ -11,7 +11,8 @@ th,
 td {
     border-collapse: collapse;
     text-align: center;
-    border: 1px solid rgba(252, 113, 33, 0.2)
+    border: none;
+    border-bottom: 1px solid rgba(252, 113, 33, 0.2);
 }
 
 h2 {

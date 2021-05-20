@@ -6,6 +6,10 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * updates order status to 'pending'.
+ * available to customer only.
+ */
 public class CheckoutCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(CheckoutCommand.class);

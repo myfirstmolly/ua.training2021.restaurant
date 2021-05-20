@@ -6,6 +6,9 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * commands container
+ */
 public class Commands {
 
     private static final Logger logger = LogManager.getLogger(Commands.class);
@@ -13,6 +16,7 @@ public class Commands {
     private static final Map<String, Command> commandMap = new HashMap<>();
 
     static {
+        commandMap.put("default", new MenuCommand());
         commandMap.put("addDish", new AddDishCommand());
         commandMap.put("addDishGetPage", new AddDishPageCommand());
         commandMap.put("addToCart", new AddDishToCartCommand());
@@ -30,10 +34,17 @@ public class Commands {
         commandMap.put("updateQty", new UpdateRequestItemQtyCommand());
     }
 
+    /**
+     * @param name name of command
+     * @return Command object which executes command with this name.
+     * if command is invalid or null, this method will return default
+     * Command, which is MenuCommand
+     */
     public static Command getCommand(String name) {
         logger.info("received command " + name);
         if (!commandMap.containsKey(name)) {
-            return null;
+            logger.info(String.format("received unknown command %s, switching to default", name));
+            return commandMap.get("default");
         }
         return commandMap.get(name);
     }

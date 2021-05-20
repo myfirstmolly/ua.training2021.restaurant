@@ -19,6 +19,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+/**
+ * returns menu page.
+ * available to all users.
+ */
 public class MenuCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(MenuCommand.class);
@@ -51,8 +55,12 @@ public class MenuCommand implements Command {
         String category = request.getParameter("category");
         if (pageParam != null)
             pageIndex = Integer.parseInt(pageParam);
-        int categoryId;
+        return getDishPageWithCookies(request, response, pageIndex, orderBy, category);
+    }
 
+    private Page<Dish> getDishPageWithCookies(HttpServletRequest request, HttpServletResponse response,
+                                              int pageIndex, String orderBy, String category) {
+        int categoryId;
         Cookie [] cookies = request.getCookies();
 
         if (request.getParameter("dropCookies") != null &&

@@ -144,7 +144,7 @@ public class RequestDaoTest {
         requestDao.save(request);
         when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         List<Request> requests = requestDao.findAllByUserAndStatus
-                (request.getCustomer().getId(), request.getStatus().toInt());
+                (request.getCustomer().getId(), request.getStatus().toInt(), 100, 1).getContent();
         Assert.assertNotNull(requests);
         Assert.assertTrue(requests.contains(request));
     }
@@ -154,7 +154,7 @@ public class RequestDaoTest {
         requestDao.save(request);
         when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         List<Request> requests = requestDao.findAllByUserAndStatus
-                (request.getCustomer().getId(), 100);
+                (request.getCustomer().getId(), 100, 100, 1).getContent();
         Assert.assertNotNull(requests);
         Assert.assertTrue(requests.isEmpty());
     }
@@ -164,7 +164,7 @@ public class RequestDaoTest {
         requestDao.save(request);
         when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         List<Request> requests = requestDao.findAllByUserAndStatus
-                (100, request.getStatus().toInt());
+                (100, request.getStatus().toInt(), 100, 1).getContent();
         Assert.assertNotNull(requests);
         Assert.assertTrue(requests.isEmpty());
     }
@@ -174,7 +174,7 @@ public class RequestDaoTest {
         requestDao.save(request);
         when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         List<Request> requests = requestDao.findAllByUserAndStatus
-                (100, 100);
+                (100, 100, 100, 1).getContent();
         Assert.assertNotNull(requests);
         Assert.assertTrue(requests.isEmpty());
     }

@@ -15,9 +15,15 @@
 <header>
     <nav>
         <ul class="nav_links">
-            <li><a href="api?command=menu#menu">Menu</a></li>
-            <li><a href="api?command=addDishGetPage">Add dish</a></li>
-            <li><a href="api?command=orders">Orders</a></li>
+            <li><a href="api?command=menu&dropCookies=true#menu">Menu</a></li>
+            <c:if test="${role.name == 'CUSTOMER'}">
+                <li><a href="api?command=cart">Cart</a></li>
+                <li><a href="api?command=orders">My Orders</a></li>
+            </c:if>
+            <c:if test="${role.name == 'MANAGER'}">
+                <li><a href="api?command=addDishGetPage">Add dish</a></li>
+                <li><a href="api?command=orders">Orders</a></li>
+            </c:if>
         </ul>
     </nav>
     <a href="api?command=logout">
@@ -25,27 +31,28 @@
     </a>
 </header>
 <div class="content">
-    <a name="menu"></a>
     <div class="menu">
+        <div class="options">
+            <div class="dropdown">
+                <button class="dropbtn">Select order status:</button>
+                <div class="dropdown-content">
+                    <c:forEach var="status" items="${statusList}">
+                        <a href="api?command=orders&status=${status}">
+                            <c:out value="${status}"/>
+                        </a>
+                    </c:forEach>
+                </div>
+            </div>
+        </div>
         <c:choose>
             <c:when test="${fn: length(orders.content) > 0}">
-                <div class="options">
-                    <div class="dropdown">
-                        <button class="dropbtn">Select order status:</button>
-                        <div class="dropdown-content">
-                            <c:forEach var="status" items="${statusList}">
-                                <a href="api?command=orders?status=${status}">
-                                    <c:out value="${status}"/>
-                                </a>
-                            </c:forEach>
-                        </div>
-                    </div>
-                </div>
                 <table class="orders">
                     <tr>
                         <th>Order No</th>
-                        <th>Username</th>
-                        <th>Phone number</th>
+                        <c:if test="${role.name == 'MANAGER'}">
+                            <th>Username</th>
+                            <th>Phone number</th>
+                        </c:if>
                         <th>Delivery address</th>
                         <th>Status</th>
                         <th>Total price</th>
@@ -53,10 +60,12 @@
                     <c:forEach var="order" items="${orders.content}">
                         <tr>
                             <td>
-                                <a href="api?command=order&id=${order.id}">${order.id}</a>
+                                <a href="api?command=order&id=${order.id}">#${order.id}</a>
                             </td>
-                            <td>${order.customer.username}</td>
-                            <td>${order.customer.phoneNumber}</td>
+                            <c:if test="${role.name == 'MANAGER'}">
+                                <td>${order.customer.username}</td>
+                                <td>${order.customer.phoneNumber}</td>
+                            </c:if>
                             <td>${order.deliveryAddress}</td>
                             <td>${order.status}</td>
                             <td>${order.totalPrice/100} uah</td>
@@ -68,10 +77,10 @@
                     <c:forEach var="i" begin="1" end="${orders.totalPages}">
                         <c:choose>
                             <c:when test="${orders.pageIndex == i}">
-                                <a class="active" href="api?command=orders?page=${i}"><c:out value="${i}"/></a>
+                                <a class="active" href="api?command=orders&page=${i}"><c:out value="${i}"/></a>
                             </c:when>
                             <c:otherwise>
-                                <a href="api?command=orders?page=${i}"><c:out value="${i}"/></a>
+                                <a href="api?command=orders&page=${i}"><c:out value="${i}"/></a>
                             </c:otherwise>
                         </c:choose>
                     </c:forEach>

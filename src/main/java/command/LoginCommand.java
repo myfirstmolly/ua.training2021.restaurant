@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+/**
+ * authenticates user by their login and password.
+ */
 public class LoginCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(LoginCommand.class);

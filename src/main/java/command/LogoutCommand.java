@@ -8,6 +8,9 @@ import util.WebPages;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * deletes user session and logs them out.
+ */
 public class LogoutCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(LogoutCommand.class);

@@ -16,7 +16,7 @@
 <header>
     <nav>
         <ul class="nav_links">
-            <li><a href="api?command=menu#menu">Menu</a></li>
+            <li><a href="api?command=menu&dropCookies=true#menu">Menu</a></li>
             <li><a href="api?command=addDishGetPage">Add dish</a></li>
             <li><a href="api?command=orders">Orders</a></li>
         </ul>

@@ -12,6 +12,10 @@ import util.WebPages;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * returns dish page.
+ * available to all users.
+ */
 public class DishCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(DishCommand.class);

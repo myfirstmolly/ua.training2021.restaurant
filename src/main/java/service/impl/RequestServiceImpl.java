@@ -39,8 +39,13 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<Request> findAllByUserAndStatus(User user, Status status) {
-        return requestDao.findAllByUserAndStatus(user.getId(), Status.OPENED.toInt());
+    public Page<Request> findAllByUserAndStatus(User user, Status status, int page) {
+        return requestDao.findAllByUserAndStatus(user.getId(), status.toInt(), LIMIT, page);
+    }
+
+    @Override
+    public Optional<Request> findOneByUserAndStatus(User user, Status status) {
+        return requestDao.findFirstByUserAndStatus(user.getId(), status.toInt());
     }
 
     @Override
@@ -55,18 +60,17 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public void addRequestItem(User user, Dish dish, int quantity) {
-        List<Request> requests = requestDao.findAllByUserAndStatus(user.getId(), Status.OPENED.toInt());
-        if (requests.isEmpty()) {
-            Request request = new Request(user, Status.OPENED);
-            requestDao.save(request);
-            requestItemDao.save(new RequestItem(request.getId(), dish, quantity));
+        Optional<Request> request = requestDao.findFirstByUserAndStatus(user.getId(), Status.OPENED.toInt());
+        if (!request.isPresent()) {
+            Request req = new Request(user, Status.OPENED);
+            requestDao.save(req);
+            requestItemDao.save(new RequestItem(req.getId(), dish, quantity));
             return;
         }
 
-        Request request = requests.get(0);
-        RequestItem requestItem = getDishRequestItem(dish, request.getRequestItems());
+        RequestItem requestItem = getDishRequestItem(dish, request.get().getRequestItems());
         if (requestItem == null) {
-            requestItem = new RequestItem(request.getId(), dish, quantity);
+            requestItem = new RequestItem(request.get().getId(), dish, quantity);
             requestItemDao.save(requestItem);
         } else {
             requestItem.setQuantity(requestItem.getQuantity() + 1);

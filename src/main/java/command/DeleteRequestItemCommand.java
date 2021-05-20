@@ -10,6 +10,10 @@ import util.WebPages;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * deletes request item from user's cart.
+ * available to customer only.
+ */
 public class DeleteRequestItemCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(DeleteRequestItemCommand.class);

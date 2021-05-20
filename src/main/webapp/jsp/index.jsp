@@ -15,9 +15,10 @@
 <header>
     <nav>
         <ul class="nav_links">
-            <li><a href="api?command=menu#menu">Menu</a></li>
+            <li><a href="api?command=menu&dropCookies=true#menu">Menu</a></li>
             <c:if test="${role.name == 'CUSTOMER'}">
                 <li><a href="api?command=cart">Cart</a></li>
+                <li><a href="api?command=orders">My Orders</a></li>
             </c:if>
             <c:if test="${role.name == 'MANAGER'}">
                 <li><a href="api?command=addDishGetPage">Add dish</a></li>

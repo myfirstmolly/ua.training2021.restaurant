@@ -3,7 +3,6 @@ package service;
 import entities.*;
 import util.Page;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface RequestService {
@@ -14,7 +13,9 @@ public interface RequestService {
 
     Page<Request> findAllByStatus(int id, int page);
 
-    List<Request> findAllByUserAndStatus(User user, Status status);
+    Page<Request> findAllByUserAndStatus(User user, Status status, int page);
+
+    Optional<Request> findOneByUserAndStatus(User user, Status status);
 
     Optional<Request> findById(int id);
 

@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import util.Page;
 
 import java.util.List;
+import java.util.Optional;
 
 public final class RequestDaoImpl extends DaoUtils<Request> implements RequestDao {
 
@@ -68,11 +69,19 @@ public final class RequestDaoImpl extends DaoUtils<Request> implements RequestDa
     }
 
     @Override
-    public List<Request> findAllByUserAndStatus(int userId, int statusId) {
+    public Page<Request> findAllByUserAndStatus(int userId, int statusId, int limit, int index) {
+        StatementBuilder s = new StatementBuilder(TABLE_NAME);
+        String sql = s.setSelect().setWhere("customer_id", "status_id").setLimit().setOffset().build();
+        logger.trace("delegated '" + sql + "' to DaoUtils");
+        return super.getPage(limit, index, sql, userId, statusId);
+    }
+
+    @Override
+    public Optional<Request> findFirstByUserAndStatus(int userId, int statusId) {
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
         String sql = s.setSelect().setWhere("customer_id", "status_id").build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
-        return super.getList(sql, userId, statusId);
+        return super.getOptional(sql, userId, statusId);
     }
 
     @Override

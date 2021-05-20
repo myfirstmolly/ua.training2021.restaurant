@@ -10,6 +10,10 @@ import util.WebPages;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * deletes dish from database.
+ * available to manager only.
+ */
 public class DeleteDishCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(DeleteDishCommand.class);

@@ -15,6 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+/**
+ * adds dish to user's cart.
+ * available to customer only.
+ */
 public class AddDishToCartCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(AddDishToCartCommand.class);

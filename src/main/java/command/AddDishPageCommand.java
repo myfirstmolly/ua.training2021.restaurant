@@ -10,6 +10,10 @@ import util.WebPages;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * returns page add-dish.jsp.
+ * available to manager only.
+ */
 public class AddDishPageCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(AddDishPageCommand.class);
