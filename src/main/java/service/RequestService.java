@@ -89,10 +89,18 @@ public interface RequestService {
     void updateRequestItem(RequestItem requestItem);
 
     /**
+     * updates Request
+     *
+     * @param request request to update
+     */
+    void updateRequest(Request request);
+
+    /**
      * updates Request status
-     *  @param requestId request unique identifier
+     *
+     * @param requestId request unique identifier
      * @param status    new request status
-     * @param manager      manager who updates status
+     * @param manager   manager who updates status
      */
     void setRequestStatus(int requestId, Status status, User manager);
 

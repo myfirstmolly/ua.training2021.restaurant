@@ -1,9 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8"%>
 <html>
 
 <head>
     <title>Restaurant - the best in the world</title>
-    <meta charset="UTF-8">
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -62,7 +62,7 @@
             <b>uah</b>
         </div>
         <form method="POST" action="api" class="checkout">
-            <input type="hidden" name="command" value="checkout">
+            <input type="hidden" name="command" value="checkoutForm">
             <button type="submit">Checkout</button>
         </form>
     </div>

@@ -19,7 +19,7 @@ import java.util.Map;
 
 @WebFilter(servletNames = "Controller", filterName = "AuthorizationFilter",
         initParams = {@WebInitParam(name = "manager", value = "addDish addDishGetPage deleteDish updateStatus"),
-                @WebInitParam(name = "customer", value = "addToCart checkout cart deleteRequestItem updateQty"),
+                @WebInitParam(name = "customer", value = "addToCart checkout checkoutForm cart deleteRequestItem updateQty"),
                 @WebInitParam(name = "authorized", value = "logout order orders"),
                 @WebInitParam(name = "any", value = "dish menu login register")})
 public class AuthorizationFilter implements Filter {

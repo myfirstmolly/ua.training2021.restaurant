@@ -85,6 +85,11 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    public void updateRequest(Request request) {
+        requestDao.update(request);
+    }
+
+    @Override
     public void setRequestStatus(int requestId, Status status, User manager) {
         if (!findById(requestId).isPresent())
             return;

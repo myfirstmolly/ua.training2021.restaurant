@@ -61,8 +61,7 @@ public class RequestsCommand implements Command {
                                                RequestService requestService,
                                                int pageIndex) {
         Status status = getStatus(request, response);
-        if (status == null ||
-                Objects.equals(status, Status.OPENED)) {
+        if (status == null || Objects.equals(status, Status.OPENED)) {
             return requestService.findAll(pageIndex);
         }
         return requestService.findAllByStatus(status.toInt(),
@@ -84,7 +83,7 @@ public class RequestsCommand implements Command {
 
     private Status getStatus(HttpServletRequest request, HttpServletResponse response) {
         String status = request.getParameter("status");
-        if (status != null && status.equals("all")) {
+        if (status != null && !Status.contains(status)) {
             for (Cookie c : request.getCookies()) {
                 if (c.getName().equals("status") || c.getName().equals("page")) {
                     c.setMaxAge(0);

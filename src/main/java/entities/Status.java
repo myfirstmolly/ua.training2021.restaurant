@@ -13,7 +13,7 @@ public enum Status {
         this.value = value;
     }
 
-    public boolean contains(String val) {
+    public static boolean contains(String val) {
         for (Status v : values()) {
             if (v.name().equals(val))
                 return true;

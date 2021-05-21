@@ -21,6 +21,7 @@ public class Commands {
         commandMap.put("addDishGetPage", new AddDishPageCommand());
         commandMap.put("addToCart", new AddDishToCartCommand());
         commandMap.put("checkout", new CheckoutCommand());
+        commandMap.put("checkoutForm", new CheckoutFormCommand());
         commandMap.put("cart", new CartCommand());
         commandMap.put("deleteDish", new DeleteDishCommand());
         commandMap.put("deleteRequestItem", new DeleteRequestItemCommand());

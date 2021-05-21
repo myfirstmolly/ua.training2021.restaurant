@@ -28,8 +28,10 @@ public class UpdateRequestStatusCommand implements Command {
         User user = (User) request.getSession().getAttribute("user");
         int orderId = Integer.parseInt(request.getParameter("id"));
         String statusName = request.getParameter("status");
-        Status status = Status.valueOf(statusName);
-        requestService.setRequestStatus(orderId, status, user);
+        if (Status.contains(statusName)) {
+            Status status = Status.valueOf(statusName);
+            requestService.setRequestStatus(orderId, status, user);
+        }
         logger.debug("-----successfully executed update order status command-----");
         return WebPages.ORDERS_COMMAND;
     }
