@@ -1,9 +1,10 @@
 package dao.impl;
 
-import dao.DishDao;
 import dao.RequestItemDao;
 import database.DBManager;
+import database.DaoFactory;
 import entities.RequestItem;
+import exceptions.ObjectNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,8 +22,9 @@ public final class RequestItemDaoImpl implements RequestItemDao {
             RequestItem requestItem = new RequestItem();
             requestItem.setId(rs.getInt("id"));
             requestItem.setRequestId(rs.getInt("request_id"));
-            DishDao dishDao = new DishDaoImpl(dbManager);
-            requestItem.setDish(dishDao.findById(rs.getInt("dish_id")).get());
+            requestItem.setDish(DaoFactory.getDishDao()
+                    .findById(rs.getInt("dish_id"))
+                    .orElseThrow(() -> new ObjectNotFoundException("dish not found")));
             requestItem.setQuantity(rs.getInt("quantity"));
             requestItem.setPrice(rs.getInt("price"));
             requestItem.setCreatedAt(rs.getDate("created_at"));

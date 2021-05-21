@@ -1,6 +1,6 @@
 package command;
 
-import database.DBManager;
+import database.DaoFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import service.RequestService;
@@ -17,12 +17,13 @@ import javax.servlet.http.HttpServletResponse;
 public class DeleteRequestItemCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(DeleteRequestItemCommand.class);
+    private final RequestService requestService =
+            new RequestServiceImpl(DaoFactory.getRequestDao(), DaoFactory.getRequestItemDao());
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.debug("-----executing delete request command-----");
         int id = Integer.parseInt(request.getParameter("id"));
-        RequestService requestService = new RequestServiceImpl(DBManager.getInstance());
         requestService.deleteRequestItem(id);
         logger.debug("-----successfully executed delete request command-----");
         return WebPages.CART_COMMAND;

@@ -1,7 +1,10 @@
 package command;
 
-import database.DBManager;
-import entities.*;
+import database.DaoFactory;
+import entities.Request;
+import entities.Role;
+import entities.Status;
+import entities.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import service.RequestService;
@@ -23,7 +26,8 @@ import java.util.Objects;
 public class RequestsCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(RequestsCommand.class);
-    private final RequestService requestService = new RequestServiceImpl(DBManager.getInstance());
+    private final RequestService requestService =
+            new RequestServiceImpl(DaoFactory.getRequestDao(), DaoFactory.getRequestItemDao());
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {

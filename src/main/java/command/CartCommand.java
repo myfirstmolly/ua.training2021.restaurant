@@ -1,6 +1,6 @@
 package command;
 
-import database.DBManager;
+import database.DaoFactory;
 import entities.Request;
 import entities.Status;
 import entities.User;
@@ -22,13 +22,14 @@ import java.util.Optional;
 public class CartCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(CartCommand.class);
+    private final RequestService requestService =
+            new RequestServiceImpl(DaoFactory.getRequestDao(), DaoFactory.getRequestItemDao());
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.debug("-----executing cart command-----");
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        RequestService requestService = new RequestServiceImpl(DBManager.getInstance());
         Optional<Request> req = requestService.findOneByUserAndStatus(user, Status.OPENED);
 
         if (!req.isPresent()) {

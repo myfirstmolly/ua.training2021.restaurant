@@ -1,9 +1,10 @@
 package command;
 
-import database.DBManager;
+import database.DaoFactory;
 import entities.Request;
 import entities.Status;
 import entities.User;
+import exceptions.ObjectNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import service.RequestService;
@@ -22,14 +23,16 @@ import java.util.List;
 public class RequestCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(RequestCommand.class);
+    private final RequestService requestService =
+            new RequestServiceImpl(DaoFactory.getRequestDao(), DaoFactory.getRequestItemDao());
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.debug("-----executing order command-----");
         int id = Integer.parseInt(request.getParameter("id"));
-        RequestService requestService = new RequestServiceImpl(DBManager.getInstance());
         User user = (User) request.getSession().getAttribute("user");
-        Request r = requestService.findById(id).get();
+        Request r = requestService.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("request not found"));
         int statusId = r.getStatus().toInt();
         List<Status> statusList = Arrays.asList(Status.values()).subList(statusId + 1, Status.values().length);
         request.setAttribute("statusList", statusList);

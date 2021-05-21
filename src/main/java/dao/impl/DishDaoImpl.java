@@ -1,9 +1,10 @@
 package dao.impl;
 
-import dao.CategoryDao;
 import dao.DishDao;
 import database.DBManager;
+import database.DaoFactory;
 import entities.Dish;
+import exceptions.ObjectNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import util.Page;
@@ -25,8 +26,9 @@ public final class DishDaoImpl implements DishDao {
             dish.setPrice(rs.getInt("price"));
             dish.setDescription(rs.getString("description"));
             dish.setImagePath(rs.getString("image_path"));
-            CategoryDao categoryDao = new CategoryDaoImpl(dbManager);
-            dish.setCategory(categoryDao.findById(rs.getInt("category_id")).get());
+            dish.setCategory(DaoFactory.getCategoryDao()
+                    .findById(rs.getInt("category_id"))
+                    .orElseThrow(() -> new ObjectNotFoundException("category not found")));
             return dish;
         });
     }

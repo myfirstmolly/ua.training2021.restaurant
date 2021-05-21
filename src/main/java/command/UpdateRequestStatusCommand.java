@@ -1,6 +1,6 @@
 package command;
 
-import database.DBManager;
+import database.DaoFactory;
 import entities.Status;
 import entities.User;
 import org.apache.logging.log4j.LogManager;
@@ -19,11 +19,12 @@ import javax.servlet.http.HttpServletResponse;
 public class UpdateRequestStatusCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(UpdateRequestStatusCommand.class);
+    private final RequestService requestService =
+            new RequestServiceImpl(DaoFactory.getRequestDao(), DaoFactory.getRequestItemDao());
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.debug("-----executing update order status command-----");
-        RequestService requestService = new RequestServiceImpl(DBManager.getInstance());
         User user = (User) request.getSession().getAttribute("user");
         int orderId = Integer.parseInt(request.getParameter("id"));
         String statusName = request.getParameter("status");

@@ -1,8 +1,9 @@
 package command;
 
-import database.DBManager;
+import database.DaoFactory;
 import entities.Dish;
 import entities.User;
+import exceptions.ObjectNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import service.DishService;
@@ -22,6 +23,9 @@ import javax.servlet.http.HttpSession;
 public class AddDishToCartCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(AddDishToCartCommand.class);
+    private final RequestService requestService =
+            new RequestServiceImpl(DaoFactory.getRequestDao(), DaoFactory.getRequestItemDao());
+    private final DishService dishService = new DishServiceImpl(DaoFactory.getDishDao());
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
@@ -29,9 +33,8 @@ public class AddDishToCartCommand implements Command {
         int dishId = Integer.parseInt(request.getParameter("dish"));
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        RequestService requestService = new RequestServiceImpl(DBManager.getInstance());
-        DishService dishService = new DishServiceImpl(DBManager.getInstance());
-        Dish dish = dishService.findById(dishId).get();
+        Dish dish = dishService.findById(dishId)
+                .orElseThrow(() -> new ObjectNotFoundException("dish not found"));
         requestService.addRequestItem(user, dish, 1);
         logger.debug("-----successfully executed add dish to cart command-----");
         return WebPages.DISH_COMMAND + dishId;

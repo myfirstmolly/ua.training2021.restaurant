@@ -1,8 +1,6 @@
 package service.impl;
 
 import dao.UserDao;
-import dao.impl.UserDaoImpl;
-import database.DBManager;
 import entities.User;
 import service.UserService;
 
@@ -12,8 +10,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
 
-    public UserServiceImpl(DBManager dbManager) {
-        userDao = new UserDaoImpl(dbManager);
+    public UserServiceImpl(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     @Override

@@ -1,11 +1,12 @@
 package dao.impl;
 
 import dao.RequestDao;
-import dao.RequestItemDao;
 import dao.UserDao;
 import database.DBManager;
+import database.DaoFactory;
 import entities.Request;
 import entities.Status;
+import exceptions.ObjectNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import util.Page;
@@ -23,16 +24,17 @@ public final class RequestDaoImpl implements RequestDao {
         daoUtils = new DaoUtils<>(dbManager, TABLE_NAME, rs -> {
             Request request = new Request();
             request.setId(rs.getInt("id"));
-            UserDao userDao = new UserDaoImpl(dbManager);
-            request.setCustomer(userDao.findById(rs.getInt("customer_id")).get());
+            UserDao userDao = DaoFactory.getUserDao();
+            request.setCustomer(userDao
+                    .findById(rs.getInt("customer_id"))
+                    .orElseThrow(() -> new ObjectNotFoundException("customer not found")));
             request.setStatus(Status.values()[rs.getInt("status_id")]);
             request.setDeliveryAddress(rs.getString("delivery_address"));
             request.setTotalPrice(rs.getLong("total_price"));
             request.setApprovedBy(userDao.findById(rs.getInt("approved_by")).orElse(null));
             request.setCreatedAt(rs.getDate("created_at"));
             request.setUpdatedAt(rs.getDate("updated_at"));
-            RequestItemDao requestItemDao = new RequestItemDaoImpl(dbManager);
-            request.setRequestItems(requestItemDao.findAllByRequestId(request.getId()));
+            request.setRequestItems(DaoFactory.getRequestItemDao().findAllByRequestId(request.getId()));
             return request;
         });
     }

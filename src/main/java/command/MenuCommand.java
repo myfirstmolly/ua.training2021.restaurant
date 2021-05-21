@@ -1,6 +1,6 @@
 package command;
 
-import database.DBManager;
+import database.DaoFactory;
 import entities.Category;
 import entities.Dish;
 import entities.User;
@@ -26,8 +26,8 @@ import java.util.List;
 public class MenuCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(MenuCommand.class);
-    private final DishService dishService = new DishServiceImpl(DBManager.getInstance());
-    private final CategoryService categoryService = new CategoryServiceImpl(DBManager.getInstance());
+    private final DishService dishService = new DishServiceImpl(DaoFactory.getDishDao());
+    private final CategoryService categoryService = new CategoryServiceImpl(DaoFactory.getCategoryDao());
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
@@ -44,7 +44,8 @@ public class MenuCommand implements Command {
     private void setRoleAttributes(HttpServletRequest request) {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        if (user == null) return;
+        if (user == null)
+            return;
         request.setAttribute("role", user.getRole());
     }
 

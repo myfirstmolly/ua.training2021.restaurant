@@ -1,8 +1,9 @@
 package command;
 
-import database.DBManager;
+import database.DaoFactory;
 import entities.Category;
 import entities.Dish;
+import exceptions.ObjectNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import service.CategoryService;
@@ -24,20 +25,22 @@ public class AddDishCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(AddDishCommand.class);
 
+    private final CategoryService categoryService = new CategoryServiceImpl(DaoFactory.getCategoryDao());
+    private final DishService dishService = new DishServiceImpl(DaoFactory.getDishDao());
+
     // price only can be entered by user like '800.00' (group 1) or '800' (group 2);
     private static final String PRICE_REGEX = "([0-9]+\\.[0-9]{2})|([0-9]+)";
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.debug("-----executing add dish command-----");
-        CategoryService categoryService = new CategoryServiceImpl(DBManager.getInstance());
-        DishService dishService = new DishServiceImpl(DBManager.getInstance());
         String name = request.getParameter("name");
         String description = request.getParameter("description");
         String priceString = request.getParameter("price");
         String imagePath = request.getParameter("imagePath");
         int categoryId = Integer.parseInt(request.getParameter("category"));
-        Category category = categoryService.findById(categoryId).get();
+        Category category = categoryService.findById(categoryId)
+                .orElseThrow(() -> new ObjectNotFoundException("category not found"));
         int price = 0;
 
         if (!isValid(name, priceString, imagePath, request)) {

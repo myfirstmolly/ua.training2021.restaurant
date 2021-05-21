@@ -57,7 +57,7 @@ public class AuthorizationFilter implements Filter {
         commonCommands.put("authorized", authorizedCommands);
         commonCommands.put("any", any);
         logger.debug("common: " + commonCommands.toString());
-        logger.info("initialized command access filter");
+        logger.debug("initialized command access filter");
     }
 
     private boolean accessAllowed(String command, HttpServletRequest request) {

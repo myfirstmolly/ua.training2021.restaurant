@@ -1,8 +1,6 @@
 package service.impl;
 
 import dao.DishDao;
-import dao.impl.DishDaoImpl;
-import database.DBManager;
 import entities.Dish;
 import service.DishService;
 import util.Page;
@@ -14,8 +12,8 @@ public class DishServiceImpl implements DishService {
     private final DishDao dishDao;
     private final int LIMIT = 12;
 
-    public DishServiceImpl(DBManager dbManager) {
-        dishDao = new DishDaoImpl(dbManager);
+    public DishServiceImpl(DishDao dishDao) {
+        this.dishDao = dishDao;
     }
 
     @Override

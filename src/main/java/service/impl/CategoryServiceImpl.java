@@ -1,8 +1,6 @@
 package service.impl;
 
 import dao.CategoryDao;
-import dao.impl.CategoryDaoImpl;
-import database.DBManager;
 import entities.Category;
 import service.CategoryService;
 
@@ -13,8 +11,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryDao categoryDao;
 
-    public CategoryServiceImpl(DBManager dbManager) {
-        categoryDao = new CategoryDaoImpl(dbManager);
+    public CategoryServiceImpl(CategoryDao categoryDao) {
+        this.categoryDao = categoryDao;
     }
 
     @Override

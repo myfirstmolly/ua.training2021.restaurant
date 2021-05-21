@@ -2,9 +2,6 @@ package service.impl;
 
 import dao.RequestDao;
 import dao.RequestItemDao;
-import dao.impl.RequestDaoImpl;
-import dao.impl.RequestItemDaoImpl;
-import database.DBManager;
 import entities.*;
 import service.RequestService;
 import util.Page;
@@ -18,9 +15,9 @@ public class RequestServiceImpl implements RequestService {
     private final RequestDao requestDao;
     private final RequestItemDao requestItemDao;
 
-    public RequestServiceImpl(DBManager dbManager) {
-        requestDao = new RequestDaoImpl(dbManager);
-        requestItemDao = new RequestItemDaoImpl(dbManager);
+    public RequestServiceImpl(RequestDao requestDao, RequestItemDao requestItemDao) {
+        this.requestDao = requestDao;
+        this.requestItemDao = requestItemDao;
     }
 
     @Override

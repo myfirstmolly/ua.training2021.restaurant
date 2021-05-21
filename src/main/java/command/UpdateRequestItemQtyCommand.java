@@ -1,7 +1,8 @@
 package command;
 
-import database.DBManager;
+import database.DaoFactory;
 import entities.RequestItem;
+import exceptions.ObjectNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import service.RequestService;
@@ -18,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 public class UpdateRequestItemQtyCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(UpdateRequestStatusCommand.class);
+    private final RequestService requestService =
+            new RequestServiceImpl(DaoFactory.getRequestDao(), DaoFactory.getRequestItemDao());
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
@@ -29,9 +32,9 @@ public class UpdateRequestItemQtyCommand implements Command {
     }
 
     private void updateOrderItem(HttpServletRequest request, String action) {
-        RequestService requestService = new RequestServiceImpl(DBManager.getInstance());
         int id = Integer.parseInt(request.getParameter("id"));
-        RequestItem item = requestService.findRequestItemById(id).get();
+        RequestItem item = requestService.findRequestItemById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("request not found"));
         if ("increase".equals(action)) {
             item.setQuantity(item.getQuantity() + 1);
             logger.debug("increased order item quantity");

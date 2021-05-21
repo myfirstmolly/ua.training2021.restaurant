@@ -1,6 +1,6 @@
 package command;
 
-import database.DBManager;
+import database.DaoFactory;
 import entities.Role;
 import entities.User;
 import org.apache.logging.log4j.LogManager;
@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 public class RegisterCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(RegisterCommand.class);
+    private final UserService userService = new UserServiceImpl(DaoFactory.getUserDao());
 
     // price regex to check whether name starts with capital letter, contains letters only
     // and its length is between 4 and 32 symbols
@@ -46,7 +47,6 @@ public class RegisterCommand implements Command {
         if (!hasValidCredentials(name, email, phoneNumber, username, request))
             return WebPages.REGISTER_PAGE;
 
-        UserService userService = new UserServiceImpl(DBManager.getInstance());
         if (userService.findByUsername(username).isPresent()) {
             request.setAttribute("usernameMsg", "username must be unique");
             return WebPages.REGISTER_PAGE;
