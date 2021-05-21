@@ -1,7 +1,7 @@
 package filter;
 
-import entities.Role;
-import entities.User;
+import model.entities.Role;
+import model.entities.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import util.WebPages;
@@ -33,7 +33,7 @@ public class AuthorizationFilter implements Filter {
     }
 
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
-        String command = req.getParameter("command");
+        String command = req.getParameter("controller/command");
         HttpServletRequest request = (HttpServletRequest) req;
         if (accessAllowed(command, request))
             chain.doFilter(req, resp);
