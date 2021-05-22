@@ -3,6 +3,8 @@ package model.dao.impl;
 import model.dao.RequestItemDao;
 import model.database.DBManager;
 import model.database.DaoFactory;
+import model.entities.Category;
+import model.entities.Dish;
 import model.entities.RequestItem;
 import model.exceptions.ObjectNotFoundException;
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +17,8 @@ public final class RequestItemDaoImpl implements RequestItemDao {
 
     private static final String TABLE_NAME = "request_item";
     private static final Logger logger = LogManager.getLogger(RequestItemDaoImpl.class);
+    public static final String JOIN_STATEMENT = "select ri.*, d.name, d.name_ukr, d.image_path " +
+            "from request_item ri inner join dish d on ri.dish_id=d.id ";
     private final DaoUtils<RequestItem> daoUtils;
 
     public RequestItemDaoImpl(DBManager dbManager) {
@@ -22,9 +26,12 @@ public final class RequestItemDaoImpl implements RequestItemDao {
             RequestItem requestItem = new RequestItem();
             requestItem.setId(rs.getInt("id"));
             requestItem.setRequestId(rs.getInt("request_id"));
-            requestItem.setDish(DaoFactory.getDishDao()
-                    .findById(rs.getInt("dish_id"))
-                    .orElseThrow(() -> new ObjectNotFoundException("dish not found")));
+            Dish dish = new Dish();
+            dish.setId(rs.getInt("dish_id"));
+            dish.setImagePath(rs.getString("image_path"));
+            dish.setName(rs.getString("name"));
+            dish.setNameUkr(rs.getString("name_ukr"));
+            requestItem.setDish(dish);
             requestItem.setQuantity(rs.getInt("quantity"));
             requestItem.setPrice(rs.getInt("price"));
             requestItem.setCreatedAt(rs.getDate("created_at"));
@@ -34,25 +41,21 @@ public final class RequestItemDaoImpl implements RequestItemDao {
 
     @Override
     public List<RequestItem> findAllByRequestId(int id) {
-        if (id <= 0) return List.of();
-        StatementBuilder s = new StatementBuilder(TABLE_NAME);
-        String sql = s.setSelect().setWhere("request_id").build();
+        String sql = JOIN_STATEMENT + "where ri.request_id=?";
         logger.trace("delegated '" + sql + "' to DaoUtils");
         return daoUtils.getList(sql, id);
     }
 
     @Override
     public List<RequestItem> findAll() {
-        StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.setSelect().build();
+        String sql = JOIN_STATEMENT;
         logger.trace("delegated '" + sql + "' to DaoUtils");
         return daoUtils.getList(sql);
     }
 
     @Override
     public Optional<RequestItem> findById(int id) {
-        StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.setSelect().setWhere("id").build();
+        String sql = JOIN_STATEMENT + "where ri.id=?";
         logger.trace("delegated '" + sql + "' to DaoUtils");
         return daoUtils.getOptional(sql, id);
     }

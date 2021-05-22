@@ -15,6 +15,8 @@ import util.WebPages;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * updates order status to 'pending'.
@@ -37,7 +39,11 @@ public class CheckoutCommand implements Command {
 
         if (!isValid(address)) {
             request.setAttribute("totalPrice", req.getTotalPrice());
-            request.setAttribute("addressMsg", "address must be between 6 and 128 symbols");
+            String locale = (String) request.getSession().getAttribute("lang");
+            if (locale == null)
+                locale = "en";
+            ResourceBundle bundle = ResourceBundle.getBundle("i18n", Locale.forLanguageTag(locale));
+            request.setAttribute("addressMsg", bundle.getString("incorrect.address"));
             return WebPages.CHECKOUT_FORM_PAGE;
         }
 

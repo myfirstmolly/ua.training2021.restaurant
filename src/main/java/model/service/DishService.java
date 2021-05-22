@@ -25,9 +25,10 @@ public interface DishService {
      *
      * @param orderBy field to sort by, can be equal to {'name', 'price', 'category'}
      * @param page    page index. indexation starts with 1.
+     * @param locale  language code.
      * @return Page object containing found dishes
      */
-    Page<Dish> findAllOrderBy(String orderBy, int page);
+    Page<Dish> findAllOrderBy(String orderBy, int page, String locale);
 
     /**
      * finds limited number of Dishes (defined in implementation class)

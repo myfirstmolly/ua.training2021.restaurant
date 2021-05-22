@@ -22,7 +22,9 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public Page<Dish> findAllOrderBy(String orderBy, int page) {
+    public Page<Dish> findAllOrderBy(String orderBy, int page, String locale) {
+        if ("name".equals(orderBy) && locale != null && locale.equals("ukr"))
+            return dishDao.findAllSortedByNameUkr(LIMIT, page);
         if ("name".equals(orderBy))
             return dishDao.findAllSortedByName(LIMIT, page);
         if ("price".equals(orderBy))

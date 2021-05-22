@@ -124,7 +124,6 @@ public final class DaoUtils<T extends Entity> {
         } catch (SQLException ex) {
             logger.error(String.format("cannot obtain objects from table %s", tableName), ex);
         }
-
         return entries;
     }
 

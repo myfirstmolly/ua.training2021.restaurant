@@ -3,6 +3,7 @@ package controller.command.cart;
 import controller.command.Command;
 import model.database.DaoFactory;
 import model.entities.Request;
+import model.entities.RequestItem;
 import model.entities.Status;
 import model.entities.User;
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +15,7 @@ import util.WebPages;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -36,6 +38,8 @@ public class CartCommand implements Command {
         if (!req.isPresent()) {
             request.setAttribute("request", null);
         } else {
+            List<RequestItem> requestItems = requestService.findAllRequestItemsByRequest(req.get());
+            request.setAttribute("requestItems", requestItems);
             request.setAttribute("request", req.get());
         }
 

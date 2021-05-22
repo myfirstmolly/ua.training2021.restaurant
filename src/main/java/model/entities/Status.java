@@ -1,16 +1,30 @@
 package model.entities;
 
 public enum Status {
-    OPENED(0),
-    PENDING(1),
-    COOKING(2),
-    DELIVERING(3),
-    DONE(4);
+    OPENED(0, "відкрито"),
+    PENDING(1, "очікує підтвердження"),
+    COOKING(2, "готується"),
+    DELIVERING(3, "доставляється"),
+    DONE(4, "виконано");
 
     int id;
+    String nameUkr;
 
-    Status(int id) {
+    Status(int id, String nameUkr) {
         this.id = id;
+        this.nameUkr = nameUkr;
+    }
+
+    public String getName() {
+        return name().toLowerCase();
+    }
+
+    public String getNameUkr() {
+        return nameUkr;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public static boolean contains(String val) {
@@ -19,9 +33,5 @@ public enum Status {
                 return true;
         }
         return false;
-    }
-
-    public int getId() {
-        return id;
     }
 }

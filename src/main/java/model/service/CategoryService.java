@@ -18,6 +18,13 @@ public interface CategoryService {
     List<Category> findAll();
 
     /**
+     * finds all categories that exist with locale
+     *
+     * @return List of all Categories
+     */
+    List<Category> findAll(String locale);
+
+    /**
      * finds category by its id
      *
      * @param id category unique identifier

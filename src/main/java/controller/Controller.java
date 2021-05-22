@@ -69,6 +69,7 @@ public class Controller extends HttpServlet {
     }
 
     private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         String commandParameter = request.getParameter("command");
         logger.debug("received command ---> " + commandParameter);
         Command command = commandMap.get(commandParameter);

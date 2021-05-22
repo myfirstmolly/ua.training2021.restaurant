@@ -19,12 +19,15 @@ public final class StatementBuilder {
      * @throws IllegalStateException if insert statement is being inserted not in
      *                               the beginning of sql statement
      */
-    public StatementBuilder setSelect() {
+    public StatementBuilder setSelect(String... parameters) {
         if (sb.length() != 0)
             throw new IllegalStateException("select statement should be in the beginning " +
                     "of sql statement");
-
-        sb.append(String.format("select * from %s ", tableName));
+        if (parameters == null || parameters.length == 0) {
+            sb.append(String.format("select * from %s ", tableName));
+            return this;
+        }
+        sb.append("select ").append(buildString(parameters)).append(" from ").append(tableName);
         return this;
     }
 

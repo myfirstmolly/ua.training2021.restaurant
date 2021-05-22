@@ -3,6 +3,5 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/script.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/model/dao/impl/UserDaoImpl.java" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/src/test/java/model/dao/UserDaoTest.java" dialect="GenericSQL" />
   </component>
 </project>

@@ -8,9 +8,13 @@ public final class Dish implements Entity {
 
     private String name;
 
+    private String nameUkr;
+
     private int price;
 
     private String description;
+
+    private String descriptionUkr;
 
     private String imagePath;
 
@@ -19,14 +23,13 @@ public final class Dish implements Entity {
     public Dish() {
     }
 
-    public Dish(String name,
-                int price,
-                String description,
-                String imagePath,
-                Category category) {
+    public Dish(String name, String nameUkr, int price, String description, String descriptionUkr,
+                String imagePath, Category category) {
         this.name = name;
+        this.nameUkr = nameUkr;
         this.price = price;
         this.description = description;
+        this.descriptionUkr = descriptionUkr;
         this.imagePath = imagePath;
         this.category = category;
     }
@@ -36,8 +39,10 @@ public final class Dish implements Entity {
         return "Dish{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", nameUkr='" + nameUkr + '\'' +
                 ", price=" + price +
                 ", description='" + description + '\'' +
+                ", descriptionUkr='" + descriptionUkr + '\'' +
                 ", imagePath='" + imagePath + '\'' +
                 ", category=" + category +
                 '}';
@@ -49,15 +54,13 @@ public final class Dish implements Entity {
         if (o == null || getClass() != o.getClass()) return false;
         Dish dish = (Dish) o;
         return id == dish.id &&
-                price == dish.price &&
-                name.equals(dish.name) &&
-                description.equals(dish.description) &&
-                category.equals(dish.category);
+                Objects.equals(name, dish.name) &&
+                Objects.equals(nameUkr, dish.nameUkr);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, price, description, category);
+        return Objects.hash(id, name, nameUkr);
     }
 
     @Override
@@ -78,6 +81,14 @@ public final class Dish implements Entity {
         this.name = name;
     }
 
+    public String getNameUkr() {
+        return nameUkr;
+    }
+
+    public void setNameUkr(String nameUkr) {
+        this.nameUkr = nameUkr;
+    }
+
     public int getPrice() {
         return price;
     }
@@ -92,6 +103,14 @@ public final class Dish implements Entity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getDescriptionUkr() {
+        return descriptionUkr;
+    }
+
+    public void setDescriptionUkr(String descriptionUkr) {
+        this.descriptionUkr = descriptionUkr;
     }
 
     public String getImagePath() {
@@ -109,5 +128,4 @@ public final class Dish implements Entity {
     public void setCategory(Category category) {
         this.category = category;
     }
-
 }

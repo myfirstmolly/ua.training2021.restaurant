@@ -21,6 +21,11 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    public List<RequestItem> findAllRequestItemsByRequest(Request request) {
+        return requestItemDao.findAllByRequestId(request.getId());
+    }
+
+    @Override
     public Page<Request> findAllByUserId(int id, int page) {
         return requestDao.findAllByUserId(id, LIMIT, page);
     }
@@ -69,7 +74,7 @@ public class RequestServiceImpl implements RequestService {
 
         // if OPENED request already exists, we need to check if dish that is
         // being added to cart is there already
-        RequestItem requestItem = getDishRequestItem(dish, request.get().getRequestItems());
+        RequestItem requestItem = getDishRequestItem(dish, requestItemDao.findAllByRequestId(request.get().getId()));
         if (requestItem == null) { // <-- if dish isn't in cart, then it will be added there with quantity equal to param quantity
             requestItem = new RequestItem(request.get().getId(), dish, quantity);
             requestItemDao.save(requestItem);
@@ -101,7 +106,7 @@ public class RequestServiceImpl implements RequestService {
 
         // setting request status 'COOKING' means that this request is approved by manager
         if (status.equals(Status.COOKING)) {
-            request.setApprovedBy(manager);
+            request.setApprovedBy(manager.getId());
         }
 
         request.setStatus(status);

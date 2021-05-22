@@ -32,7 +32,8 @@ public class MenuCommand implements Command {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.debug("-----executing menu command-----");
-        List<Category> categories = categoryService.findAll();
+        String locale = (String) request.getSession().getAttribute("lang");
+        List<Category> categories = categoryService.findAll(locale);
         request.setAttribute("categories", categories);
         Page<Dish> dishes = getPage(request, response);
         request.setAttribute("dishes", dishes);
@@ -84,7 +85,7 @@ public class MenuCommand implements Command {
             response.addCookie(new Cookie("orderBy", orderBy));
             logger.debug("created cookie with orderBy value for user");
             dropCookie(cookies, "category", response);
-            return dishService.findAllOrderBy(orderBy, pageIndex);
+            return dishService.findAllOrderBy(orderBy, pageIndex, (String) request.getSession().getAttribute("lang"));
         }
 
         if (getCookie("category", cookies) != null) {
@@ -96,7 +97,7 @@ public class MenuCommand implements Command {
         if (getCookie("orderBy", cookies) != null) {
             orderBy = getCookie("orderBy", cookies).getValue();
             logger.debug("retrieved cookie with orderBy value for user");
-            return dishService.findAllOrderBy(orderBy, pageIndex);
+            return dishService.findAllOrderBy(orderBy, pageIndex, (String) request.getSession().getAttribute("lang"));
         }
 
         return dishService.findAll(pageIndex);

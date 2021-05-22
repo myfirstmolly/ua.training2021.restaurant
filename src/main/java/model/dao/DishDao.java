@@ -3,6 +3,8 @@ package model.dao;
 import model.entities.Dish;
 import util.Page;
 
+import java.util.Optional;
+
 /**
  * data access object interface for dish table
  */
@@ -43,6 +45,17 @@ public interface DishDao extends CrudDao<Dish> {
     Page<Dish> findAllSortedByName(int limit, int index);
 
     /**
+     * finds limited number of sorted by name dishes and returns them as Page object
+     *
+     * @param limit max number of dishes per Page
+     * @param index Page index. indexation starts with 1.
+     * @return Page object with n<=limit dishes with given category id
+     * @throws IllegalArgumentException if limit is less than 0 or
+     *                                  index is less than 1
+     */
+    Page<Dish> findAllSortedByNameUkr(int limit, int index);
+
+    /**
      * finds limited number of sorted by category name dishes and returns them as Page object
      *
      * @param limit max number of dishes per Page
@@ -63,5 +76,7 @@ public interface DishDao extends CrudDao<Dish> {
      *                                  index is less than 1
      */
     Page<Dish> findAllSortedByPrice(int limit, int index);
+
+    Optional<Dish> findById(int id);
 
 }

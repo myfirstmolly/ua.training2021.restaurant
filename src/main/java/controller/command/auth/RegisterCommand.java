@@ -13,6 +13,9 @@ import util.WebPages;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 /**
@@ -68,23 +71,25 @@ public class RegisterCommand implements Command {
     private boolean hasValidCredentials(String name, String email, String phoneNumber,
                                         String username, HttpServletRequest request) {
         boolean hasErrors = false;
+        String locale = (String) request.getSession().getAttribute("lang");
+        if (locale == null)
+            locale = "en";
+        ResourceBundle bundle = ResourceBundle.getBundle("i18n", Locale.forLanguageTag(locale));
 
         if (name == null || !Pattern.compile(NAME_REGEX).matcher(name).find()) {
-            request.setAttribute("nameMsg", "name must start with capital letter and " +
-                    "be between 4 and 32 letters");
+            request.setAttribute("nameMsg", bundle.getString("wrong.name.msg"));
             hasErrors = true;
         }
         if (email == null || !Pattern.compile(EMAIL_REGEX).matcher(email).find()) {
-            request.setAttribute("emailMsg", "please, check you email");
+            request.setAttribute("emailMsg", bundle.getString("wrong.email.msg"));
             hasErrors = true;
         }
         if (phoneNumber == null || !Pattern.compile(PHONE_REGEX).matcher(phoneNumber).find()) {
-            request.setAttribute("phoneMsg", "please, check you phone number");
+            request.setAttribute("phoneMsg", bundle.getString("wrong.phone.msg"));
             hasErrors = true;
         }
         if (username == null || !Pattern.compile(USERNAME_REGEX).matcher(username).find()) {
-            request.setAttribute("usernameMsg", "username must consist of latin letters and " +
-                    "be from 4 to 16 letters");
+            request.setAttribute("usernameMsg", bundle.getString("wrong.username.msg"));
             hasErrors = true;
         }
 

@@ -1,10 +1,20 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ page isELIgnored="false" %>
+
+<fmt:setBundle basename="i18n"/>
+
+<fmt:message key="title" var="title"/>
+<fmt:message key="currency" var="currency"/>
+<fmt:message key="add.to.cart" var="addToCart"/>
+<fmt:message key="delete" var="delete"/>
+
 <html>
 
 <head>
-    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-    <title>Restaurant - the best in the world</title>
+    <title>${title}</title>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link type="text/css" href="${pageContext.request.contextPath}/style/style.css" rel="stylesheet">
@@ -12,56 +22,40 @@
 </head>
 
 <body>
-<header>
-    <nav>
-        <ul class="nav_links">
-            <li><a href="api?command=menu#menu">Menu</a></li>
-            <c:if test="${role.name == 'CUSTOMER'}">
-                <li><a href="api?command=cart">Cart</a></li>
-                <li><a href="api?command=orders">My Orders</a></li>
-            </c:if>
-            <c:if test="${role.name == 'MANAGER'}">
-                <li><a href="api?command=addDishGetPage">Add dish</a></li>
-                <li><a href="api?command=orders">Orders</a></li>
-            </c:if>
-        </ul>
-    </nav>
-    <c:choose>
-        <c:when test="${role == null}">
-            <a href="/restaurant">
-                <button>Login</button>
-            </a>
-        </c:when>
-        <c:otherwise>
-            <a href="api?command=logout">
-                <button>Logout</button>
-            </a>
-        </c:otherwise>
-    </c:choose>
-</header>
+<jsp:include page="navigation.jsp"/>
 <div class="content">
     <div class="dish">
         <div class="menu_img">
             <img src="${dish.imagePath}">
         </div>
         <div class="dish_description">
-            <h3>${dish.name}</h3>
-            <div class="desc">
-                <p>${dish.description}</p>
-            </div>
-            <h4>${dish.price/100}</h4>
+            <c:choose>
+                <c:when test="${sessionScope.lang eq 'ukr'}">
+                    <h3>${dish.nameUkr}</h3>
+                    <div class="desc">
+                        <p>${dish.descriptionUkr}</p>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <h3>${dish.name}</h3>
+                    <div class="desc">
+                        <p>${dish.description}</p>
+                    </div>
+                </c:otherwise>
+            </c:choose>
+            <h4>${dish.price/100} ${currency}</h4>
             <c:if test="${role.name == 'CUSTOMER'}">
                 <form method="POST" action="api">
                     <input type="hidden" name="command" value="addToCart">
                     <input type="hidden" name="dish" value="${dish.id}">
-                    <button type="submit">Add to cart</button>
+                    <button type="submit">${addToCart}</button>
                 </form>
             </c:if>
             <c:if test="${role.name == 'MANAGER'}">
                 <form method="POST" action="api">
                     <input type="hidden" name="command" value="deleteDish">
                     <input type="hidden" name="dish" value="${dish.id}">
-                    <button>Delete</button>
+                    <button>${delete}</button>
                 </form>
             </c:if>
         </div>

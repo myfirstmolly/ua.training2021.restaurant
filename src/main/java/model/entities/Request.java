@@ -17,13 +17,11 @@ public final class Request implements Entity {
 
     private long totalPrice;
 
-    private User approvedBy;
+    private Integer approvedBy;
 
     private Date createdAt;
 
     private Date updatedAt;
-
-    private List<RequestItem> requestItems;
 
     public Request() {
     }
@@ -31,7 +29,7 @@ public final class Request implements Entity {
     public Request(User customer, Status status) {
         this.customer = customer;
         this.status = status;
-        requestItems = new ArrayList<>();
+        approvedBy = null;
     }
 
     @Override
@@ -43,7 +41,6 @@ public final class Request implements Entity {
                 ", deliveryAddress='" + deliveryAddress + '\'' +
                 ", totalPrice=" + totalPrice +
                 ", approvedBy=" + approvedBy +
-                ", bill=" + requestItems +
                 '}';
     }
 
@@ -54,7 +51,7 @@ public final class Request implements Entity {
         Request request = (Request) o;
         return id == request.id &&
                 totalPrice == request.totalPrice &&
-                customer.equals(request.customer) &&
+                customer == request.customer &&
                 status == request.status;
     }
 
@@ -105,11 +102,11 @@ public final class Request implements Entity {
         this.totalPrice = totalPrice;
     }
 
-    public User getApprovedBy() {
+    public Integer getApprovedBy() {
         return approvedBy;
     }
 
-    public void setApprovedBy(User approvedBy) {
+    public void setApprovedBy(Integer approvedBy) {
         this.approvedBy = approvedBy;
     }
 
@@ -127,14 +124,6 @@ public final class Request implements Entity {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public List<RequestItem> getRequestItems() {
-        return requestItems;
-    }
-
-    public void setRequestItems(List<RequestItem> requestItems) {
-        this.requestItems = requestItems;
     }
 
 }

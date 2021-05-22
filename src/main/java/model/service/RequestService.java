@@ -3,9 +3,12 @@ package model.service;
 import model.entities.*;
 import util.Page;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RequestService {
+
+    List<RequestItem> findAllRequestItemsByRequest(Request request);
 
     /**
      * finds limited number of Requests (defined in implementation class)
@@ -117,5 +120,4 @@ public interface RequestService {
      * @param id request unique identifier
      */
     void deleteById(int id);
-
 }

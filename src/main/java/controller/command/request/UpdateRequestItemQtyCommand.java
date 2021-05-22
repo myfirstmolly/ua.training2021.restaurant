@@ -36,12 +36,12 @@ public class UpdateRequestItemQtyCommand implements Command {
         int id = Integer.parseInt(request.getParameter("id"));
         RequestItem item = requestService.findRequestItemById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("request not found"));
-        if ("increase".equals(action)) {
+        if ("increase".equals(action) && item.getQuantity() < 30) {
             item.setQuantity(item.getQuantity() + 1);
             logger.debug("increased order item quantity");
         }
 
-        if ("decrease".equals(action)) {
+        if ("decrease".equals(action) && item.getQuantity() > 1) {
             item.setQuantity(item.getQuantity() - 1);
             logger.debug("decreased order item quantity");
         }

@@ -27,7 +27,18 @@ public final class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Category> findAll() {
         StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.setSelect().build();
+        String sql = b.setSelect("id", "name").build();
+        logger.trace("delegated '" + sql + "' to DaoUtils");
+        return daoUtils.getList(sql);
+    }
+
+    @Override
+    public List<Category> findAll(String locale) {
+        if (locale == null || !locale.equals("ukr"))
+            return findAll();
+
+        StatementBuilder b = new StatementBuilder(TABLE_NAME);
+        String sql = b.setSelect("id", "name_ukr as name").build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
         return daoUtils.getList(sql);
     }
@@ -80,4 +91,5 @@ public final class CategoryDaoImpl implements CategoryDao {
         }
         deleteById(category.getId());
     }
+
 }

@@ -12,6 +12,8 @@ import util.WebPages;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * authenticates user by their login and password.
@@ -35,7 +37,11 @@ public class LoginCommand implements Command {
             logger.debug("-----successfully executed login command-----");
             return "redirect:" + WebPages.MENU_COMMAND;
         } else {
-            request.setAttribute("message", "Please, enter correct credentials");
+            String locale = (String) request.getSession().getAttribute("lang");
+            if (locale == null)
+                locale = "en";
+            ResourceBundle bundle = ResourceBundle.getBundle("i18n", Locale.forLanguageTag(locale));
+            request.setAttribute("message", bundle.getString("incorrect.credentials"));
             logger.info(String.format("user %s tried to log in", login));
             logger.debug("-----successfully executed login command-----");
             return WebPages.LOGIN_PAGE;
