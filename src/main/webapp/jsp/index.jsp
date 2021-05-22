@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="m" uri="http://tomcat.apache.org/tags" %>
 <%@ page isELIgnored="false" %>
 
 <fmt:setBundle basename="i18n"/>
@@ -75,7 +76,7 @@
                             <p>${dish.description}</p>
                         </c:otherwise>
                     </c:choose>
-                    <h4>${dish.price/100} ${currency}</h4>
+                    <h4><m:priceFormat price="${dish.price}"/> ${currency}</h4>
                 </div>
             </c:forEach>
         </div>

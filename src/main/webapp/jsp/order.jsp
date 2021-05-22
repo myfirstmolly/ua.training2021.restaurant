@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="m" uri="http://tomcat.apache.org/tags" %>
 <%@ page isELIgnored="false" %>
 
 <fmt:setBundle basename="i18n"/>
@@ -56,7 +57,7 @@
                 <b id="counter"> ${requestItem.quantity} </b>
             </div>
             <div class="price">
-                <h3 class="item_price">${requestItem.price/100}</h3>
+                <h3 class="item_price"><m:priceFormat price="${requestItem.price}"/></h3>
                 <h3 class="currency">${currency}</h3>
             </div>
         </div>
