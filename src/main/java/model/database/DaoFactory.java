@@ -3,6 +3,9 @@ package model.database;
 import model.dao.*;
 import model.dao.impl.*;
 
+/**
+ * factory for dao objects
+ */
 public class DaoFactory {
 
     public static CategoryDao getCategoryDao() {
