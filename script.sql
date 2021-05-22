@@ -37,7 +37,6 @@ values (0, 'manager'),
        (1, 'customer');
 
 
-
 /**
 --------------------------------------------------------------
     USER
@@ -72,7 +71,7 @@ create table if not exists request_status
 (
     id          int primary key,
     name        varchar(32) unique not null,
-    description varchar(2048)      not null
+    description varchar(200)       not null
 );
 
 -- since Status is enum, ids must start from 0
@@ -119,19 +118,20 @@ create table if not exists request
  */
 create table if not exists category
 (
-    id   int primary key auto_increment,
-    name varchar(32) unique not null
+    id       int primary key auto_increment,
+    name     varchar(32) unique not null,
+    name_ukr varchar(32) unique not null
 );
 
 insert into category
-values (default, 'appetizer'),
-       (default, 'salad'),
-       (default, 'soup'),
-       (default, 'hot dish'),
-       (default, 'pasta'),
-       (default, 'fish'),
-       (default, 'dessert'),
-       (default, 'drink');
+values (default, 'appetizer', 'закуска'),
+       (default, 'salad', 'салат'),
+       (default, 'soup', 'суп'),
+       (default, 'hot dish', 'гаряча страва'),
+       (default, 'pasta', 'паста'),
+       (default, 'fish', 'риба'),
+       (default, 'dessert', 'десерт'),
+       (default, 'drink', 'напій');
 
 
 /**
@@ -141,12 +141,14 @@ values (default, 'appetizer'),
  */
 create table if not exists dish
 (
-    id          int primary key auto_increment,
-    name        varchar(32) unique not null,
-    price       int                not null default 0,
-    description varchar(2048)      null,
-    image_path  varchar(100)       not null,
-    category_id int                not null,
+    id              int primary key auto_increment,
+    name            varchar(32) unique not null,
+    name_ukr        varchar(32) unique not null,
+    price           int                not null default 0,
+    description     varchar(2048)      null,
+    description_ukr varchar(2048)      null,
+    image_path      varchar(300)       not null,
+    category_id     int                not null,
     constraint fk_dish_has_category_category_id
         foreign key (category_id) references category (id)
             on update cascade
@@ -166,7 +168,6 @@ begin
     end if;
 end;
 // delimiter ;
-
 
 
 /**
