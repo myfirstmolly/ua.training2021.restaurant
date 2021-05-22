@@ -34,6 +34,6 @@ public class UpdateRequestStatusCommand implements Command {
             requestService.setRequestStatus(orderId, status, user);
         }
         logger.debug("-----successfully executed update order status command-----");
-        return WebPages.ORDERS_COMMAND;
+        return "redirect:" + WebPages.ORDERS_COMMAND;
     }
 }

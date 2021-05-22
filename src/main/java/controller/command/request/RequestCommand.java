@@ -3,6 +3,7 @@ package controller.command.request;
 import controller.command.Command;
 import model.database.DaoFactory;
 import model.entities.Request;
+import model.entities.Role;
 import model.entities.Status;
 import model.entities.User;
 import model.exceptions.ObjectNotFoundException;
@@ -34,7 +35,10 @@ public class RequestCommand implements Command {
         User user = (User) request.getSession().getAttribute("user");
         Request r = requestService.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("request not found"));
-        int statusId = r.getStatus().toInt();
+        int statusId = r.getStatus().getId();
+        if (r.getStatus().equals(Status.OPENED)) {
+            return "redirect:" + WebPages.CART_COMMAND;
+        }
         List<Status> statusList = Arrays.asList(Status.values()).subList(statusId + 1, Status.values().length);
         request.setAttribute("statusList", statusList);
         request.setAttribute("request", r);

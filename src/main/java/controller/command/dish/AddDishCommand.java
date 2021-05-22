@@ -64,7 +64,7 @@ public class AddDishCommand implements Command {
         Dish dish = new Dish(name, price, description, imagePath, category);
         dishService.save(dish);
         logger.debug("-----successfully executed add dish command-----");
-        return WebPages.DISH_COMMAND + dish.getId();
+        return "redirect:" + WebPages.DISH_COMMAND + dish.getId();
     }
 
     private boolean isValid(String name, String priceDouble, String imagePath, HttpServletRequest request) {

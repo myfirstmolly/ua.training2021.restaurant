@@ -37,12 +37,12 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public Page<Request> findAllByUserAndStatus(User user, Status status, int page) {
-        return requestDao.findAllByUserAndStatus(user.getId(), status.toInt(), LIMIT, page);
+        return requestDao.findAllByUserAndStatus(user.getId(), status.getId(), LIMIT, page);
     }
 
     @Override
     public Optional<Request> findOneByUserAndStatus(User user, Status status) {
-        return requestDao.findFirstByUserAndStatus(user.getId(), status.toInt());
+        return requestDao.findFirstByUserAndStatus(user.getId(), status.getId());
     }
 
     @Override
@@ -59,7 +59,7 @@ public class RequestServiceImpl implements RequestService {
     public void addRequestItem(User user, Dish dish, int quantity) {
         // since OPENED status represents dishes in user's cart, each user must have either zero or 1 request
         // with this status
-        Optional<Request> request = requestDao.findFirstByUserAndStatus(user.getId(), Status.OPENED.toInt());
+        Optional<Request> request = requestDao.findFirstByUserAndStatus(user.getId(), Status.OPENED.getId());
         if (!request.isPresent()) { // <-- if user wants to add item to cart, but OPENED request doesn't exist yet, it will be created
             Request req = new Request(user, Status.OPENED);
             requestDao.save(req);
@@ -96,7 +96,7 @@ public class RequestServiceImpl implements RequestService {
         Request request = findById(requestId).get();
 
         // if manager tries to set request status which is previous to current, do nothing
-        if (status.toInt() <= request.getStatus().toInt())
+        if (status.getId() <= request.getStatus().getId())
             return;
 
         // setting request status 'COOKING' means that this request is approved by manager

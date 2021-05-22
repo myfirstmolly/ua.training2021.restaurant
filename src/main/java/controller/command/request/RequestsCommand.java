@@ -65,8 +65,7 @@ public class RequestsCommand implements Command {
         if (status == null || Objects.equals(status, Status.OPENED)) {
             return requestService.findAll(pageIndex);
         }
-        return requestService.findAllByStatus(status.toInt(),
-                pageIndex);
+        return requestService.findAllByStatus(status.getId(), pageIndex);
     }
 
     private Page<Request> getUserOrdersPage(HttpServletRequest request,
@@ -78,8 +77,7 @@ public class RequestsCommand implements Command {
         if (status == null) {
             return requestService.findAllByUserId(user.getId(), pageIndex);
         }
-        return requestService.findAllByUserAndStatus(user,
-                status, pageIndex);
+        return requestService.findAllByUserAndStatus(user, status, pageIndex);
     }
 
     private Status getStatus(HttpServletRequest request, HttpServletResponse response) {

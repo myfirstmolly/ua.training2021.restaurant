@@ -45,10 +45,13 @@ public class RegisterCommand implements Command {
         String phoneNumber = request.getParameter("phone");
         String username = request.getParameter("username");
         String password = (String) request.getAttribute("password");
-        if (!hasValidCredentials(name, email, phoneNumber, username, request))
+        if (!hasValidCredentials(name, email, phoneNumber, username, request)) {
+            logger.trace("received invalid credentials, redirecting back");
             return WebPages.REGISTER_PAGE;
+        }
 
         if (userService.findByUsername(username).isPresent()) {
+            logger.trace("received duplicated username, redirecting back");
             request.setAttribute("usernameMsg", "username must be unique");
             return WebPages.REGISTER_PAGE;
         }
@@ -59,7 +62,7 @@ public class RegisterCommand implements Command {
         HttpSession session = request.getSession();
         session.setAttribute("user", user);
         logger.debug("-----successfully executed register command-----");
-        return WebPages.MENU_COMMAND;
+        return "redirect:" + WebPages.MENU_COMMAND;
     }
 
     private boolean hasValidCredentials(String name, String email, String phoneNumber,

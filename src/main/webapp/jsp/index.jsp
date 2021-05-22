@@ -1,10 +1,30 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!DOCTYPE html>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<fmt:setBundle basename="resources"/>
+<fmt:setLocale value="ukr"/>
+<fmt:message key="menu" var="menu"/>
+<fmt:message key="cart" var="cart"/>
+<fmt:message key="my.orders" var="myOrders"/>
+<fmt:message key="add.dish" var="addDish"/>
+<fmt:message key="orders" var="orders"/>
+<fmt:message key="language" var="lang"/>
+<fmt:message key="language.code" var="langCode"/>
+<fmt:message key="login" var="login"/>
+<fmt:message key="logout" var="logout"/>
+<fmt:message key="restaurant.name" var="restaurantName"/>
+<fmt:message key="restaurant.desc" var="desc"/>
+<fmt:message key="order.by" var="orderBy"/>
+<fmt:message key="price" var="price"/>
+<fmt:message key="category" var="category"/>
+<fmt:message key="name" var="name"/>
+<fmt:message key="all" var="all"/>
+<fmt:message key="currency" var="currency"/>
 <html>
 
 <head>
     <title>Restaurant - the best in the world</title>
-    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link type="text/css" href="${pageContext.request.contextPath}/style/style.css" rel="stylesheet">
@@ -14,54 +34,60 @@
 <header>
     <nav>
         <ul class="nav_links">
-            <li><a href="api?command=menu#menu">Menu</a></li>
+            <li><a href="api?command=menu#menu">${menu}</a></li>
             <c:if test="${role.name == 'CUSTOMER'}">
-                <li><a href="api?command=cart">Cart</a></li>
-                <li><a href="api?command=orders">My Orders</a></li>
+                <li><a href="api?command=cart">${cart}</a></li>
+                <li><a href="api?command=orders">${myOrders}</a></li>
             </c:if>
             <c:if test="${role.name == 'MANAGER'}">
-                <li><a href="api?command=addDishGetPage">Add dish</a></li>
-                <li><a href="api?command=orders">Orders</a></li>
+                <li><a href="api?command=addDishGetPage">${addDish}</a></li>
+                <li><a href="api?command=orders">${orders}</a></li>
             </c:if>
-            <li><a href="api?command=menu&lang=en#menu">English</a></li>
-            <li><a href="api?command=menu&lang=ukr#menu">Українська</a></li>
+            <li><a href="api?command=setLocale&lang=${langCode}#menu">${lang}</a></li>
         </ul>
     </nav>
     <c:choose>
         <c:when test="${role == null}">
             <a href="/restaurant">
-                <button>Login</button>
+                <button>${login}</button>
             </a>
         </c:when>
         <c:otherwise>
             <a href="api?command=logout">
-                <button>Logout</button>
+                <button>${logout}</button>
             </a>
         </c:otherwise>
     </c:choose>
 </header>
 <div class="content">
     <div class="main_banner">
-        <h1>Restaurant</h1>
-        <p>The best food in the world</p>
+        <h1>${restaurantName}</h1>
+        <p>${desc}</p>
     </div>
     <a name="menu"></a>
     <div class="menu">
         <div class="options">
             <div class="dropdown">
-                <button class="dropbtn">Order by</button>
+                <button class="dropbtn">${orderBy}</button>
                 <div class="dropdown-content">
-                    <a href="api?command=menu&orderBy=price#menu">Price</a>
-                    <a href="api?command=menu&orderBy=category#menu">Category</a>
-                    <a href="api?command=menu&orderBy=name#menu">Name</a>
+                    <a href="api?command=menu&orderBy=price#menu">${price}</a>
+                    <a href="api?command=menu&orderBy=category#menu">${category}</a>
+                    <a href="api?command=menu&orderBy=name#menu">${category}</a>
                 </div>
             </div>
             <div class="dropdown">
-                <button class="dropbtn">Category</button>
+                <button class="dropbtn">${category}</button>
                 <div class="dropdown-content">
-                    <a href="api?command=menu&category=all#menu">All</a>
+                    <a href="api?command=menu&category=all#menu">${all}</a>
                     <c:forEach var="category" items="${categories}">
-                        <a href="api?command=menu&category=${category.id}#menu">${category.name}</a>
+                        <c:choose>
+                            <c:when test="${fn:startsWith(sessionScope.locale, 'ukr')}">
+                                <a href="api?command=menu&category=${category.id}#menu">${category.nameUkr}</a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="api?command=menu&category=${category.id}#menu">${category.name}</a>
+                            </c:otherwise>
+                        </c:choose>
                     </c:forEach>
                 </div>
             </div>
@@ -78,7 +104,7 @@
                         <h3>${dish.name}</h3>
                     </a>
                     <p>${dish.description}</p>
-                    <h4>${dish.price/100} uah</h4>
+                    <h4>${dish.price/100} ${currency}</h4>
                 </div>
             </c:forEach>
         </div>

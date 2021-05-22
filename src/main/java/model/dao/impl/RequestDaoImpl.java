@@ -60,7 +60,7 @@ public final class RequestDaoImpl implements RequestDao {
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
         String sql = s.setSelect().setWhere("status_id!").setOrderBy("id desc").setLimit().setOffset().build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
-        return daoUtils.getPage(limit, index, sql, status.toInt());
+        return daoUtils.getPage(limit, index, sql, status.getId());
     }
 
     @Override
@@ -112,7 +112,7 @@ public final class RequestDaoImpl implements RequestDao {
         StatementBuilder s = new StatementBuilder(TABLE_NAME);
         String sql = s.setInsert("customer_id", "status_id", "delivery_address").build();
         Integer customer = request.getCustomer() == null ? null : request.getCustomer().getId();
-        Integer status = request.getStatus() == null ? null : request.getStatus().toInt();
+        Integer status = request.getStatus() == null ? null : request.getStatus().getId();
         logger.trace("delegated '" + sql + "' to DaoUtils");
         daoUtils.save(request, sql, customer, status, request.getDeliveryAddress());
     }
@@ -128,7 +128,7 @@ public final class RequestDaoImpl implements RequestDao {
                 .build();
         logger.trace("delegated '" + sql + "' to DaoUtils");
         Integer customer = request.getCustomer() == null ? null : request.getCustomer().getId();
-        Integer status = request.getStatus() == null ? null : request.getStatus().toInt();
+        Integer status = request.getStatus() == null ? null : request.getStatus().getId();
         Integer approvedBy = request.getApprovedBy() == null ? null : request.getApprovedBy().getId();
         daoUtils.update(sql, customer, status, request.getDeliveryAddress(), approvedBy, request.getId());
     }

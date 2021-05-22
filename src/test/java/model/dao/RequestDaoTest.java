@@ -116,7 +116,7 @@ public class RequestDaoTest {
     public void whenFindByStatusIdCalled_thenReturnListOfRequests() throws SQLException {
         requestDao.save(request);
         when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
-        List<Request> requests = requestDao.findAllByStatusId(request.getStatus().toInt(), 100, 1).getContent();
+        List<Request> requests = requestDao.findAllByStatusId(request.getStatus().getId(), 100, 1).getContent();
         Assert.assertNotNull(requests);
         Assert.assertTrue(requests.contains(request));
     }
@@ -144,7 +144,7 @@ public class RequestDaoTest {
         requestDao.save(request);
         when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         List<Request> requests = requestDao.findAllByUserAndStatus
-                (request.getCustomer().getId(), request.getStatus().toInt(), 100, 1).getContent();
+                (request.getCustomer().getId(), request.getStatus().getId(), 100, 1).getContent();
         Assert.assertNotNull(requests);
         Assert.assertTrue(requests.contains(request));
     }
@@ -164,7 +164,7 @@ public class RequestDaoTest {
         requestDao.save(request);
         when(dbManager.getConnection()).thenReturn(DriverManager.getConnection(DB_URL, USERNAME, PASSWORD));
         List<Request> requests = requestDao.findAllByUserAndStatus
-                (100, request.getStatus().toInt(), 100, 1).getContent();
+                (100, request.getStatus().getId(), 100, 1).getContent();
         Assert.assertNotNull(requests);
         Assert.assertTrue(requests.isEmpty());
     }

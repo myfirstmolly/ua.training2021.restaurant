@@ -7,10 +7,10 @@ public enum Status {
     DELIVERING(3),
     DONE(4);
 
-    int value;
+    int id;
 
-    Status(int value) {
-        this.value = value;
+    Status(int id) {
+        this.id = id;
     }
 
     public static boolean contains(String val) {
@@ -21,7 +21,7 @@ public enum Status {
         return false;
     }
 
-    public int toInt() {
-        return value;
+    public int getId() {
+        return id;
     }
 }

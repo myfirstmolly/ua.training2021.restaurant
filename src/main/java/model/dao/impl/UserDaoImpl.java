@@ -68,7 +68,7 @@ public final class UserDaoImpl implements UserDao {
         logger.trace("delegated '" + sql + "' to DaoUtils");
         daoUtils.save(user, sql, user.getUsername(), user.getPassword(), user.getName(),
                 user.getPhoneNumber(), user.getEmail(),
-                user.getRole() == null ? null : user.getRole().toInt());
+                user.getRole() == null ? null : user.getRole().getId());
     }
 
     @Override
@@ -82,7 +82,7 @@ public final class UserDaoImpl implements UserDao {
         logger.trace("delegated '" + sql + "' to DaoUtils");
         daoUtils.update(sql, user.getUsername(), user.getPassword(), user.getName(),
                 user.getPhoneNumber(), user.getEmail(),
-                user.getRole() == null ? null : user.getRole().toInt(),
+                user.getRole() == null ? null : user.getRole().getId(),
                 user.getId());
     }
 

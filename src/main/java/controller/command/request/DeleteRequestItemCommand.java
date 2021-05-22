@@ -27,6 +27,6 @@ public class DeleteRequestItemCommand implements Command {
         int id = Integer.parseInt(request.getParameter("id"));
         requestService.deleteRequestItem(id);
         logger.debug("-----successfully executed delete request command-----");
-        return WebPages.CART_COMMAND;
+        return "redirect:" + WebPages.CART_COMMAND;
     }
 }

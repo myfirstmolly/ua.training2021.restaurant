@@ -38,6 +38,6 @@ public class AddDishToCartCommand implements Command {
                 .orElseThrow(() -> new ObjectNotFoundException("dish not found"));
         requestService.addRequestItem(user, dish, 1);
         logger.debug("-----successfully executed add dish to cart command-----");
-        return WebPages.DISH_COMMAND + dishId;
+        return "redirect:" + WebPages.DISH_COMMAND + dishId;
     }
 }

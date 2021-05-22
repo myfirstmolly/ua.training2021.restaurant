@@ -4,14 +4,14 @@ public enum Role {
     MANAGER(0),
     CUSTOMER(1);
 
-    int value;
+    int id;
 
     Role(int i) {
-        value = i;
+        id = i;
     }
 
-    public int toInt() {
-        return value;
+    public int getId() {
+        return id;
     }
 
     public String getName() {

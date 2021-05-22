@@ -45,7 +45,7 @@ public class CheckoutCommand implements Command {
         req.setDeliveryAddress(address);
         requestService.updateRequest(req);
         logger.debug("-----successfully executed checkout command-----");
-        return WebPages.ORDER_COMMAND + req.getId();
+        return "redirect:" + WebPages.ORDER_COMMAND + req.getId();
     }
 
     private boolean isValid(String address) {

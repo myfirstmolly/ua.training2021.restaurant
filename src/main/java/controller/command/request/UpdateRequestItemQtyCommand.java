@@ -29,7 +29,7 @@ public class UpdateRequestItemQtyCommand implements Command {
         String action = request.getParameter("action");
         updateOrderItem(request, action);
         logger.debug("-----successfully executed update order item quantity command-----");
-        return WebPages.CART_COMMAND;
+        return "redirect:" + WebPages.CART_COMMAND;
     }
 
     private void updateOrderItem(HttpServletRequest request, String action) {

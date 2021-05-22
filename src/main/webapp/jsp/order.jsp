@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page pageEncoding="UTF-8"%>
 <html>
+
 <head>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -63,7 +64,7 @@
         <input type="hidden" name="id" value="${request.id}">
         <p>Update status:</p>
         <select name="status">
-            <option selected value="${request.status}">${request.status}</option>
+            <option selected value="${request.status.id}">${request.status}</option>
             <c:forEach var="status" items="${statusList}">
                 <option value="${status}">${status}</option>
             </c:forEach>

@@ -17,11 +17,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@WebFilter(servletNames = "Controller", filterName = "AuthorizationFilter",
+@WebFilter(servletNames = "Controller", urlPatterns = "/*", filterName = "AuthorizationFilter",
         initParams = {@WebInitParam(name = "manager", value = "addDish addDishGetPage deleteDish updateStatus"),
                 @WebInitParam(name = "customer", value = "addToCart checkout checkoutForm cart deleteRequestItem updateQty"),
                 @WebInitParam(name = "authorized", value = "logout order orders"),
-                @WebInitParam(name = "any", value = "dish menu login register")})
+                @WebInitParam(name = "any", value = "dish setLocale menu login register")})
 public class AuthorizationFilter implements Filter {
 
     private static final Logger logger = LogManager.getLogger(AuthorizationFilter.class);
@@ -33,14 +33,21 @@ public class AuthorizationFilter implements Filter {
     }
 
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
-        String command = req.getParameter("controller/command");
+        String command = req.getParameter("command");
         HttpServletRequest request = (HttpServletRequest) req;
-        if (accessAllowed(command, request))
+        logger.debug("received command: " + command);
+        logger.debug("authorization filter started, uri: " + request.getRequestURI());
+        if (accessAllowed(command, request)) {
+            logger.trace("access to page allowed");
             chain.doFilter(req, resp);
+        }
         else {
+            logger.trace("access to page is not allowed");
             if (request.getSession() != null) {
+                logger.trace("invalidating session");
                 request.getSession().invalidate();
             }
+            logger.trace("redirecting to login page");
             req.getRequestDispatcher(WebPages.LOGIN_PAGE).forward(req, resp);
         }
     }

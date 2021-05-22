@@ -33,7 +33,7 @@ public class LoginCommand implements Command {
             session.setAttribute("user", user);
             logger.info(String.format("user %s logged in as %s", user.getUsername(), user.getRole()));
             logger.debug("-----successfully executed login command-----");
-            return WebPages.MENU_COMMAND;
+            return "redirect:" + WebPages.MENU_COMMAND;
         } else {
             request.setAttribute("message", "Please, enter correct credentials");
             logger.info(String.format("user %s tried to log in", login));

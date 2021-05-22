@@ -21,7 +21,9 @@ public class LogoutCommand implements Command {
         logger.debug("-----executing logout command-----");
         User user = (User) request.getSession().getAttribute("user");
         if (user != null) {
+            logger.trace(String.format("invalidating user %s session...", user.getUsername()));
             request.getSession().invalidate();
+            logger.trace("successfully invalidated session");
             logger.info(String.format("user %s logged out", user.getUsername()));
         }
         logger.debug("-----successfully executed logout command-----");
