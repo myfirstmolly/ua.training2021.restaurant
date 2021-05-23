@@ -11,7 +11,7 @@ They can also view catalogue sorted by:
 
 * dish category;
 
-Also, the customer is able to filter dishes by their category. Customer can
+Also, customer is able to filter dishes by their category. Customer can
 order the same dish more than once.
 
 _Manager_ administrates the orders: after receiving a new order, manager sends
