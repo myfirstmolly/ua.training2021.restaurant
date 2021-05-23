@@ -8,7 +8,7 @@ import javax.servlet.http.HttpSessionAttributeListener;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-import java.util.List;
+import java.util.HashSet;
 
 /**
  * session listener
@@ -34,7 +34,7 @@ public class SessionListener implements HttpSessionListener, HttpSessionAttribut
             return;
 
         User user = (User) event.getValue();
-        List<String> loggedUsers = (List<String>) event.getSession()
+        HashSet<String> loggedUsers = (HashSet<String>) event.getSession()
                 .getServletContext().getAttribute("loggedUsers");
         if (loggedUsers.contains(user.getUsername())) {
             logger.trace(String.format("user %s is already logged in, invalidating session...",
@@ -68,7 +68,7 @@ public class SessionListener implements HttpSessionListener, HttpSessionAttribut
         logger.debug("traced session deletion");
         User user = (User) se.getSession().getAttribute("user");
         if (user != null) {
-            List<String> loggedUsers = (List<String>) se.getSession()
+            HashSet<String> loggedUsers = (HashSet<String>) se.getSession()
                     .getServletContext().getAttribute("loggedUsers");
             if (loggedUsers.contains(user.getUsername())) {
                 loggedUsers.remove(user.getUsername());

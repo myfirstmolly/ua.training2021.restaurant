@@ -5,8 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 
 public class ContextListener implements ServletContextListener {
 
@@ -22,7 +21,7 @@ public class ContextListener implements ServletContextListener {
      */
     public void contextInitialized(ServletContextEvent sce) {
         logger.debug("context initialization started");
-        List<String> loggedUsers = new ArrayList<>();
+        HashSet<String> loggedUsers = new HashSet<>();
         sce.getServletContext().setAttribute("loggedUsers", loggedUsers);
         logger.trace("added 'loggedUsers' attribute to servlet context");
         logger.debug("context initialization finished");
