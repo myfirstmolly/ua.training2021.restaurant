@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet(name = "Controller", urlPatterns = "/api")
 public class Controller extends HttpServlet {
 
     private static final Logger logger = LogManager.getLogger(Controller.class);
@@ -37,6 +36,7 @@ public class Controller extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
+        logger.debug("servlet initialization started");
         commandMap = new HashMap<>();
         commandMap.put("default", new MenuCommand());
         commandMap.put("setLocale", new SetLocaleCommand());
@@ -57,6 +57,7 @@ public class Controller extends HttpServlet {
         commandMap.put("orders", new RequestsCommand());
         commandMap.put("updateStatus", new UpdateRequestStatusCommand());
         commandMap.put("updateQty", new UpdateRequestItemQtyCommand());
+        logger.debug("servlet initialization finished, commands: " + commandMap.toString());
         super.init();
     }
 

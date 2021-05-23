@@ -2,7 +2,6 @@ package controller.command;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import util.WebPages;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +22,7 @@ public class SetLocaleCommand implements Command {
         session.setAttribute("lang", locale);
         logger.trace("added to session attribute lang=" + locale);
         logger.debug("-----successfully executed setLocale command-----");
-        return WebPages.MENU_COMMAND;
+        return "redirect:/" + request.getHeader("referer");
     }
 
 }

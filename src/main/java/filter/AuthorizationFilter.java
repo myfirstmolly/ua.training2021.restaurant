@@ -17,11 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@WebFilter(servletNames = "Controller", urlPatterns = "/*", filterName = "AuthorizationFilter",
-        initParams = {@WebInitParam(name = "manager", value = "addDish addDishGetPage deleteDish updateStatus"),
-                @WebInitParam(name = "customer", value = "addToCart checkout checkoutForm cart deleteRequestItem updateQty"),
-                @WebInitParam(name = "authorized", value = "logout order orders"),
-                @WebInitParam(name = "any", value = "dish setLocale menu login register")})
 public class AuthorizationFilter implements Filter {
 
     private static final Logger logger = LogManager.getLogger(AuthorizationFilter.class);
@@ -36,7 +31,7 @@ public class AuthorizationFilter implements Filter {
         String command = req.getParameter("command");
         HttpServletRequest request = (HttpServletRequest) req;
         logger.debug("received command: " + command);
-        logger.debug("authorization filter started, uri: " + request.getRequestURI());
+        logger.debug("authorization filter started");
         if (accessAllowed(command, request)) {
             logger.trace("access to page allowed");
             chain.doFilter(req, resp);
@@ -81,6 +76,9 @@ public class AuthorizationFilter implements Filter {
         }
 
         User user = (User) request.getSession().getAttribute("user");
+
+        if (user == null)
+            return false;
 
         if (user.getRole().equals(Role.CUSTOMER))
             return authoritiesMap.get(Role.CUSTOMER).contains(command);

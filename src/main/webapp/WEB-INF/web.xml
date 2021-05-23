@@ -3,9 +3,75 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
+
     <welcome-file-list>
         <welcome-file>jsp/login.jsp</welcome-file>
     </welcome-file-list>
+
+    <servlet>
+        <servlet-name>Controller</servlet-name>
+        <servlet-class>controller.Controller</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Controller</servlet-name>
+        <url-pattern>/api</url-pattern>
+    </servlet-mapping>
+
+
+    <filter>
+        <filter-name>EncodingFilter</filter-name>
+        <filter-class>filter.EncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>EncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <servlet-name>Controller</servlet-name>
+    </filter-mapping>
+
+
+    <filter>
+        <filter-name>AuthorizationFilter</filter-name>
+        <filter-class>filter.AuthorizationFilter</filter-class>
+        <init-param>
+            <param-name>manager</param-name>
+            <param-value>addDish addDishGetPage deleteDish updateStatus</param-value>
+        </init-param>
+        <init-param>
+            <param-name>customer</param-name>
+            <param-value>addToCart checkout checkoutForm cart deleteRequestItem updateQty</param-value>
+        </init-param>
+        <init-param>
+            <param-name>authorized</param-name>
+            <param-value>logout order orders</param-value>
+        </init-param>
+        <init-param>
+            <param-name>any</param-name>
+            <param-value>dish setLocale menu login register</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>AuthorizationFilter</filter-name>
+        <servlet-name>Controller</servlet-name>
+    </filter-mapping>
+
+
+    <filter>
+        <filter-name>PasswordEncryptionFilter</filter-name>
+        <filter-class>filter.PasswordEncryptionFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>PasswordEncryptionFilter</filter-name>
+        <servlet-name>Controller</servlet-name>
+    </filter-mapping>
+
 
     <resource-ref>
         <description>MySQL Datasource</description>
@@ -13,6 +79,7 @@
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
     </resource-ref>
+
     <error-page>
         <exception-type>model.exceptions.ObjectNotFoundException</exception-type>
         <location>/jsp/not-found.jsp</location>
@@ -21,4 +88,5 @@
         <exception-type>java.lang.Throwable</exception-type>
         <location>/jsp/not-found.jsp</location>
     </error-page>
+
 </web-app>

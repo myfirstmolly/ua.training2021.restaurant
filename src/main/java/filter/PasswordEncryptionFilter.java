@@ -11,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-@WebFilter(servletNames = "Controller", filterName = "PasswordEncryptionFilter")
 public class PasswordEncryptionFilter implements Filter {
 
     private static final Logger logger = LogManager.getLogger(PasswordEncryptionFilter.class);
@@ -20,7 +19,9 @@ public class PasswordEncryptionFilter implements Filter {
         logger.debug("destroyed password encryption filter");
     }
 
-    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
+    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
+            throws ServletException, IOException {
+
         if ("register".equals(req.getParameter("command"))) {
             if (req.getParameter("password") == null ||
                     req.getParameter("password").length() < 6) {
