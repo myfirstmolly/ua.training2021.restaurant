@@ -4,17 +4,16 @@ import controller.command.Command;
 import model.database.DaoFactory;
 import model.entities.Role;
 import model.entities.User;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import model.service.UserService;
 import model.service.impl.UserServiceImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import util.WebPages;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Locale;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
@@ -26,7 +25,7 @@ public class RegisterCommand implements Command {
     private static final Logger logger = LogManager.getLogger(RegisterCommand.class);
     private final UserService userService = new UserServiceImpl(DaoFactory.getUserDao());
 
-    // price regex to check whether name starts with capital letter, contains letters only
+    // regex to check whether name starts with capital letter, contains letters only
     // and its length is between 4 and 32 symbols
     private static final String NAME_REGEX = "\\p{Lu}\\p{L}{3,31}";
 
