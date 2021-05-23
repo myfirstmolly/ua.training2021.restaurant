@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class RequestServiceImpl implements RequestService {
 
-    private final int LIMIT = 18;
+    private final int LIMIT = 10;
     private final RequestDao requestDao;
     private final RequestItemDao requestItemDao;
 

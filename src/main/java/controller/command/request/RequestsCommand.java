@@ -93,6 +93,12 @@ public class RequestsCommand implements Command {
         }
 
         if (status != null) {
+            for (Cookie c : request.getCookies()) {
+                if (c.getName().equals("page")) {
+                    c.setMaxAge(0);
+                    response.addCookie(c);
+                }
+            }
             Cookie cookie = new Cookie("status", status);
             response.addCookie(cookie);
             return Status.valueOf(status);
