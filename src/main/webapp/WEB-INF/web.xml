@@ -73,6 +73,15 @@
     </filter-mapping>
 
 
+    <listener>
+        <listener-class>listener.ContextListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>listener.SessionListener</listener-class>
+    </listener>
+
+
     <resource-ref>
         <description>MySQL Datasource</description>
         <res-ref-name>jdbc/restaurant</res-ref-name>

@@ -19,10 +19,10 @@ public class LogoutCommand implements Command {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.debug("-----executing logout command-----");
-        User user = (User) request.getSession().getAttribute("user");
+        User user = (User) request.getSession(false).getAttribute("user");
         if (user != null) {
             logger.trace(String.format("invalidating user %s session...", user.getUsername()));
-            request.getSession().invalidate();
+            request.getSession(false).invalidate();
             logger.trace("successfully invalidated session");
             logger.info(String.format("user %s logged out", user.getUsername()));
         }
