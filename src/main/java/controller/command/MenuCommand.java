@@ -1,19 +1,18 @@
 package controller.command;
 
-import model.database.DaoFactory;
+import model.dao.DaoFactory;
 import model.entities.Category;
 import model.entities.Dish;
 import model.entities.User;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import model.service.CategoryService;
 import model.service.DishService;
 import model.service.impl.CategoryServiceImpl;
 import model.service.impl.DishServiceImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import util.Page;
 import util.WebPages;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -35,7 +34,7 @@ public class MenuCommand implements Command {
         String locale = (String) request.getSession().getAttribute("lang");
         List<Category> categories = categoryService.findAll(locale);
         request.setAttribute("categories", categories);
-        Page<Dish> dishes = getPage(request, response);
+        Page<Dish> dishes = getPage(request);
         request.setAttribute("dishes", dishes);
         setRoleAttributes(request);
         logger.debug("-----successfully executed menu command-----");
@@ -50,76 +49,58 @@ public class MenuCommand implements Command {
         request.setAttribute("role", user.getRole());
     }
 
-    private Page<Dish> getPage(HttpServletRequest request, HttpServletResponse response) {
+    private Page<Dish> getPage(HttpServletRequest request) {
         int pageIndex = 1;
         String pageParam = request.getParameter("page");
-        String orderBy = request.getParameter("orderBy");
-        String category = request.getParameter("category");
-        if (pageParam != null)
-            pageIndex = Integer.parseInt(pageParam);
-        if (pageIndex <= 1)
-            pageIndex = 1;
-        return getDishPageWithCookies(request, response, pageIndex, orderBy, category);
+        if (pageParam != null) {
+            if (Integer.parseInt(pageParam) > 1)
+                pageIndex = Integer.parseInt(pageParam);
+            request.getSession().setAttribute("menuPage", pageIndex);
+        }
+        return getDishPage(request, pageIndex);
     }
 
-    private Page<Dish> getDishPageWithCookies(HttpServletRequest request, HttpServletResponse response,
-                                              int pageIndex, String orderBy, String category) {
-        int categoryId;
-        Cookie[] cookies = request.getCookies();
+    private Page<Dish> getDishPage(HttpServletRequest request, int pageIndex) {
+        HttpSession session = request.getSession();
+        String orderBy = request.getParameter("orderBy");
+        String category = request.getParameter("category");
 
         if (category != null && category.equals("all")) {
-            dropCookie(cookies, "orderBy", response);
-            dropCookie(cookies, "category", response);
+            session.removeAttribute("orderBy");
+            session.removeAttribute("category");
             return dishService.findAll(pageIndex);
         }
 
-        if (category != null) {
-            categoryId = Integer.parseInt(category);
-            response.addCookie(new Cookie("category", String.valueOf(categoryId)));
-            logger.debug("created cookie with category id for user");
-            dropCookie(cookies, "orderBy", response);
+        setSessionAttributes(session, orderBy, category);
+
+        if (session.getAttribute("category") != null) {
+            int categoryId = (Integer) session.getAttribute("category");
+            logger.debug("retrieved session attribute with category id for user");
             return dishService.findAllByCategoryId(categoryId, pageIndex);
         }
 
-        if (orderBy != null) {
-            response.addCookie(new Cookie("orderBy", orderBy));
-            logger.debug("created cookie with orderBy value for user");
-            dropCookie(cookies, "category", response);
-            return dishService.findAllOrderBy(orderBy, pageIndex, (String) request.getSession().getAttribute("lang"));
-        }
-
-        if (getCookie("category", cookies) != null) {
-            categoryId = Integer.parseInt(getCookie("category", cookies).getValue());
-            logger.debug("retrieved cookie with category id for user");
-            return dishService.findAllByCategoryId(categoryId, pageIndex);
-        }
-
-        if (getCookie("orderBy", cookies) != null) {
-            orderBy = getCookie("orderBy", cookies).getValue();
-            logger.debug("retrieved cookie with orderBy value for user");
+        if (session.getAttribute("orderBy") != null) {
+            orderBy = (String) session.getAttribute("orderBy");
+            logger.debug("retrieved session attribute with orderBy value for user");
             return dishService.findAllOrderBy(orderBy, pageIndex, (String) request.getSession().getAttribute("lang"));
         }
 
         return dishService.findAll(pageIndex);
     }
 
-    private void dropCookie(Cookie[] cookies, String name, HttpServletResponse response) {
-        for (Cookie c : cookies) {
-            if (c.getName().equals(name)) {
-                c.setMaxAge(0);
-                response.addCookie(c);
-            }
+    private void setSessionAttributes(HttpSession session, String orderBy, String category) {
+        if (category != null) {
+            int categoryId = Integer.parseInt(category);
+            session.setAttribute("category", categoryId);
+            logger.debug("set session attribute with category id for user");
+            session.removeAttribute("orderBy");
         }
-    }
 
-    private Cookie getCookie(String name, Cookie[] cookies) {
-        if (cookies == null || cookies.length == 0)
-            return null;
-        for (Cookie c : cookies) {
-            if (c.getName().equals(name))
-                return c;
+        if (orderBy != null) {
+            session.setAttribute("orderBy", orderBy);
+            logger.debug("set session attribute with orderBy value for user");
+            session.removeAttribute("category");
         }
-        return null;
     }
 
 }

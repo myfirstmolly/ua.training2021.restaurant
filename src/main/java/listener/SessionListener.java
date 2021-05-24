@@ -17,9 +17,6 @@ public class SessionListener implements HttpSessionListener, HttpSessionAttribut
 
     private static final Logger logger = LogManager.getLogger(SessionListener.class);
 
-    public SessionListener() {
-    }
-
     /**
      * checks if session attribute 'user' is added (which is equivalent to user logging in).
      * since concurrent logins are not allowed, if user with this username has already got

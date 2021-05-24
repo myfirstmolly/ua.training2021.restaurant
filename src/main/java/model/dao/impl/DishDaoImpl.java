@@ -2,10 +2,8 @@ package model.dao.impl;
 
 import model.dao.DishDao;
 import model.database.DBManager;
-import model.database.DaoFactory;
 import model.entities.Category;
 import model.entities.Dish;
-import model.exceptions.ObjectNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import util.Page;

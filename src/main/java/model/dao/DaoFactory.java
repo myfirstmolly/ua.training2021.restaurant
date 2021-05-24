@@ -1,7 +1,7 @@
-package model.database;
+package model.dao;
 
-import model.dao.*;
 import model.dao.impl.*;
+import model.database.DBManager;
 
 /**
  * factory for dao objects

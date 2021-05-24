@@ -1,13 +1,10 @@
 package model.dao.impl;
 
 import model.dao.RequestDao;
-import model.dao.UserDao;
 import model.database.DBManager;
-import model.database.DaoFactory;
 import model.entities.Request;
 import model.entities.Status;
 import model.entities.User;
-import model.exceptions.ObjectNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import util.Page;

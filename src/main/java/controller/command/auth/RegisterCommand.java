@@ -1,7 +1,7 @@
 package controller.command.auth;
 
 import controller.command.Command;
-import model.database.DaoFactory;
+import model.dao.DaoFactory;
 import model.entities.Role;
 import model.entities.User;
 import model.service.UserService;

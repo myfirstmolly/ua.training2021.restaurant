@@ -11,9 +11,6 @@ public class ContextListener implements ServletContextListener {
 
     private static final Logger logger = LogManager.getLogger(ContextListener.class);
 
-    public ContextListener() {
-    }
-
     /**
      * initializes context attribute with logged users
      *

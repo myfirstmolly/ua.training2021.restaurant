@@ -3,6 +3,7 @@ package model.service.impl;
 import model.dao.RequestDao;
 import model.dao.RequestItemDao;
 import model.entities.*;
+import model.exceptions.ObjectNotFoundException;
 import model.service.RequestService;
 import util.Page;
 
@@ -61,27 +62,8 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public void addRequestItem(User user, Dish dish, int quantity) {
-        // since OPENED status represents dishes in user's cart, each user must have either zero or 1 request
-        // with this status
-        Optional<Request> request = requestDao.findFirstByUserAndStatus(user.getId(), Status.OPENED.getId());
-        if (!request.isPresent()) { // <-- if user wants to add item to cart, but OPENED request doesn't exist yet, it will be created
-            Request req = new Request(user, Status.OPENED);
-            requestDao.save(req);
-            requestItemDao.save(new RequestItem(req.getId(), dish, quantity));
-            return;
-        }
-
-        // if OPENED request already exists, we need to check if dish that is
-        // being added to cart is there already
-        RequestItem requestItem = getDishRequestItem(dish, requestItemDao.findAllByRequestId(request.get().getId()));
-        if (requestItem == null) { // <-- if dish isn't in cart, then it will be added there with quantity equal to param quantity
-            requestItem = new RequestItem(request.get().getId(), dish, quantity);
-            requestItemDao.save(requestItem);
-        } else { // <-- if dish is in the cart already, then its quantity will be increased.
-            requestItem.setQuantity(requestItem.getQuantity() + 1);
-            requestItemDao.update(requestItem);
-        }
+    public void addRequestItem(User user, Dish dish) {
+        requestItemDao.addRequestItem(user.getId(), dish.getId());
     }
 
     @Override
@@ -96,19 +78,12 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public void setRequestStatus(int requestId, Status status, User manager) {
-        if (!findById(requestId).isPresent())
-            return;
-        Request request = findById(requestId).get();
-
-        // if manager tries to set request status which is previous to current, do nothing
-        if (status.getId() <= request.getStatus().getId())
-            return;
-
+        Request request = findById(requestId).orElseThrow(() -> new
+                ObjectNotFoundException("request not found"));
         // setting request status 'COOKING' means that this request is approved by manager
         if (status.equals(Status.COOKING)) {
             request.setApprovedBy(manager.getId());
         }
-
         request.setStatus(status);
         requestDao.update(request);
     }
@@ -121,16 +96,6 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public void deleteById(int id) {
         requestDao.deleteById(id);
-    }
-
-    private RequestItem getDishRequestItem(Dish dish, List<RequestItem> requestItems) {
-        if (requestItems.size() == 0)
-            return null;
-        for (RequestItem rs : requestItems) {
-            if (rs.getDish().equals(dish))
-                return rs;
-        }
-        return null;
     }
 
 }

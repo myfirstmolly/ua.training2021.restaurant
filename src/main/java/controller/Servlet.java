@@ -27,9 +27,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Controller extends HttpServlet {
+public class Servlet extends HttpServlet {
 
-    private static final Logger logger = LogManager.getLogger(Controller.class);
+    private static final Logger logger = LogManager.getLogger(Servlet.class);
 
     private Map<String, Command> commandMap;
 

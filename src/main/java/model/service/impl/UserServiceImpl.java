@@ -29,10 +29,8 @@ public class UserServiceImpl implements UserService {
         if (username == null || password == null)
             return false;
 
-        if (!userDao.findByUsername(username).isPresent())
-            return false;
-
-        return userDao.findByUsername(username).get().getPassword().equals(password);
+        Optional<User> user = userDao.findByUsername(username);
+        return user.map(value -> value.getPassword().equals(password)).orElse(false);
     }
 
     @Override

@@ -1,16 +1,16 @@
 package controller.command.cart;
 
 import controller.command.Command;
-import model.database.DaoFactory;
+import model.dao.DaoFactory;
 import model.entities.Dish;
 import model.entities.User;
 import model.exceptions.ObjectNotFoundException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import model.service.DishService;
 import model.service.RequestService;
 import model.service.impl.DishServiceImpl;
 import model.service.impl.RequestServiceImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import util.WebPages;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +36,7 @@ public class AddDishToCartCommand implements Command {
         User user = (User) session.getAttribute("user");
         Dish dish = dishService.findById(dishId)
                 .orElseThrow(() -> new ObjectNotFoundException("dish not found"));
-        requestService.addRequestItem(user, dish, 1);
+        requestService.addRequestItem(user, dish);
         logger.debug("-----successfully executed add dish to cart command-----");
         return "redirect:" + WebPages.DISH_COMMAND + dishId;
     }

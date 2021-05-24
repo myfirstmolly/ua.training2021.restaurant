@@ -1,13 +1,13 @@
 package controller.command.request;
 
 import controller.command.Command;
-import model.database.DaoFactory;
+import model.dao.DaoFactory;
 import model.entities.RequestItem;
 import model.exceptions.ObjectNotFoundException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import model.service.RequestService;
 import model.service.impl.RequestServiceImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import util.WebPages;
 
 import javax.servlet.http.HttpServletRequest;

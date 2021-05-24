@@ -78,11 +78,10 @@ public interface RequestService {
     /**
      * saves RequestItem user's cart.
      *
-     * @param user     user whose cart should be updated
-     * @param dish     dish to add to cart
-     * @param quantity quantity of dishes
+     * @param user user whose cart should be updated
+     * @param dish dish to add to cart
      */
-    void addRequestItem(User user, Dish dish, int quantity);
+    void addRequestItem(User user, Dish dish);
 
     /**
      * updates RequestItem

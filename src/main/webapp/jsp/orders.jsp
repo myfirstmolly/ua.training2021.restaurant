@@ -40,7 +40,7 @@
             <div class="dropdown">
                 <button class="dropbtn">${selectStatus}:</button>
                 <div class="dropdown-content">
-                    <a href="api?command=orders&status=all">${all}</a>
+                    <a href="api?command=orders&status=ALL">${all}</a>
                     <c:forEach var="status" items="${statusList}">
                         <a href="api?command=orders&status=${status}">
                             <c:choose>

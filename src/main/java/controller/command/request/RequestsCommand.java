@@ -1,15 +1,15 @@
 package controller.command.request;
 
 import controller.command.Command;
-import model.database.DaoFactory;
+import model.dao.DaoFactory;
 import model.entities.Request;
 import model.entities.Role;
 import model.entities.Status;
 import model.entities.User;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import model.service.RequestService;
 import model.service.impl.RequestServiceImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import util.Page;
 import util.WebPages;
 

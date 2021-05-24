@@ -5,7 +5,8 @@ public enum Status {
     PENDING(1, "очікує підтвердження"),
     COOKING(2, "готується"),
     DELIVERING(3, "доставляється"),
-    DONE(4, "виконано");
+    DONE(4, "виконано"),
+    ALL(5, "усi");
 
     int id;
     String nameUkr;

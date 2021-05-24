@@ -1,16 +1,16 @@
 package controller.command.dish;
 
 import controller.command.Command;
-import model.database.DaoFactory;
+import model.dao.DaoFactory;
 import model.entities.Category;
 import model.entities.Dish;
 import model.exceptions.ObjectNotFoundException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import model.service.CategoryService;
 import model.service.DishService;
 import model.service.impl.CategoryServiceImpl;
 import model.service.impl.DishServiceImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import util.WebPages;
 
 import javax.servlet.http.HttpServletRequest;

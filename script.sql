@@ -251,3 +251,17 @@ begin
     where id = old.request_id;
 end;
 // delimiter ;
+
+
+delimiter //
+create trigger request_before_update
+    before update
+    on request
+    for each row
+begin
+    if NEW.status_id <= OLD.status_id
+    then
+        set NEW.status_id = OLD.status_id;
+    end if;
+end;
+// delimiter ;

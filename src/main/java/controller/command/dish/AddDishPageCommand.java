@@ -1,11 +1,11 @@
 package controller.command.dish;
 
 import controller.command.Command;
-import model.database.DaoFactory;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import model.dao.DaoFactory;
 import model.service.CategoryService;
 import model.service.impl.CategoryServiceImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import util.WebPages;
 
 import javax.servlet.http.HttpServletRequest;
