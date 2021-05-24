@@ -73,6 +73,17 @@
     </filter-mapping>
 
 
+    <filter>
+        <filter-name>SessionAttributesFilter</filter-name>
+        <filter-class>filter.SessionAttributesFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>SessionAttributesFilter</filter-name>
+        <servlet-name>Controller</servlet-name>
+    </filter-mapping>
+
+
     <listener>
         <listener-class>listener.ContextListener</listener-class>
     </listener>

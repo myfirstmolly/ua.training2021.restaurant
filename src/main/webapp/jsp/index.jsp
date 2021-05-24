@@ -50,7 +50,7 @@
             <div class="dropdown">
                 <button class="dropbtn">${category}</button>
                 <div class="dropdown-content">
-                    <a href="api?command=menu&category=all#menu">${all}</a>
+                    <a href="api?command=menu&category=ALL#menu">${all}</a>
                     <c:forEach var="category" items="${categories}">
                         <a href="api?command=menu&category=${category.id}#menu">${category.name}</a>
                     </c:forEach>

@@ -50,57 +50,21 @@ public class MenuCommand implements Command {
     }
 
     private Page<Dish> getPage(HttpServletRequest request) {
-        int pageIndex = 1;
-        String pageParam = request.getParameter("page");
-        if (pageParam != null) {
-            if (Integer.parseInt(pageParam) > 1)
-                pageIndex = Integer.parseInt(pageParam);
-            request.getSession().setAttribute("menuPage", pageIndex);
-        }
-        return getDishPage(request, pageIndex);
-    }
-
-    private Page<Dish> getDishPage(HttpServletRequest request, int pageIndex) {
+        int pageIndex = (int) request.getSession().getAttribute("menuPage");
         HttpSession session = request.getSession();
-        String orderBy = request.getParameter("orderBy");
-        String category = request.getParameter("category");
 
-        if (category != null && category.equals("all")) {
-            session.removeAttribute("orderBy");
-            session.removeAttribute("category");
-            return dishService.findAll(pageIndex);
-        }
-
-        setSessionAttributes(session, orderBy, category);
-
-        if (session.getAttribute("category") != null) {
-            int categoryId = (Integer) session.getAttribute("category");
+        if (session.getAttribute("categoryId") != null) {
+            int categoryId = (Integer) session.getAttribute("categoryId");
             logger.debug("retrieved session attribute with category id for user");
             return dishService.findAllByCategoryId(categoryId, pageIndex);
         }
 
         if (session.getAttribute("orderBy") != null) {
-            orderBy = (String) session.getAttribute("orderBy");
+            String orderBy = (String) session.getAttribute("orderBy");
             logger.debug("retrieved session attribute with orderBy value for user");
             return dishService.findAllOrderBy(orderBy, pageIndex, (String) request.getSession().getAttribute("lang"));
         }
 
         return dishService.findAll(pageIndex);
     }
-
-    private void setSessionAttributes(HttpSession session, String orderBy, String category) {
-        if (category != null) {
-            int categoryId = Integer.parseInt(category);
-            session.setAttribute("category", categoryId);
-            logger.debug("set session attribute with category id for user");
-            session.removeAttribute("orderBy");
-        }
-
-        if (orderBy != null) {
-            session.setAttribute("orderBy", orderBy);
-            logger.debug("set session attribute with orderBy value for user");
-            session.removeAttribute("category");
-        }
-    }
-
 }
