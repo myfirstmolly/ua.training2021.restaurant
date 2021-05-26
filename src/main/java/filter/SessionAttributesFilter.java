@@ -37,7 +37,6 @@ public class SessionAttributesFilter implements Filter {
         setPageAttributes(req, "menuPage");
 
         if (category != null) {
-            logger.error(category);
             if (!category.equals("ALL")) {
                 session.setAttribute("categoryId", Integer.parseInt(category));
             } else {

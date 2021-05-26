@@ -49,7 +49,14 @@
         <b>${category}
             <select name="category">
                 <c:forEach var="category" items="${categories}">
-                    <option value="${category.id}">${category.name}</option>
+                    <c:choose>
+                        <c:when test="${sessionScope.lang eq 'ukr'}">
+                            <option value="${category.id}">${category.nameUkr}</option>
+                        </c:when>
+                        <c:otherwise>
+                            <option value="${category.id}">${category.name}</option>
+                        </c:otherwise>
+                    </c:choose>
                 </c:forEach>
             </select>
         </b>

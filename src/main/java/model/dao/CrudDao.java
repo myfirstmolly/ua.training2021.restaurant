@@ -47,11 +47,4 @@ public interface CrudDao<T> {
      */
     void deleteById(int id);
 
-    /**
-     * deletes object from table
-     *
-     * @param t object to delete
-     */
-    void delete(T t);
-
 }

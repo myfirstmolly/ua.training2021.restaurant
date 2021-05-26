@@ -31,8 +31,7 @@ public class MenuCommand implements Command {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.debug("-----executing menu command-----");
-        String locale = (String) request.getSession().getAttribute("lang");
-        List<Category> categories = categoryService.findAll(locale);
+        List<Category> categories = categoryService.findAll();
         request.setAttribute("categories", categories);
         Page<Dish> dishes = getPage(request);
         request.setAttribute("dishes", dishes);

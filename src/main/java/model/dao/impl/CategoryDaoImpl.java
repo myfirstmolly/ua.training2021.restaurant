@@ -1,54 +1,65 @@
 package model.dao.impl;
 
 import model.dao.CategoryDao;
+import model.dao.mapper.CategoryMapper;
 import model.database.DBManager;
 import model.entities.Category;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public final class CategoryDaoImpl implements CategoryDao {
 
-    private static final String TABLE_NAME = "category";
     private static final Logger logger = LogManager.getLogger(CategoryDaoImpl.class);
-    private final DaoUtils<Category> daoUtils;
+
+    private final DBManager dbManager;
 
     public CategoryDaoImpl(DBManager dbManager) {
-        daoUtils = new DaoUtils<>(dbManager, TABLE_NAME, rs -> {
-            Category category = new Category();
-            category.setId(rs.getInt("id"));
-            category.setName(rs.getString("name"));
-            return category;
-        });
+        this.dbManager = dbManager;
     }
 
     @Override
     public List<Category> findAll() {
-        StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.setSelect("id", "name").build();
+        String sql = "select * from category";
         logger.trace("delegated '" + sql + "' to DaoUtils");
-        return daoUtils.getList(sql);
-    }
+        logger.info("sql: " + sql);
+        List<Category> entries = new ArrayList<>();
 
-    @Override
-    public List<Category> findAll(String locale) {
-        if (locale == null || !locale.equals("ukr"))
-            return findAll();
-
-        StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.setSelect("id", "name_ukr as name").build();
-        logger.trace("delegated '" + sql + "' to DaoUtils");
-        return daoUtils.getList(sql);
+        try (Connection con = dbManager.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next())
+                    entries.add(getMapper().map(rs));
+            }
+        } catch (SQLException ex) {
+            logger.error("cannot obtain objects from table category", ex);
+        }
+        return entries;
     }
 
     @Override
     public Optional<Category> findById(int id) {
-        StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.setSelect().setWhere("id").build();
-        logger.trace("delegated '" + sql + "' to DaoUtils");
-        return daoUtils.getOptional(sql, id);
+        String sql = "select * from category where id=?";
+        logger.info("sql: " + sql);
+
+        try (Connection con = dbManager.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next())
+                    return Optional.of(getMapper().map(rs));
+            }
+        } catch (SQLException ex) {
+            logger.error("cannot get object from table category", ex);
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -57,10 +68,28 @@ public final class CategoryDaoImpl implements CategoryDao {
             logger.warn("cannot save null object");
             return;
         }
-        StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.setInsert("name").build();
-        logger.trace("delegated '" + sql + "' to DaoUtils");
-        daoUtils.save(category, sql, category.getName());
+        String sql = "insert into category(name, name_ukr) values (?,?)";
+        logger.info("sql: " + sql);
+
+        Connection con = null;
+        try {
+            con = dbManager.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            con.setAutoCommit(false);
+            ps.setString(1, category.getName());
+            ps.setString(2, category.getNameUkr());
+
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    category.setId(keys.getInt(1));
+                }
+            }
+        } catch (SQLException ex) {
+            logger.error("exception occurred during statement execution", ex);
+            dbManager.rollbackTransaction(con);
+        } finally {
+            dbManager.commitAndClose(con);
+        }
     }
 
     @Override
@@ -69,27 +98,48 @@ public final class CategoryDaoImpl implements CategoryDao {
             logger.warn("cannot update null object");
             return;
         }
-        StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.setUpdate("name").setWhere("id").build();
-        logger.trace("delegated '" + sql + "' to DaoUtils");
-        daoUtils.update(sql, category.getName(), category.getId());
+
+        String sql = "update category set name=?, name_ukr=? where id=?";
+        logger.info("sql: " + sql);
+        Connection con = null;
+        try {
+            con = dbManager.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, category.getName());
+            ps.setString(2, category.getNameUkr());
+            ps.setInt(3, category.getId());
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            logger.error("exception occurred during statement execution", ex);
+            dbManager.rollbackTransaction(con);
+        } finally {
+            dbManager.commitAndClose(con);
+        }
     }
 
     @Override
     public void deleteById(int id) {
-        StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.setDelete().setWhere("id").build();
-        logger.trace("delegated '" + sql + "' to DaoUtils");
-        daoUtils.deleteById(id, sql);
+        if (id <= 0) return;
+
+        String sql = "delete from category where id=?";
+        logger.info("sql: " + sql);
+
+        Connection con = null;
+        try {
+            con = dbManager.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            logger.error(String.format("cannot delete row{id=%s} from table category", id), ex);
+            dbManager.rollbackTransaction(con);
+        } finally {
+            dbManager.commitAndClose(con);
+        }
     }
 
-    @Override
-    public void delete(Category category) {
-        if (category == null) {
-            logger.warn("Cannot delete null object in from table " + TABLE_NAME);
-            return;
-        }
-        deleteById(category.getId());
+    public static CategoryMapper getMapper() {
+        return new CategoryMapper("id", "name", "name_ukr");
     }
 
 }

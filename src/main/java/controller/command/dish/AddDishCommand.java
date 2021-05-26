@@ -49,8 +49,7 @@ public class AddDishCommand implements Command {
         int price = 0;
 
         if (!isValid(name, nameUkr, priceString, imagePath, request)) {
-            request.setAttribute("categories", categoryService.findAll((String) request.getSession()
-                    .getAttribute("lang")));
+            request.setAttribute("categories", categoryService.findAll());
             return WebPages.ADD_DISH_PAGE;
         }
 

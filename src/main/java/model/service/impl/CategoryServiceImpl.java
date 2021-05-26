@@ -21,11 +21,6 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> findAll(String locale) {
-        return categoryDao.findAll(locale);
-    }
-
-    @Override
     public Optional<Category> findById(int id) {
         return categoryDao.findById(id);
     }

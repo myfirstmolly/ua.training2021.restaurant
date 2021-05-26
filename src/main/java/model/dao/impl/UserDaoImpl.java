@@ -1,12 +1,14 @@
 package model.dao.impl;
 
 import model.dao.UserDao;
+import model.dao.mapper.UserMapper;
 import model.database.DBManager;
-import model.entities.Role;
 import model.entities.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,46 +17,67 @@ import java.util.Optional;
  */
 public final class UserDaoImpl implements UserDao {
 
-    private static final String TABLE_NAME = "user";
     private static final Logger logger = LogManager.getLogger(UserDaoImpl.class);
-    private final DaoUtils<User> daoUtils;
+    private final DBManager dbManager;
 
     public UserDaoImpl(DBManager dbManager) {
-        daoUtils = new DaoUtils<>(dbManager, TABLE_NAME, rs -> {
-            User user = new User();
-            user.setId(rs.getInt("id"));
-            user.setUsername(rs.getString("username"));
-            user.setPassword(rs.getString("password"));
-            user.setName(rs.getString("name"));
-            user.setPhoneNumber(rs.getString("phone_number"));
-            user.setEmail(rs.getString("email"));
-            user.setRole(Role.values()[rs.getInt("role_id")]);
-            return user;
-        });
+        this.dbManager = dbManager;
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
-        StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.setSelect().setWhere("username").build();
-        logger.trace("delegated '" + sql + "' to DaoUtils");
-        return daoUtils.getOptional(sql, username);
+        String sql = "select * from user where username=?";
+        logger.info("sql: " + sql);
+        try (Connection con = dbManager.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, username);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next())
+                    return Optional.of(getMapper().map(rs));
+            }
+        } catch (SQLException ex) {
+            logger.error("cannot get object from table user", ex);
+        }
+
+        return Optional.empty();
     }
 
     @Override
     public List<User> findAll() {
-        StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.setSelect().build();
-        logger.trace("delegated '" + sql + "' to DaoUtils");
-        return daoUtils.getList(sql);
+        String sql = "select * from user";
+        logger.info("sql: " + sql);
+        List<User> entries = new ArrayList<>();
+
+        try (Connection con = dbManager.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next())
+                    entries.add(getMapper().map(rs));
+            }
+        } catch (SQLException ex) {
+            logger.error("cannot obtain objects from table user", ex);
+        }
+        return entries;
     }
 
     @Override
     public Optional<User> findById(int id) {
-        StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.setSelect().setWhere("id").build();
-        logger.trace("delegated '" + sql + "' to DaoUtils");
-        return daoUtils.getOptional(sql, id);
+        String sql = "select * from user where id=?";
+        logger.info("sql: " + sql);
+        try (Connection con = dbManager.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next())
+                    return Optional.of(getMapper().map(rs));
+            }
+        } catch (SQLException ex) {
+            logger.error("cannot get object from table user", ex);
+        }
+
+        return Optional.empty();
     }
 
     @Override
@@ -63,12 +86,27 @@ public final class UserDaoImpl implements UserDao {
             logger.warn("cannot save null object");
             return;
         }
-        StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.setInsert(getParams()).build();
-        logger.trace("delegated '" + sql + "' to DaoUtils");
-        daoUtils.save(user, sql, user.getUsername(), user.getPassword(), user.getName(),
-                user.getPhoneNumber(), user.getEmail(),
-                user.getRole() == null ? null : user.getRole().getId());
+        String sql = "insert into user (username, password, name, phone_number, email, role_id " +
+                "values(?, ?, ?, ?, ?, ?)";
+        logger.info("sql: " + sql);
+        Connection con = null;
+        try {
+            con = dbManager.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            con.setAutoCommit(false);
+            setParams(user, ps);
+
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    user.setId(keys.getInt(1));
+                }
+            }
+        } catch (SQLException ex) {
+            logger.error("exception occurred during statement execution", ex);
+            dbManager.rollbackTransaction(con);
+        } finally {
+            dbManager.commitAndClose(con);
+        }
     }
 
     @Override
@@ -77,33 +115,57 @@ public final class UserDaoImpl implements UserDao {
             logger.warn("cannot update null object");
             return;
         }
-        StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.setUpdate(getParams()).setWhere("id").build();
-        logger.trace("delegated '" + sql + "' to DaoUtils");
-        daoUtils.update(sql, user.getUsername(), user.getPassword(), user.getName(),
-                user.getPhoneNumber(), user.getEmail(),
-                user.getRole() == null ? null : user.getRole().getId(),
-                user.getId());
+        String sql = "update user set username=?, password=?, name=?, phone_number=?," +
+                "email=?, role_id=? where id=?";
+        logger.info("sql: " + sql);
+        Connection con = null;
+        try {
+            con = dbManager.getConnection();
+            con.setAutoCommit(false);
+            PreparedStatement ps = con.prepareStatement(sql);
+            setParams(user, ps);
+            ps.setInt(7, user.getId());
+        } catch (SQLException ex) {
+            logger.error("exception occurred during statement execution", ex);
+            dbManager.rollbackTransaction(con);
+        } finally {
+            dbManager.commitAndClose(con);
+        }
     }
 
     @Override
     public void deleteById(int id) {
-        StatementBuilder b = new StatementBuilder(TABLE_NAME);
-        String sql = b.setDelete().setWhere("id").build();
-        logger.trace("delegated '" + sql + "' to DaoUtils");
-        daoUtils.deleteById(id, sql);
-    }
+        String sql = "delete from user where id=?";
+        logger.info("sql: " + sql);
+        Connection con = null;
 
-    @Override
-    public void delete(User user) {
-        if (user == null) {
-            logger.warn("Cannot delete null object in from table " + TABLE_NAME);
-            return;
+        try {
+            con = dbManager.getConnection();
+            con.setAutoCommit(false);
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            logger.error(String.format("cannot delete row{id=%s} from table user", id), ex);
+            dbManager.rollbackTransaction(con);
+        } finally {
+            dbManager.commitAndClose(con);
         }
-        deleteById(user.getId());
     }
 
-    private String[] getParams() {
-        return new String[]{"username", "password", "name", "phone_number", "email", "role_id"};
+    private void setParams(User user, PreparedStatement ps) throws SQLException {
+        ps.setString(1, user.getUsername());
+        ps.setString(2, user.getPassword());
+        ps.setString(3, user.getName());
+        ps.setString(4, user.getPhoneNumber());
+        ps.setString(5, user.getEmail());
+        ps.setInt(6, user.getRole().getId());
+        ps.executeUpdate();
     }
+
+    private static UserMapper getMapper() {
+        return new UserMapper("id", "username", "password", "name",
+                "phone_number", "email", "role_id");
+    }
+
 }

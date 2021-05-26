@@ -52,7 +52,14 @@
                 <div class="dropdown-content">
                     <a href="api?command=menu&category=ALL#menu">${all}</a>
                     <c:forEach var="category" items="${categories}">
-                        <a href="api?command=menu&category=${category.id}#menu">${category.name}</a>
+                        <c:choose>
+                            <c:when test="${sessionScope.lang eq 'ukr'}">
+                                <a href="api?command=menu&category=${category.id}#menu">${category.nameUkr}</a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="api?command=menu&category=${category.id}#menu">${category.name}</a>
+                            </c:otherwise>
+                        </c:choose>
                     </c:forEach>
                 </div>
             </div>

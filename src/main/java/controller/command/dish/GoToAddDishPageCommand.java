@@ -23,8 +23,7 @@ public class GoToAddDishPageCommand implements Command {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.debug("-----executing add dish page command-----");
-        String locale = (String) request.getSession().getAttribute("lang");
-        request.setAttribute("categories", categoryService.findAll(locale));
+        request.setAttribute("categories", categoryService.findAll());
         logger.debug("-----successfully executed add dish page command-----");
         return WebPages.ADD_DISH_PAGE;
     }

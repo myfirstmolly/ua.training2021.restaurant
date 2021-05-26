@@ -265,3 +265,42 @@ begin
     end if;
 end;
 // delimiter ;
+
+
+drop procedure if exists insert_order_item;
+DELIMITER //
+create procedure insert_order_item(in user_param int,
+                                   in dish_param int)
+begin
+    declare order_param_id int;
+    declare item_param int;
+    declare qty int;
+    declare order_qty int;
+    declare item_qty int;
+    set order_qty = (select count(*) from request where customer_id = user_param and status_id = 1);
+    set item_param = null;
+
+    if order_qty = 0
+    then
+        insert into request(customer_id, status_id) values (user_param, 1);
+        set order_param_id = (select LAST_INSERT_ID());
+    else
+        set order_param_id = (select id from request where customer_id = user_param and status_id = 1);
+    end if;
+
+    set item_qty = (select count(*) from request_item where dish_id = dish_param and request_id = order_param_id);
+    if item_qty = 0
+    then
+        insert into request_item(request_id, dish_id, quantity) values (order_param_id, dish_param, 1);
+        set item_param = (select LAST_INSERT_ID());
+        set qty = 1;
+    else
+        select id, quantity
+        into item_param, qty
+        from request_item
+        where dish_id = dish_param
+          and request_id = order_param_id;
+        update request_item set quantity = qty + 1 where id = item_param;
+    end if;
+end//
+DELIMITER ;
