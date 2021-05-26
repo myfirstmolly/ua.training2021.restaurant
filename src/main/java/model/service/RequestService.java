@@ -1,14 +1,13 @@
 package model.service;
 
-import model.entities.*;
+import model.entities.Request;
+import model.entities.Status;
+import model.entities.User;
 import util.Page;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface RequestService {
-
-    List<RequestItem> findAllRequestItemsByRequest(Request request);
 
     /**
      * finds limited number of Requests (defined in implementation class)
@@ -68,34 +67,11 @@ public interface RequestService {
     Optional<Request> findById(int id);
 
     /**
-     * finds one RequestItem by its unique identifier
-     *
-     * @param id RequestItem unique identifier
-     * @return Optional Dish object
-     */
-    Optional<RequestItem> findRequestItemById(int id);
-
-    /**
-     * saves RequestItem user's cart.
-     *
-     * @param user user whose cart should be updated
-     * @param dish dish to add to cart
-     */
-    void addRequestItem(User user, Dish dish);
-
-    /**
-     * updates RequestItem
-     *
-     * @param requestItem item to update
-     */
-    void updateRequestItem(RequestItem requestItem);
-
-    /**
      * updates Request
      *
      * @param request request to update
      */
-    void updateRequest(Request request);
+    void approveRequest(Request request);
 
     /**
      * updates Request status
@@ -105,13 +81,6 @@ public interface RequestService {
      * @param manager   manager who updates status
      */
     void setRequestStatus(int requestId, Status status, User manager);
-
-    /**
-     * deletes RequestItem
-     *
-     * @param id item unique identifier
-     */
-    void deleteRequestItem(int id);
 
     /**
      * deletes Request

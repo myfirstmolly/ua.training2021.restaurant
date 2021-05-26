@@ -7,7 +7,9 @@ import model.entities.RequestItem;
 import model.entities.Status;
 import model.entities.User;
 import model.exceptions.ObjectNotFoundException;
+import model.service.RequestItemService;
 import model.service.RequestService;
+import model.service.impl.RequestItemServiceImpl;
 import model.service.impl.RequestServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,8 +27,9 @@ import java.util.List;
 public class RequestCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(RequestCommand.class);
-    private final RequestService requestService =
-            new RequestServiceImpl(DaoFactory.getRequestDao(), DaoFactory.getRequestItemDao());
+    private final RequestService requestService = new RequestServiceImpl(DaoFactory.getRequestDao());
+    private final RequestItemService requestItemService =
+            new RequestItemServiceImpl(DaoFactory.getRequestItemDao());
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
@@ -36,11 +39,12 @@ public class RequestCommand implements Command {
         Request r = requestService.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("request not found"));
         int statusId = r.getStatus().getId();
+
         if (r.getStatus().equals(Status.OPENED)) {
             return "redirect:" + WebPages.CART_COMMAND;
         }
 
-        List<RequestItem> requestItems = requestService.findAllRequestItemsByRequest(r);
+        List<RequestItem> requestItems = requestItemService.findAllByRequestId(r.getId());
         List<Status> statusList = Arrays.asList(Status.values()).subList(statusId + 1, Status.values().length);
         request.setAttribute("statusList", statusList);
         request.setAttribute("request", r);

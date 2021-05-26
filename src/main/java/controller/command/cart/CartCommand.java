@@ -6,7 +6,9 @@ import model.entities.Request;
 import model.entities.RequestItem;
 import model.entities.Status;
 import model.entities.User;
+import model.service.RequestItemService;
 import model.service.RequestService;
+import model.service.impl.RequestItemServiceImpl;
 import model.service.impl.RequestServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,8 +27,9 @@ import java.util.Optional;
 public class CartCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(CartCommand.class);
-    private final RequestService requestService =
-            new RequestServiceImpl(DaoFactory.getRequestDao(), DaoFactory.getRequestItemDao());
+    private final RequestService requestService = new RequestServiceImpl(DaoFactory.getRequestDao());
+    private final RequestItemService requestItemService =
+            new RequestItemServiceImpl(DaoFactory.getRequestItemDao());
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
@@ -38,7 +41,7 @@ public class CartCommand implements Command {
         if (!req.isPresent()) {
             request.setAttribute("request", null);
         } else {
-            List<RequestItem> requestItems = requestService.findAllRequestItemsByRequest(req.get());
+            List<RequestItem> requestItems = requestItemService.findAllByRequestId(req.get().getId());
             request.setAttribute("requestItems", requestItems);
             request.setAttribute("request", req.get());
         }
@@ -46,4 +49,5 @@ public class CartCommand implements Command {
         logger.debug("-----successfully executed cart command-----");
         return WebPages.CART_PAGE;
     }
+
 }

@@ -4,8 +4,8 @@ import controller.command.Command;
 import model.dao.DaoFactory;
 import model.entities.RequestItem;
 import model.exceptions.ObjectNotFoundException;
-import model.service.RequestService;
-import model.service.impl.RequestServiceImpl;
+import model.service.RequestItemService;
+import model.service.impl.RequestItemServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import util.WebPages;
@@ -20,8 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 public class UpdateRequestItemQtyCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(UpdateRequestStatusCommand.class);
-    private final RequestService requestService =
-            new RequestServiceImpl(DaoFactory.getRequestDao(), DaoFactory.getRequestItemDao());
+    private final RequestItemService requestItemService =
+            new RequestItemServiceImpl(DaoFactory.getRequestItemDao());
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
@@ -34,7 +34,7 @@ public class UpdateRequestItemQtyCommand implements Command {
 
     private void updateOrderItem(HttpServletRequest request, String action) {
         int id = Integer.parseInt(request.getParameter("id"));
-        RequestItem item = requestService.findRequestItemById(id)
+        RequestItem item = requestItemService.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException("request not found"));
         if ("increase".equals(action) && item.getQuantity() < 30) {
             item.setQuantity(item.getQuantity() + 1);
@@ -46,6 +46,6 @@ public class UpdateRequestItemQtyCommand implements Command {
             logger.debug("decreased order item quantity");
         }
 
-        requestService.updateRequestItem(item);
+        requestItemService.updateQuantity(item);
     }
 }

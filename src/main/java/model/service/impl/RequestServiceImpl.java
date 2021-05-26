@@ -1,29 +1,22 @@
 package model.service.impl;
 
 import model.dao.RequestDao;
-import model.dao.RequestItemDao;
-import model.entities.*;
+import model.entities.Request;
+import model.entities.Status;
+import model.entities.User;
 import model.exceptions.ObjectNotFoundException;
 import model.service.RequestService;
 import util.Page;
 
-import java.util.List;
 import java.util.Optional;
 
 public class RequestServiceImpl implements RequestService {
 
     private final int LIMIT = 10;
     private final RequestDao requestDao;
-    private final RequestItemDao requestItemDao;
 
-    public RequestServiceImpl(RequestDao requestDao, RequestItemDao requestItemDao) {
+    public RequestServiceImpl(RequestDao requestDao) {
         this.requestDao = requestDao;
-        this.requestItemDao = requestItemDao;
-    }
-
-    @Override
-    public List<RequestItem> findAllRequestItemsByRequest(Request request) {
-        return requestItemDao.findAllByRequestId(request.getId());
     }
 
     @Override
@@ -57,22 +50,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public Optional<RequestItem> findRequestItemById(int id) {
-        return requestItemDao.findById(id);
-    }
-
-    @Override
-    public void addRequestItem(User user, Dish dish) {
-        requestItemDao.addRequestItem(user.getId(), dish.getId());
-    }
-
-    @Override
-    public void updateRequestItem(RequestItem requestItem) {
-        requestItemDao.update(requestItem);
-    }
-
-    @Override
-    public void updateRequest(Request request) {
+    public void approveRequest(Request request) {
         requestDao.update(request);
     }
 
@@ -86,11 +64,6 @@ public class RequestServiceImpl implements RequestService {
         }
         request.setStatus(status);
         requestDao.update(request);
-    }
-
-    @Override
-    public void deleteRequestItem(int id) {
-        requestItemDao.deleteById(id);
     }
 
     @Override

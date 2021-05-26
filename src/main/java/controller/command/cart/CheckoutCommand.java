@@ -26,7 +26,7 @@ public class CheckoutCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(CheckoutCommand.class);
     private final RequestService requestService =
-            new RequestServiceImpl(DaoFactory.getRequestDao(), DaoFactory.getRequestItemDao());
+            new RequestServiceImpl(DaoFactory.getRequestDao());
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
@@ -49,7 +49,7 @@ public class CheckoutCommand implements Command {
 
         req.setStatus(Status.PENDING);
         req.setDeliveryAddress(address);
-        requestService.updateRequest(req);
+        requestService.approveRequest(req);
         logger.debug("-----successfully executed checkout command-----");
         return "redirect:" + WebPages.ORDER_COMMAND + req.getId();
     }

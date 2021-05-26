@@ -15,9 +15,9 @@ import javax.servlet.http.HttpServletResponse;
  * returns page add-dish.jsp.
  * available to manager only.
  */
-public class AddDishPageCommand implements Command {
+public class GoToAddDishPageCommand implements Command {
 
-    private static final Logger logger = LogManager.getLogger(AddDishPageCommand.class);
+    private static final Logger logger = LogManager.getLogger(GoToAddDishPageCommand.class);
     private final CategoryService categoryService = new CategoryServiceImpl(DaoFactory.getCategoryDao());
 
     @Override

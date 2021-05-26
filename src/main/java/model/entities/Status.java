@@ -1,11 +1,12 @@
 package model.entities;
 
 public enum Status {
-    OPENED(0, "відкрито"),
-    PENDING(1, "очікує підтвердження"),
-    COOKING(2, "готується"),
-    DELIVERING(3, "доставляється"),
-    DONE(4, "виконано");
+
+    OPENED(1, "відкрито"),
+    PENDING(2, "очікує підтвердження"),
+    COOKING(3, "готується"),
+    DELIVERING(4, "доставляється"),
+    DONE(5, "виконано");
 
     int id;
     String nameUkr;
@@ -27,11 +28,4 @@ public enum Status {
         return id;
     }
 
-    public static boolean contains(String val) {
-        for (Status v : values()) {
-            if (v.name().equals(val))
-                return true;
-        }
-        return false;
-    }
 }

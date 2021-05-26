@@ -26,7 +26,7 @@ public class RequestsCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(RequestsCommand.class);
     private final RequestService requestService =
-            new RequestServiceImpl(DaoFactory.getRequestDao(), DaoFactory.getRequestItemDao());
+            new RequestServiceImpl(DaoFactory.getRequestDao());
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {

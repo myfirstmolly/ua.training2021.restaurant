@@ -20,7 +20,7 @@ public class CheckoutFormCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(CheckoutFormCommand.class);
     private final RequestService requestService =
-            new RequestServiceImpl(DaoFactory.getRequestDao(), DaoFactory.getRequestItemDao());
+            new RequestServiceImpl(DaoFactory.getRequestDao());
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {

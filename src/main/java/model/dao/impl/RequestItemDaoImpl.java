@@ -4,6 +4,7 @@ import model.dao.RequestItemDao;
 import model.database.DBManager;
 import model.entities.Dish;
 import model.entities.RequestItem;
+import model.exceptions.ObjectNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -75,6 +76,7 @@ public final class RequestItemDaoImpl implements RequestItemDao {
 
     @Override
     public void addRequestItem(int userId, int dishId) {
+        String findDish = "select from dish where id=?";
         String findAllItems = "select id, quantity from request_item where dish_id=? and request_id=?";
         String updateCount = "update request_item set quantity=? where id=?";
         String insertItem = "insert into request_item(request_id, dish_id, quantity) values(?, ?, ?)";
@@ -83,6 +85,12 @@ public final class RequestItemDaoImpl implements RequestItemDao {
         try {
             con = dbManager.getConnection();
             con.setAutoCommit(false);
+            PreparedStatement findDishPs = con.prepareStatement(findDish);
+            findDishPs.setInt(1, dishId);
+            try (ResultSet rs = findDishPs.executeQuery()) {
+                if (!rs.next())
+                    throw new ObjectNotFoundException("can't find dish");
+            }
             int requestId = getRequestId(userId, con);
 
             PreparedStatement findAllItemsPs = con.prepareStatement(findAllItems);

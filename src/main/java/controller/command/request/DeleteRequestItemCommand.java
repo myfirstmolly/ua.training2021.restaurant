@@ -2,8 +2,8 @@ package controller.command.request;
 
 import controller.command.Command;
 import model.dao.DaoFactory;
-import model.service.RequestService;
-import model.service.impl.RequestServiceImpl;
+import model.service.RequestItemService;
+import model.service.impl.RequestItemServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import util.WebPages;
@@ -18,14 +18,14 @@ import javax.servlet.http.HttpServletResponse;
 public class DeleteRequestItemCommand implements Command {
 
     private static final Logger logger = LogManager.getLogger(DeleteRequestItemCommand.class);
-    private final RequestService requestService =
-            new RequestServiceImpl(DaoFactory.getRequestDao(), DaoFactory.getRequestItemDao());
+    private final RequestItemService requestItemService =
+            new RequestItemServiceImpl(DaoFactory.getRequestItemDao());
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         logger.debug("-----executing delete request command-----");
         int id = Integer.parseInt(request.getParameter("id"));
-        requestService.deleteRequestItem(id);
+        requestItemService.deleteById(id);
         logger.debug("-----successfully executed delete request command-----");
         return "redirect:" + WebPages.CART_COMMAND;
     }
