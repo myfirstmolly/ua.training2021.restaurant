@@ -44,7 +44,7 @@ public class RequestCommand implements Command {
             return "redirect:" + WebPages.CART_COMMAND;
         }
 
-        List<RequestItem> requestItems = requestItemService.findAllByRequestId(r.getId());
+        List<RequestItem> requestItems = requestItemService.findAllByRequestId(id);
         List<Status> statusList = Arrays.asList(Status.values()).subList(statusId + 1, Status.values().length);
         request.setAttribute("statusList", statusList);
         request.setAttribute("request", r);

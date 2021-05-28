@@ -27,6 +27,6 @@ public class LogoutCommand implements Command {
             logger.info(String.format("user %s logged out", user.getUsername()));
         }
         logger.debug("-----successfully executed logout command-----");
-        return WebPages.DEFAULT_PAGE;
+        return "redirect:" + WebPages.DEFAULT_PAGE;
     }
 }

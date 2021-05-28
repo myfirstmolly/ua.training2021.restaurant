@@ -2,8 +2,6 @@ package controller.command.request;
 
 import controller.command.Command;
 import model.dao.DaoFactory;
-import model.entities.RequestItem;
-import model.exceptions.ObjectNotFoundException;
 import model.service.RequestItemService;
 import model.service.impl.RequestItemServiceImpl;
 import org.apache.logging.log4j.LogManager;
@@ -34,18 +32,14 @@ public class UpdateRequestItemQtyCommand implements Command {
 
     private void updateOrderItem(HttpServletRequest request, String action) {
         int id = Integer.parseInt(request.getParameter("id"));
-        RequestItem item = requestItemService.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("request not found"));
-        if ("increase".equals(action) && item.getQuantity() < 30) {
-            item.setQuantity(item.getQuantity() + 1);
+        if ("increase".equals(action)) {
+            requestItemService.increaseQuantity(id);
             logger.debug("increased order item quantity");
         }
 
-        if ("decrease".equals(action) && item.getQuantity() > 1) {
-            item.setQuantity(item.getQuantity() - 1);
+        if ("decrease".equals(action)) {
+            requestItemService.decreaseQuantity(id);
             logger.debug("decreased order item quantity");
         }
-
-        requestItemService.updateQuantity(item);
     }
 }

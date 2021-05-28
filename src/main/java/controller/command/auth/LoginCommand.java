@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 /**
@@ -28,9 +29,10 @@ public class LoginCommand implements Command {
         logger.debug("-----executing login command-----");
         String login = request.getParameter("login");
         String password = (String) request.getAttribute("password");
+        Optional<User> u = userService.findByUsername(login);
 
-        if (userService.hasValidCredentials(login, password)) {
-            User user = userService.findByUsername(login).get();
+        if (u.isPresent() && u.get().getPassword().equals(password)) {
+            User user = u.get();
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
             logger.info(String.format("user %s logged in as %s", user.getUsername(), user.getRole()));

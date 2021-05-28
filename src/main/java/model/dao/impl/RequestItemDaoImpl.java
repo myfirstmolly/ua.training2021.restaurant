@@ -97,7 +97,7 @@ public final class RequestItemDaoImpl implements RequestItemDao {
     @Override
     public void addRequestItem(int userId, int dishId) {
         String sql = "call insert_order_item(?, ?)";
-
+        logger.info(sql);
         Connection con = null;
         try {
             con = dbManager.getConnection();
@@ -107,6 +107,36 @@ public final class RequestItemDaoImpl implements RequestItemDao {
             ps.setInt(2, dishId);
             ps.executeUpdate();
             ps.close();
+        } catch (SQLException ex) {
+            logger.error("exception occurred during statement execution", ex);
+            dbManager.rollbackTransaction(con);
+        } finally {
+            dbManager.commitAndClose(con);
+        }
+    }
+
+    @Override
+    public void increaseQuantity(int requestId) {
+        String sql = "update request_item set quantity=quantity+1 where id=?";
+        updateQty(requestId, sql);
+    }
+
+    @Override
+    public void decreaseQuantity(int requestId) {
+        String sql = "update request_item set quantity=quantity-1 where id=?";
+        updateQty(requestId, sql);
+    }
+
+    private void updateQty(int requestId, String sql) {
+        logger.info("sql: " + sql);
+        Connection con = null;
+        try {
+            con = dbManager.getConnection();
+            con.setAutoCommit(false);
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, requestId);
+            ps.executeUpdate();
+
         } catch (SQLException ex) {
             logger.error("exception occurred during statement execution", ex);
             dbManager.rollbackTransaction(con);
@@ -138,7 +168,6 @@ public final class RequestItemDaoImpl implements RequestItemDao {
         } finally {
             dbManager.commitAndClose(con);
         }
-        logger.trace("delegated '" + sql + "' to DaoUtils");
     }
 
     @Override

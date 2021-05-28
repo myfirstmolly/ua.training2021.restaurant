@@ -2,11 +2,11 @@ package model.entities;
 
 public enum Status {
 
-    OPENED(1, "відкрито"),
-    PENDING(2, "очікує підтвердження"),
-    COOKING(3, "готується"),
-    DELIVERING(4, "доставляється"),
-    DONE(5, "виконано");
+    OPENED(0, "відкрито"),
+    PENDING(1, "очікує підтвердження"),
+    COOKING(2, "готується"),
+    DELIVERING(3, "доставляється"),
+    DONE(4, "виконано");
 
     int id;
     String nameUkr;

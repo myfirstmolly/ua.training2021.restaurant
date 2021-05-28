@@ -266,6 +266,19 @@ begin
 end;
 // delimiter ;
 
+delimiter //
+create trigger request_itm_before_update_qty_2
+    before update
+    on request_item
+    for each row
+begin
+    if NEW.quantity > 30
+    then
+        set new.quantity = 30;
+    end if;
+end;
+// delimiter ;
+
 
 drop procedure if exists insert_order_item;
 DELIMITER //

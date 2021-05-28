@@ -33,25 +33,26 @@ public class CheckoutCommand implements Command {
         logger.debug("-----executing checkout command-----");
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        Request req = requestService.findOneByUserAndStatus(user, Status.OPENED)
-                .orElseThrow(() -> new ObjectNotFoundException("request not found"));
         String address = request.getParameter("address");
 
-        if (!isValid(address)) {
-            request.setAttribute("totalPrice", req.getTotalPrice());
-            String locale = (String) request.getSession().getAttribute("lang");
-            if (locale == null)
-                locale = "en";
-            ResourceBundle bundle = ResourceBundle.getBundle("i18n", Locale.forLanguageTag(locale));
-            request.setAttribute("addressMsg", bundle.getString("incorrect.address"));
-            return WebPages.CHECKOUT_FORM_PAGE;
-        }
+        if (!isValid(address))
+            return redirectBack(request, user);
 
-        req.setStatus(Status.PENDING);
-        req.setDeliveryAddress(address);
-        requestService.approveRequest(req);
+        requestService.approveRequest(user, address);
         logger.debug("-----successfully executed checkout command-----");
-        return "redirect:" + WebPages.ORDER_COMMAND + req.getId();
+        return "redirect:" + WebPages.ORDERS_COMMAND;
+    }
+
+    private String redirectBack(HttpServletRequest request, User user) {
+        Request req = requestService.findOneByUserAndStatus(user, Status.OPENED)
+                .orElseThrow(() -> new ObjectNotFoundException("request not found"));
+        request.setAttribute("totalPrice", req.getTotalPrice());
+        String locale = (String) request.getSession().getAttribute("lang");
+        if (locale == null)
+            locale = "en";
+        ResourceBundle bundle = ResourceBundle.getBundle("i18n", Locale.forLanguageTag(locale));
+        request.setAttribute("addressMsg", bundle.getString("incorrect.address"));
+        return WebPages.CHECKOUT_FORM_PAGE;
     }
 
     private boolean isValid(String address) {

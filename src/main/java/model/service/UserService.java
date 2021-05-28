@@ -23,15 +23,6 @@ public interface UserService {
     Optional<User> findById(int id);
 
     /**
-     * checks if credentials (i.e. username and password match those stored in model.database
-     *
-     * @param username user's username
-     * @param password user's password
-     * @return true if credentials are valid, false - if not
-     */
-    boolean hasValidCredentials(String username, String password);
-
-    /**
      * saves new user to db
      *
      * @param user user to save

@@ -38,9 +38,7 @@ public class CartCommand implements Command {
         User user = (User) session.getAttribute("user");
         Optional<Request> req = requestService.findOneByUserAndStatus(user, Status.OPENED);
 
-        if (!req.isPresent()) {
-            request.setAttribute("request", null);
-        } else {
+        if (req.isPresent()) {
             List<RequestItem> requestItems = requestItemService.findAllByRequestId(req.get().getId());
             request.setAttribute("requestItems", requestItems);
             request.setAttribute("request", req.get());

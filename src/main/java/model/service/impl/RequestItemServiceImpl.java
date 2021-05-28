@@ -31,8 +31,13 @@ public class RequestItemServiceImpl implements RequestItemService {
     }
 
     @Override
-    public void updateQuantity(RequestItem requestItem) {
-        requestItemDao.update(requestItem);
+    public void increaseQuantity(int requestItemId) {
+        requestItemDao.increaseQuantity(requestItemId);
+    }
+
+    @Override
+    public void decreaseQuantity(int requestItemId) {
+        requestItemDao.decreaseQuantity(requestItemId);
     }
 
     @Override

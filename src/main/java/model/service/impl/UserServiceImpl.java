@@ -16,21 +16,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findByUsername(String username) {
+        if (username == null)
+            return Optional.empty();
         return userDao.findByUsername(username);
     }
 
     @Override
     public Optional<User> findById(int id) {
         return userDao.findById(id);
-    }
-
-    @Override
-    public boolean hasValidCredentials(String username, String password) {
-        if (username == null || password == null)
-            return false;
-
-        Optional<User> user = userDao.findByUsername(username);
-        return user.map(value -> value.getPassword().equals(password)).orElse(false);
     }
 
     @Override

@@ -46,14 +46,23 @@ public class AddDishCommand implements Command {
         int categoryId = Integer.parseInt(request.getParameter("category"));
         Category category = categoryService.findById(categoryId)
                 .orElseThrow(() -> new ObjectNotFoundException("category not found"));
-        int price = 0;
 
         if (!isValid(name, nameUkr, priceString, imagePath, request)) {
             request.setAttribute("categories", categoryService.findAll());
             return WebPages.ADD_DISH_PAGE;
         }
 
+        int price = parsePrice(priceString);
+
+        Dish dish = new Dish(name, nameUkr, price, description, descriptionUkr, imagePath, category);
+        dishService.save(dish);
+        logger.debug("-----successfully executed add dish command-----");
+        return "redirect:" + WebPages.DISH_COMMAND + dish.getId();
+    }
+
+    private int parsePrice(String priceString) {
         Matcher m = Pattern.compile(PRICE_REGEX).matcher(priceString);
+        int price = 0;
         if (m.find()) {
             if (m.group(1) != null) { // <-- price is entered as number with floating point
                 String priceInt = priceString.replace(".", "");
@@ -64,11 +73,7 @@ public class AddDishCommand implements Command {
                 price = 100 * Integer.parseInt(priceString);
             }
         }
-
-        Dish dish = new Dish(name, nameUkr, price, description, descriptionUkr, imagePath, category);
-        dishService.save(dish);
-        logger.debug("-----successfully executed add dish command-----");
-        return "redirect:" + WebPages.DISH_COMMAND + dish.getId();
+        return price;
     }
 
     private boolean isValid(String name, String nameUkr,  String priceDouble, String imagePath,

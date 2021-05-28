@@ -50,8 +50,8 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public void approveRequest(Request request) {
-        requestDao.update(request);
+    public void approveRequest(User user, String address) {
+        requestDao.setStatusPending(user.getId(), address);
     }
 
     @Override

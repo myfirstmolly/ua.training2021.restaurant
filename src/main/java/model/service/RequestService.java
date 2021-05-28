@@ -69,9 +69,10 @@ public interface RequestService {
     /**
      * updates Request
      *
-     * @param request request to update
+     * @param user    user who approved their request
+     * @param address delivery address
      */
-    void approveRequest(Request request);
+    void approveRequest(User user, String address);
 
     /**
      * updates Request status

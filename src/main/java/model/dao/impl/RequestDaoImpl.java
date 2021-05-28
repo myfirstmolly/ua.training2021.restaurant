@@ -6,6 +6,7 @@ import model.dao.mapper.UserMapper;
 import model.database.DBManager;
 import model.entities.Request;
 import model.entities.Status;
+import model.exceptions.ObjectNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import util.Page;
@@ -38,10 +39,8 @@ public final class RequestDaoImpl implements RequestDao {
 
         String sql = JOIN_STRING + "order by id desc limit ? offset ?";
         logger.info("sql: " + sql);
-
         String countTotal = "select count(*) from request;";
         logger.info("sql: " + countTotal);
-
         return getRequestPage(limit, index, sql, countTotal);
     }
 
@@ -49,7 +48,6 @@ public final class RequestDaoImpl implements RequestDao {
     public Page<Request> findAllByUserId(int id, int limit, int index) {
         String sql = JOIN_STRING + "where customer_id=? order by id desc limit ? offset ?";
         logger.info("sql: " + sql);
-
         String countTotal = "select count(*) from request where customer_id=?;";
         return getRequestPage(limit, index, sql, countTotal, id);
     }
@@ -59,7 +57,6 @@ public final class RequestDaoImpl implements RequestDao {
         String sql = JOIN_STRING + "where status_id!=? order by id desc limit ? offset ?";
         logger.info("sql: " + sql);
         int id = status.getId();
-
         String countTotal = "select count(*) from request where status_id!=?;";
         return getRequestPage(limit, index, sql, countTotal, id);
     }
@@ -68,7 +65,6 @@ public final class RequestDaoImpl implements RequestDao {
     public Page<Request> findAllByStatusId(int id, int limit, int index) {
         String sql = JOIN_STRING + "where status_id=? order by id desc limit ? offset ?";
         logger.info("sql: " + sql);
-
         String countTotal = "select count(*) from request where status_id=?;";
         return getRequestPage(limit, index, sql, countTotal, id);
     }
@@ -99,6 +95,40 @@ public final class RequestDaoImpl implements RequestDao {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public void setStatusPending(int userId, String address) {
+        String getRequest = JOIN_STRING + "where customer_id=? and status_id=?";
+        String sql = "update request set status_id=?, delivery_address=? where id=?";
+        logger.info("sql: " + sql);
+        Connection con = null;
+        try {
+            con = dbManager.getConnection();
+            con.setAutoCommit(false);
+            PreparedStatement ps = con.prepareStatement(getRequest);
+            ps.setInt(1, userId);
+            ps.setInt(2, Status.PENDING.getId());
+            Request request;
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next())
+                    request = getMapper().map(rs);
+                else
+                    throw new ObjectNotFoundException("request not found");
+            }
+            ps.close();
+            PreparedStatement update = con.prepareStatement(getRequest);
+            update.setInt(1, request.getStatus().getId());
+            update.setString(2, address);
+            update.setInt(3, request.getId());
+            update.executeUpdate();
+
+        } catch (SQLException ex) {
+            logger.error("exception occurred during statement execution", ex);
+            dbManager.rollbackTransaction(con);
+        } finally {
+            dbManager.commitAndClose(con);
+        }
     }
 
     @Override
@@ -149,7 +179,6 @@ public final class RequestDaoImpl implements RequestDao {
             return;
         }
         String sql = "update request set status_id=?, delivery_address=?, approved_by=? where id=?";
-        logger.trace("delegated '" + sql + "' to DaoUtils");
 
         logger.info("sql: " + sql);
         Connection con = null;
@@ -226,7 +255,7 @@ public final class RequestDaoImpl implements RequestDao {
                 while (rs.next())
                     entries.add(getMapper().map(rs));
                 if (countRs.next())
-                    totalValues = countRs.getInt("count");
+                    totalValues = countRs.getInt(1);
             }
         } catch (SQLException ex) {
             logger.error("cannot retrieve objects from table request", ex);

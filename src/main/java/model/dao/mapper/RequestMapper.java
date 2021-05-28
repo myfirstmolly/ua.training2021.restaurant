@@ -34,7 +34,7 @@ public class RequestMapper implements Mapper<Request> {
     public Request map(ResultSet rs) throws SQLException {
         Request request = new Request();
         request.setId(rs.getInt(id));
-        request.setStatus(Status.values()[rs.getInt(statusId) - 1]);
+        request.setStatus(Status.values()[rs.getInt(statusId)]);
         request.setDeliveryAddress(rs.getString(deliveryAddress));
         request.setTotalPrice(rs.getLong(totalPrice));
         request.setApprovedBy(rs.getInt(approvedBy));

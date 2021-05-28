@@ -1,8 +1,9 @@
 package model.entities;
 
 public enum Role {
-    MANAGER(1),
-    CUSTOMER(2);
+
+    MANAGER(0),
+    CUSTOMER(1);
 
     int id;
 

@@ -32,11 +32,18 @@ public interface RequestItemService {
     void addItem(int userId, int dishId);
 
     /**
-     * updates RequestItem
+     * increases request item quantity by one
      *
-     * @param requestItem item to update
+     * @param requestItemId request item unique identifier
      */
-    void updateQuantity(RequestItem requestItem);
+    void increaseQuantity(int requestItemId);
+
+    /**
+     * decreases request item quantity by one
+     *
+     * @param requestItemId request item unique identifier
+     */
+    void decreaseQuantity(int requestItemId);
 
     /**
      * deletes RequestItem

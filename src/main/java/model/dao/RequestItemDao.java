@@ -28,4 +28,8 @@ public interface RequestItemDao extends CrudDao<RequestItem> {
      */
     void addRequestItem(int userId, int dishId);
 
+    void increaseQuantity(int requestId);
+
+    void decreaseQuantity(int requestId);
+
 }

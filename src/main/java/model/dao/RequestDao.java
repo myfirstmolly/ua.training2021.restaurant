@@ -85,4 +85,11 @@ public interface RequestDao extends CrudDao<Request> {
      */
     Optional<Request> findFirstByUserAndStatus(int userId, int statusId);
 
+    /**
+     * sets request status to 'pending'
+     *
+     * @param userId  id of user who approves their request
+     * @param address delivery address
+     */
+    void setStatusPending(int userId, String address);
 }

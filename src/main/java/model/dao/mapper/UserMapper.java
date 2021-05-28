@@ -35,7 +35,7 @@ public class UserMapper implements Mapper<User> {
         user.setName(rs.getString(name));
         user.setPhoneNumber(rs.getString(phoneNumber));
         user.setEmail(rs.getString(email));
-        user.setRole(Role.values()[rs.getInt(roleId) - 1]);
+        user.setRole(Role.values()[rs.getInt(roleId)]);
         return user;
     }
 }
