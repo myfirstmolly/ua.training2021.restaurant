@@ -255,6 +255,36 @@ end;
 // delimiter ;
 
 
+-- when dish price is updated, order total price is also updated
+delimiter //
+create trigger dish_before_update
+    before update
+    on dish
+    for each row
+begin
+    update request_item ri join request r on ri.request_id = r.id
+    set ri.price = new.price
+    where r.status_id = 0
+      and ri.dish_id = new.id;
+    if new.price > old.price
+    then
+        update request join request_item i on request.id = i.request_id
+        set total_price = total_price + i.quantity * (new.price - old.price)
+        where i.dish_id = new.id
+          and request.status_id = 0;
+    else
+        if NEW.price < OLD.price then
+            update request join request_item i on request.id = i.request_id
+            set total_price = total_price - i.quantity * (old.price - new.price)
+            where i.dish_id = new.id
+              and request.status_id = 0;
+        end if;
+    end if;
+end;
+// delimiter ;
+
+
+-- restricting manager from setting status, which is previous to current
 delimiter //
 create trigger request_before_update
     before update
@@ -269,6 +299,7 @@ end;
 // delimiter ;
 
 
+-- user is allowed to have up to 30 same dishes in cart
 delimiter //
 create trigger request_itm_before_update_qty_2
     before update
@@ -293,15 +324,15 @@ begin
     declare qty int;
     declare order_qty int;
     declare item_qty int;
-    set order_qty = (select count(*) from request where customer_id = user_param and status_id = 1);
+    set order_qty = (select count(*) from request where customer_id = user_param and status_id = 0);
     set item_param = null;
 
     if order_qty = 0
     then
-        insert into request(customer_id, status_id) values (user_param, 1);
+        insert into request(customer_id, status_id) values (user_param, 0);
         set order_param_id = (select LAST_INSERT_ID());
     else
-        set order_param_id = (select id from request where customer_id = user_param and status_id = 1);
+        set order_param_id = (select id from request where customer_id = user_param and status_id = 0);
     end if;
 
     set item_qty = (select count(*) from request_item where dish_id = dish_param and request_id = order_param_id);
@@ -355,6 +386,8 @@ create table if not exists deleted_dish
             on delete restrict
 );
 
+
+-- copy deleted user data to this table
 delimiter //
 create trigger user_before_delete
     before delete
@@ -367,6 +400,7 @@ end;
 // delimiter ;
 
 
+-- copy deleted dish data to this table
 delimiter //
 create trigger dish_before_delete
     before delete
@@ -376,33 +410,5 @@ begin
     insert into dish(id, name, name_ukr, price, description, description_ukr, image_path, category_id)
     values (old.id, old.name, old.name_ukr, old.price, old.description, old.description_ukr, old.image_path,
             old.category_id);
-end;
-// delimiter ;
-
-
-delimiter //
-create trigger dish_before_update
-    before update
-    on dish
-    for each row
-begin
-    update request_item ri join request r on ri.request_id = r.id
-    set ri.price = new.price
-    where r.status_id = 0
-      and ri.dish_id = new.id;
-    if new.price > old.price
-    then
-        update request join request_item i on request.id = i.request_id
-        set total_price = total_price + i.quantity * (new.price - old.price)
-        where i.dish_id = new.id
-          and request.status_id = 0;
-    else
-        if NEW.price < OLD.price then
-            update request join request_item i on request.id = i.request_id
-            set total_price = total_price - i.quantity * (old.price - new.price)
-            where i.dish_id = new.id
-              and request.status_id = 0;
-        end if;
-    end if;
 end;
 // delimiter ;
